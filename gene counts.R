@@ -1,0 +1,12 @@
+setwd()
+post_recomb_gene_count = read.table("post_recomb_gene_counts.txt")
+head(post_recomb_gene_count)
+median(post_recomb_gene_count$V1)
+hist(post_recomb_gene_count$V1)
+summary(post_recomb_gene_count)
+nrow(post_recomb_gene_count)
+
+no_recomb_gene_count = read.table("no_recomb_gene_counts.txt")
+head(no_recomb_gene_count)
+median(no_recomb_gene_count$V1)
+nrow(no_recomb_gene_count)
