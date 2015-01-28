@@ -52,6 +52,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   dim(no_introns_both)
   dim(no_introns_neg) + dim(no_introns_pos) #checks out
   
+  pdf(sprintf("start end reading frame for %s.pdf", dataset_name), useDingbats = FALSE)
   no_introns_both[,"read_start_aa_in_cds"] = no_introns_both$read_start_in_cds / 3
   no_introns_both[,"start_readframe_aa_in_cds"] = no_introns_both$read_start_in_cds %% 3
   hist(no_introns_both$start_readframe_aa_in_cds)
@@ -64,6 +65,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   
   no_introns_both[,"readframe_tot"] = no_introns_both$end_readframe_aa_in_cds + no_introns_both$start_readframe_aa_in_cds
   hist(no_introns_both$readframe_tot)
+  dev.off()
   
   #subset the table by what reading frame the fragments are in
   zero_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==0),]
@@ -111,11 +113,11 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   rownames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
   colnames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
   read_frame_dist_weighted_table
+  dev.off()
   
   list(exon_percents = exon_percents, no_introns = no_introns, no_introns_pos = no_introns_pos, zero_two = zero_two)
 }
-a = NULL
-b= NULL
+
 up = reading_frame_single_intron("up_orf_unique.bed", "up")
 typeof(up)
 head(up$no_introns)
