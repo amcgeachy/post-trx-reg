@@ -23,28 +23,59 @@ percent_single_exon_genes
 percent_multi_exon_genes = number_multi_exon_genes/number_all_exon_genes
 percent_multi_exon_genes
 
-#make list of single intron genes 
-no_introns = unique_orfs[unique_orfs$exon_number==1,]
-head(no_introns)
+  #make list of single intron genes 
+  no_introns = unique_orfs[unique_orfs$exon_number==1,]
+  head(no_introns)
+  
+    #subset it by + strand and make metrics
+    no_introns_pos = no_introns[no_introns$strand_read=="+",]
+    head(no_introns_pos)
+    
+    no_introns_pos[,"read_start_in_cds"] = no_introns_pos$start_read - no_introns_pos$start_cds
+    head(no_introns_pos)
 
-#subset it by + strand and make metrics
-no_introns_pos = no_introns[no_introns$strand_read=="+",]
-head(no_introns_pos)
+    #subset it by - strand and make metrics
+    no_introns_neg = no_introns[no_introns$strand_read=="-",]
+    head(no_introns_neg)
+    
+    no_introns_neg[,"read_start_in_cds"] = no_introns_neg$end_cds - no_introns_neg$end_read 
+    head(no_introns_neg)
+    
+    #combine - and + into one table
+    dim(no_introns_neg) + dim(no_introns_pos)
+    no_introns_both = rbind(no_introns_neg, no_introns_pos)
+    dim(no_introns_both)
+    dim(no_introns_neg) + dim(no_introns_pos) #checks out
 
-no_introns_pos[,"read_start_in_cds"] = no_introns_pos$start_read - no_introns_pos$start_cds
-head(no_introns_pos)
-no_introns_pos[,"read_start_aa_in_cds"] = no_introns_pos$read_start_in_cds / 3
-no_introns_pos[,"start_readframe_aa_in_cds"] = no_introns_pos$read_start_in_cds %% 3
-hist(no_introns_pos$start_readframe_aa_in_cds)
+    no_introns_both[,"read_start_aa_in_cds"] = no_introns_both$read_start_in_cds / 3
+    no_introns_both[,"start_readframe_aa_in_cds"] = no_introns_both$read_start_in_cds %% 3
+    hist(no_introns_both$start_readframe_aa_in_cds)
+    
+    no_introns_both[,"read_end_in_cds"] = no_introns_both$read_start_in_cds + no_introns_both$read_length
+    head(no_introns_both)
+    no_introns_both[,"read_end_aa_in_cds"] = no_introns_both$read_end_in_cds / 3
+    no_introns_both[,"end_readframe_aa_in_cds"] = no_introns_both$read_end_in_cds %% 3
+    hist(no_introns_both$end_readframe_aa_in_cds, add=TRUE, col=NULL, border=2)
+    
+    no_introns_both[,"readframe_tot"] = no_introns_both$end_readframe_aa_in_cds + no_introns_both$start_readframe_aa_in_cds
+    hist(no_introns_both$readframe_tot)
 
-no_introns_pos[,"read_end_in_cds"] = no_introns_pos$read_start_in_cds + no_introns_pos$read_length
-head(no_introns_pos)
-no_introns_pos[,"read_end_aa_in_cds"] = no_introns_pos$read_end_in_cds / 3
-no_introns_pos[,"end_readframe_aa_in_cds"] = no_introns_pos$read_end_in_cds %% 3
-hist(no_introns_pos$end_readframe_aa_in_cds, add=TRUE, col=NULL, border=2)
 
-no_introns_pos[,"readframe_tot"] = no_introns_pos$end_readframe_aa_in_cds + no_introns_pos$start_readframe_aa_in_cds
-hist(no_introns_pos$readframe_tot)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 head(no_introns_pos)
 
