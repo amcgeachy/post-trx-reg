@@ -1,20 +1,36 @@
-unique_orfs = read.table(inputfile, header=FALSE)
+getwd()
+setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles/")
+
+unique_orfs = read.table("up_orf_unique.bed", header=FALSE)
 colnames(unique_orfs) = c("frag_count", "chr_read", "start_read", "end_read", "strand_read",
                           "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
                           "thick_start", "thick_end", "RGB", "exon_number", "exon_start", "exon_end", "overlap")
 
+head(unique_orfs)
+
 unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
 head(unique_orfs)
-summary(unique_orfs$read_length)
-summary(unique_orfs$exon_number)
 
+number_multi_exon_genes = sum((summary(unique_orfs$exon_number)[3:8]))
+number_single_exon_genes = summary(unique_orfs$exon_number)[2]
+number_all_exon_genes = sum(summary(unique_orfs$exon_number)[2:8])
+number_multi_exon_genes
+number_single_exon_genes
+number_all_exon_genes
+
+percent_single_exon_genes = number_single_exon_genes/number_all_exon_genes
+percent_single_exon_genes
+percent_multi_exon_genes = number_multi_exon_genes/number_all_exon_genes
+percent_multi_exon_genes
+
+#make list of single intron genes 
 no_introns = unique_orfs[unique_orfs$exon_number==1,]
 head(no_introns)
 
+#subset it by + strand and make metrics
 no_introns_pos = no_introns[no_introns$strand_read=="+",]
 head(no_introns_pos)
 
-summary(no_introns_pos$strand_read)
 no_introns_pos[,"read_start_in_cds"] = no_introns_pos$start_read - no_introns_pos$start_cds
 head(no_introns_pos)
 no_introns_pos[,"read_start_aa_in_cds"] = no_introns_pos$read_start_in_cds / 3
@@ -25,9 +41,9 @@ no_introns_pos[,"read_end_in_cds"] = no_introns_pos$read_start_in_cds + no_intro
 head(no_introns_pos)
 no_introns_pos[,"read_end_aa_in_cds"] = no_introns_pos$read_end_in_cds / 3
 no_introns_pos[,"end_readframe_aa_in_cds"] = no_introns_pos$read_end_in_cds %% 3
-no_introns_pos[,"readframe_tot"] = no_introns_pos$end_readframe_aa_in_cds + no_introns_pos$start_readframe_aa_in_cds
 hist(no_introns_pos$end_readframe_aa_in_cds, add=TRUE, col=NULL, border=2)
 
+no_introns_pos[,"readframe_tot"] = no_introns_pos$end_readframe_aa_in_cds + no_introns_pos$start_readframe_aa_in_cds
 hist(no_introns_pos$readframe_tot)
 
 head(no_introns_pos)
