@@ -38,7 +38,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   
   zero_zero = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==0),]
   head(zero_zero)
-  return(zero_zero)
+  write.csv(zero_zero, file=sprintf("%s zero_zero pos.csv", dataset_name))
   zero_one = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==1),]
   zero_two = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==2),]
   
@@ -65,22 +65,24 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   
   read_frame_dist_weighted = c(sum(zero_zero$frag_count), sum(zero_one$frag_count), sum(zero_two$frag_count),
                                sum(one_zero$frag_count), sum(one_one$frag_count), sum(one_two$frag_count),
-                               sum(two_zero$frag_count), sum(two_one$frag_count), sum(two_two$frag_count))
-  
-  return(read_frame_dist_weighted)
-  
+                               sum(two_zero$frag_count), sum(two_one$frag_count), sum(two_two$frag_count))  
   barplot(read_frame_dist_weighted, xaxt = "n", main=sprintf("Single intron weighted read frame distribution, %s", dataset_name))
   labels=c("0,0", "0,1", "0,2",
            "1,0", "1,1", "1,2",
            "2,0", "2,1", "2,2")
   axis(1, at=(1:9), labels=labels, cex=.05)
   dev.off()
+  
+  new_list = list(no_introns, no_introns_pos)
 }
 a = NULL
 b= NULL
-list[a,b] = reading_frame_single_intron("up_orf_unique.bed", "up")
-typeof(test)
-head(test)
+test = reading_frame_single_intron("up_orf_unique.bed", "up")
+up_no_introns = test[[1]]
+up_no_introns_pos = test[[2]]
+
+nrow(up_no_introns_pos) / nrow(up_no_introns)
+nrow(up_no_introns_pos)
 tail(test)
 reading_frame_single_intron("down_orf_unique.bed", "down")
 reading_frame_single_intron("no_recomb_orf_unique.bed", "no_recomb")
