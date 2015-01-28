@@ -22,6 +22,10 @@ percent_single_exon_genes = number_single_exon_genes/number_all_exon_genes
 percent_single_exon_genes
 percent_multi_exon_genes = number_multi_exon_genes/number_all_exon_genes
 percent_multi_exon_genes
+exon_percents = matrix(c(percent_single_exon_genes, percent_multi_exon_genes))
+rownames(exon_percents) = c("single exon genes", "multi exon genes")
+exon_percents
+
 
   #make list of single intron genes 
   no_introns = unique_orfs[unique_orfs$exon_number==1,]
@@ -60,44 +64,31 @@ percent_multi_exon_genes
     no_introns_both[,"readframe_tot"] = no_introns_both$end_readframe_aa_in_cds + no_introns_both$start_readframe_aa_in_cds
     hist(no_introns_both$readframe_tot)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-head(no_introns_pos)
-
-zero_zero = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==0),]
+#subset the table by what reading frame the fragments are in
+zero_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==0),]
 head(zero_zero)
-write.csv(zero_zero, file=sprintf("%s zero_zero pos.csv", dataset_name))
-zero_one = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==1),]
-zero_two = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==2),]
-
-one_zero = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==1 & no_introns_pos$end_readframe_aa_in_cds==0),]
+zero_one = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==1),]
+zero_two = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==2),]
+head(zero_two)
+nrow(zero_two)
+one_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==1 & no_introns_both$end_readframe_aa_in_cds==0),]
 head(one_zero)
-one_one = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==1 & no_introns_pos$end_readframe_aa_in_cds==1),]
-one_two = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==1 & no_introns_pos$end_readframe_aa_in_cds==2),]
+one_one = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==1 & no_introns_both$end_readframe_aa_in_cds==1),]
+one_two = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==1 & no_introns_both$end_readframe_aa_in_cds==2),]
 
-two_zero = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==2 & no_introns_pos$end_readframe_aa_in_cds==0),]
+two_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==2 & no_introns_both$end_readframe_aa_in_cds==0),]
 head(two_zero)
-two_one = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==2 & no_introns_pos$end_readframe_aa_in_cds==1),]
-two_two = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==2 & no_introns_pos$end_readframe_aa_in_cds==2),]
+two_one = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==2 & no_introns_both$end_readframe_aa_in_cds==1),]
+two_two = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==2 & no_introns_both$end_readframe_aa_in_cds==2),]
 
 read_frame_dist = c(nrow(zero_zero), nrow(zero_one), nrow(zero_two),
                     nrow(one_zero), nrow(one_one), nrow(one_two),
                     nrow(two_zero), nrow(two_one), nrow(two_two))
+
+read_frame_dist_table = matrix(read_frame_dist, nrow =3)
+rownames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
+colnames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
+read_frame_dist_table
 
 pdf(sprintf("readingframe %s with numbers.pdf", dataset_name), useDingbats = FALSE)
 barplot(read_frame_dist, xaxt = "n", main=sprintf("Single intron read frame distribution, %s", dataset_name))
@@ -114,6 +105,11 @@ labels=c("0,0", "0,1", "0,2",
          "1,0", "1,1", "1,2",
          "2,0", "2,1", "2,2")
 axis(1, at=(1:9), labels=labels, cex=.05)
+
+read_frame_dist_weighted_table = matrix(read_frame_dist_weighted, nrow =3)
+rownames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
+colnames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
+read_frame_dist_weighted_table
 dev.off()
 
 new_list = list(no_introns, no_introns_pos)
