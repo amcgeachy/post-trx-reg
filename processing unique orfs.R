@@ -38,6 +38,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   
   zero_zero = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==0),]
   head(zero_zero)
+  return(zero_zero)
   zero_one = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==1),]
   zero_two = no_introns_pos[which(no_introns_pos$start_readframe_aa_in_cds==0 & no_introns_pos$end_readframe_aa_in_cds==2),]
   
@@ -54,7 +55,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   read_frame_dist = c(nrow(zero_zero), nrow(zero_one), nrow(zero_two),
            nrow(one_zero), nrow(one_one), nrow(one_two),
            nrow(two_zero), nrow(two_one), nrow(two_two))
-  
+    
   pdf(sprintf("readingframe %s with numbers.pdf", dataset_name), useDingbats = FALSE)
   barplot(read_frame_dist, xaxt = "n", main=sprintf("Single intron read frame distribution, %s", dataset_name))
   labels=c("0,0", "0,1", "0,2",
@@ -66,7 +67,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
                                sum(one_zero$frag_count), sum(one_one$frag_count), sum(one_two$frag_count),
                                sum(two_zero$frag_count), sum(two_one$frag_count), sum(two_two$frag_count))
   
-  print(read_frame_dist_weighted)
+  return(read_frame_dist_weighted)
   
   barplot(read_frame_dist_weighted, xaxt = "n", main=sprintf("Single intron weighted read frame distribution, %s", dataset_name))
   labels=c("0,0", "0,1", "0,2",
@@ -75,8 +76,12 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   axis(1, at=(1:9), labels=labels, cex=.05)
   dev.off()
 }
-
-reading_frame_single_intron("up_orf_unique.bed", "up")
+a = NULL
+b= NULL
+list[a,b] = reading_frame_single_intron("up_orf_unique.bed", "up")
+typeof(test)
+head(test)
+tail(test)
 reading_frame_single_intron("down_orf_unique.bed", "down")
 reading_frame_single_intron("no_recomb_orf_unique.bed", "no_recomb")
 reading_frame_single_intron("post_recomb_orf_unique.bed", "post_recomb")
