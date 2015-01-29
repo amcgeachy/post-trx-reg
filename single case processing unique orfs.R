@@ -114,17 +114,9 @@ dev.off()
 new_list = list(no_introns, no_introns_pos)
 
 intergenic = summary(unique_orfs$exon_number)[1]
-intergenic
 genic = sum(summary(unique_orfs$exon_number)[2:8])
-genic
-summary(unique_orfs$exon_number)
+genic_and_not =sum(summary(unique_orfs$exon_number)[1:8])
+per_intergenic = round(intergenic/genic_and_not, digits=3)
+per_genic = round(genic/genic_and_not, digits=3)
 
-pie(c(intergenic, genic), labels=c("intergenic", "genic"), main="percent in gene, up")
-sum_up[[1]] /sum(sum_up) #nongenic
-1-sum_up[[1]]/sum(sum_up) #genic
-pie(
-  x=c(
-    sum_up[[1]] /sum(sum_up),
-    1-sum_up[[1]]/sum(sum_up)),
-  labels=c("nongenic", "genic"), main = "up")
-
+pie(c(intergenic, genic), labels=c(sprintf("intergenic, %s", per_intergenic), sprintf("genic, %s", per_genic)), main="percent in gene, up")
