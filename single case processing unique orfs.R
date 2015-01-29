@@ -26,7 +26,6 @@ exon_percents = matrix(c(percent_single_exon_genes, percent_multi_exon_genes))
 rownames(exon_percents) = c("single exon genes", "multi exon genes")
 exon_percents
 
-
   #make list of single intron genes 
   no_introns = unique_orfs[unique_orfs$exon_number==1,]
   head(no_introns)

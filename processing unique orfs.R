@@ -120,7 +120,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
 
 up = reading_frame_single_intron("up_orf_unique.bed", "up")
 typeof(up)
-head(up$no_introns)
+head(up$exon_percents)
 head(up$zero_two)
 
 nrow(up_no_introns_pos) / nrow(up_no_introns)
