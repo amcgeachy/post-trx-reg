@@ -160,60 +160,39 @@ reading_frame_single_intron = function(inputfile, dataset_name){
 
 #####
 
+#Now combine the data into a single data frame. 
+
+#make unique identifier for each fragment
+head(up$no_introns_both)
+up$no_introns_both[,"unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
+                                      up$no_introns_both$end_read, up$no_introns_both$strand_read, sep="_")
+down$no_introns_both[,"unique"] = paste(down$no_introns_both$chr_read, down$no_introns_both$start_read, 
+                                        down$no_introns_both$end_read, down$no_introns_both$strand_read, sep="_")
+no_recomb$no_introns_both[,"unique"] = paste(no_recomb$no_introns_both$chr_read, no_recomb$no_introns_both$start_read,
+                                             no_recomb$no_introns_both$end_read, no_recomb$no_introns_both$strand_read, sep="_")
+post_recomb$no_introns_both[,"unique"] = paste(post_recomb$no_introns_both$chr_read, post_recomb$no_introns_both$start_read,
+                                               post_recomb$no_introns_both$end_read, post_recomb$no_introns_both$strand_read, sep="_")
+head(up$no_introns_both)
+
+up_unique = up$no_introns_both$unique
+head(up_unique)
+post_unique = post_recomb$no_introns_both$unique
+head(post_unique)
+intersect(up_unique, post_unique)
+
+length(up_unique)
+length(post_unique)
+length(intersect(up_unique, post_unique))
+length(union(up_unique, post_unique))
+length(setdiff(up_unique, post_unique))
 
 
+summary(match(post_unique, up_unique))
+length(post_unique)
+length(up_unique) - length(post_unique)
+length(post_unique) + length(up_unique)
 
-
-
-no_recomb_orfs = read.table("no_recomb_orf_unique.bed", header=FALSE)
-colnames(no_recomb_orfs) = c("frag_count", "chr_read", "start_read", "end_read", "strand_read",
-                          "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
-                          "thick_start", "thick_end", "RGB", "exon_number", "exon_start", "exon_end", "overlap")
-head(no_recomb_orfs)
-sum_no_recomb = summary(no_recomb_orfs$exon_number)
-sum(sum_no_recomb)
-sum_no_recomb[[1]] /sum(sum_no_recomb) #nongenic
-1-sum_no_recomb[[1]]/sum(sum_no_recomb) #genic
-
-post_recomb_orfs = read.table("post_recomb_orf_unique.bed", header=FALSE)
-colnames(post_recomb_orfs) = c("frag_count", "chr_read", "start_read", "end_read", "strand_read",
-                             "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
-                             "thick_start", "thick_end", "RGB", "exon_number", "exon_start", "exon_end", "overlap")
-head(post_recomb_orfs)
-summary(post_recomb_orfs$exon_number)
-sum_post_recomb = summary(post_recomb_orfs$exon_number)
-sum(sum_post_recomb)
-sum_post_recomb[[1]] /sum(sum_post_recomb) #nongenic
-1-sum_post_recomb[[1]]/sum(sum_post_recomb) #genic
-
-sum_up = summary(unique_orfs$exon_number)
-sum(sum_up)
-sum_up[[1]] /sum(sum_up) #nongenic
-1-sum_up[[1]]/sum(sum_up) #genic
-pie(
-  x=c(
-    sum_up[[1]] /sum(sum_up),
-    1-sum_up[[1]]/sum(sum_up)),
-  labels=c("nongenic", "genic"), main = "up")
-
-
-pie(
-  x=c(
-    sum_no_recomb[[1]] /sum(sum_no_recomb),
-    1-sum_no_recomb[[1]]/sum(sum_no_recomb)),
-  labels=c("nongenic", "genic"), main = "no recomb")
-
-pie(
-  x=c(
-    sum_post_recomb[[1]] /sum(sum_post_recomb),
-    1-sum_post_recomb[[1]]/sum(sum_post_recomb)),
-  labels=c("nongenic", "genic"), main = "post recomb")
-
-barplot(blah)
-?text
-
-2833925/148362
-sum(136232 ,  94092, 2833925  ,148362 ,  76146  , 78148   ,99759 , 133444  ,102088)
-2833925/sum(136232 ,  94092, 2833925  ,148362 ,  76146  , 78148   ,99759 , 133444  ,102088)
-
-145224/sum(161245, 146153, 145224, 142945, 130254, 127734 ,148782 ,136660, 133554)
+baby = head(up_unique)
+baby2 = head(post_unique)
+baby
+baby2
