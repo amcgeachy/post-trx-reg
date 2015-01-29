@@ -115,27 +115,40 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   read_frame_dist_weighted_table
   dev.off()
   
-  list(exon_percents = exon_percents, no_introns = no_introns, no_introns_pos = no_introns_pos, zero_two = zero_two)
+  list(exon_percents = exon_percents, no_introns_both = no_introns_both, zero_two = zero_two)
 }
 
-up = reading_frame_single_intron("up_orf_unique.bed", "up")
-typeof(up)
-head(up$exon_percents)
-head(up$zero_two)
+#subset into lists of in frame fragments
+  up = reading_frame_single_intron("up_orf_unique.bed", "up")
+  typeof(up)
+  up$exon_percents
+  head(up$no_introns_both)
+  head(up$zero_two)
+  
+  down = reading_frame_single_intron("down_orf_unique.bed", "down")
+  typeof(down)
+  down$exon_percents
+  head(down$no_introns_both)
+  head(down$zero_two)
+  
+  no_recomb = reading_frame_single_intron("no_recomb_orf_unique.bed", "no_recomb")
+  typeof(no_recomb)
+  no_recomb$exon_percents
+  head(no_recomb$no_introns_both)
+  head(no_recomb$zero_two)
+  
+  post_recomb = reading_frame_single_intron("post_recomb_orf_unique.bed", "post_recomb")
+  typeof(post_recomb)
+  post_recomb$exon_percents
+  head(post_recomb$no_introns_both)
+  head(post_recomb$zero_two)
 
-nrow(up_no_introns_pos) / nrow(up_no_introns)
-nrow(up_no_introns_pos)
-tail(test)
-reading_frame_single_intron("down_orf_unique.bed", "down")
-reading_frame_single_intron("no_recomb_orf_unique.bed", "no_recomb")
-reading_frame_single_intron("post_recomb_orf_unique.bed", "post_recomb")
+#####
 
-?type
 
-typeof(unique_orfs)
-head(zero_two)
-plot(head(zero_two$frag_count, n=200))
-summary(unique_orfs$exon_number)[[1]]
+
+
+
 
 no_recomb_orfs = read.table("no_recomb_orf_unique.bed", header=FALSE)
 colnames(no_recomb_orfs) = c("frag_count", "chr_read", "start_read", "end_read", "strand_read",
