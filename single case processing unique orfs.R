@@ -1,7 +1,7 @@
 getwd()
 setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles/")
 
-unique_orfs = read.table("up_orf_unique.bed", header=FALSE)
+unique_orfs = read.table("down_orf_unique.bed", header=FALSE)
 colnames(unique_orfs) = c("frag_count", "chr_read", "start_read", "end_read", "strand_read",
                           "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
                           "thick_start", "thick_end", "RGB", "exon_number", "exon_start", "exon_end", "overlap")
@@ -11,9 +11,10 @@ head(unique_orfs)
 unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
 head(unique_orfs)
 
-number_multi_exon_genes = sum((summary(unique_orfs$exon_number)[3:8]))
+number_multi_exon_genes = sum((summary(unique_orfs$exon_number)[3:length(summary(unique_orfs$exon_number))]))
+length(summary(unique_orfs$exon_number))
 number_single_exon_genes = summary(unique_orfs$exon_number)[2]
-number_all_exon_genes = sum(summary(unique_orfs$exon_number)[2:8])
+number_all_exon_genes = sum(summary(unique_orfs$exon_number)[2:length(summary(unique_orfs$exon_number))])
 number_multi_exon_genes
 number_single_exon_genes
 number_all_exon_genes
@@ -114,9 +115,10 @@ dev.off()
 new_list = list(no_introns, no_introns_pos)
 
 intergenic = summary(unique_orfs$exon_number)[1]
-genic = sum(summary(unique_orfs$exon_number)[2:8])
-genic_and_not =sum(summary(unique_orfs$exon_number)[1:8])
+genic = sum(summary(unique_orfs$exon_number)[2:length(summary(unique_orfs$exon_number))])
+genic_and_not =sum(summary(unique_orfs$exon_number)[1:length(summary(unique_orfs$exon_number))])
 per_intergenic = round(intergenic/genic_and_not, digits=3)
 per_genic = round(genic/genic_and_not, digits=3)
-
+per_genic
+per_intergenic
 pie(c(intergenic, genic), labels=c(sprintf("intergenic, %s", per_intergenic), sprintf("genic, %s", per_genic)), main="percent in gene, up")
