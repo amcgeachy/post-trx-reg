@@ -112,3 +112,19 @@ read_frame_dist_weighted_table
 dev.off()
 
 new_list = list(no_introns, no_introns_pos)
+
+intergenic = summary(unique_orfs$exon_number)[1]
+intergenic
+genic = sum(summary(unique_orfs$exon_number)[2:8])
+genic
+summary(unique_orfs$exon_number)
+
+pie(c(intergenic, genic), labels=c("intergenic", "genic"), main="percent in gene, up")
+sum_up[[1]] /sum(sum_up) #nongenic
+1-sum_up[[1]]/sum(sum_up) #genic
+pie(
+  x=c(
+    sum_up[[1]] /sum(sum_up),
+    1-sum_up[[1]]/sum(sum_up)),
+  labels=c("nongenic", "genic"), main = "up")
+
