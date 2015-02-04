@@ -1,5 +1,5 @@
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles/")
+setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_new/")
 
 reading_frame_single_intron = function(inputfile, dataset_name){
   #import data
@@ -29,19 +29,23 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   rownames(exon_percents) = c("single exon genes", "multi exon genes")
   exon_percents  
   
-  #pie charts for in gene, out of gene
-  intergenic = summary(unique_orfs$exon_number)[1]
-  genic = sum(summary(unique_orfs$exon_number)[2:length(summary(unique_orfs$exon_number))])
-  genic_and_not =sum(summary(unique_orfs$exon_number)[1:length(summary(unique_orfs$exon_number))])
-  per_intergenic = round(intergenic/genic_and_not, digits=3)
-  per_genic = round(genic/genic_and_not, digits=3)
-  
-  
-  pdf(sprintf("percent genic %s.pdf", dataset_name), useDingbats = FALSE)
-  pie(c(intergenic, genic), labels=c(sprintf("intergenic, %s", per_intergenic), sprintf("genic, %s", per_genic)), 
-      main=sprintf("percent in gene, %s", dataset_name))
-  dev.off()
-  
+  #make counts for pie chart in terms of genic or not
+    intergenic = unique_orfs[which(unique_orfs$exon_number=="."),]
+    intergenic_weighted_count = sum(intergenic$frag_count)
+    genic = unique_orfs[which(unique_orfs$exon_number!="."),]
+    genic_weighted_count = sum(genic$frag_count)
+    all_genicity_weighted_count = sum(unique_orfs$frag_count)
+    intergenic_weighted_count + genic_weighted_count
+    all_genicity_weighted_count # checks out
+    
+    #make them into tidy percents
+    percent_genic = round(genic_weighted_count/all_genicity_weighted_count, digits = 3)
+    percent_intergenic = round(intergenic_weighted_count/all_genicity_weighted_count, digits = 3)
+    
+    #make the pie chart
+    pie(c(intergenic_weighted_count, genic_weighted_count), labels=c(sprintf("intergenic, %s", percent_intergenic), sprintf("genic, %s", percent_genic)), main="percent in gene, up")
+    
+    
   #make a subset of data that we'll work with for now (single intron) and add metrics
     #make list of single intron genes 
     no_introns = unique_orfs[unique_orfs$exon_number==1,]
@@ -99,42 +103,46 @@ reading_frame_single_intron = function(inputfile, dataset_name){
     two_one = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==2 & no_introns_both$end_readframe_aa_in_cds==1),]
     two_two = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==2 & no_introns_both$end_readframe_aa_in_cds==2),]
     
-    read_frame_dist = c(nrow(zero_zero), nrow(zero_one), nrow(zero_two),
-                        nrow(one_zero), nrow(one_one), nrow(one_two),
-                        nrow(two_zero), nrow(two_one), nrow(two_two))
+    #make a table of unweighted counts for each reading frame combo
+      read_frame_dist = c(nrow(zero_zero), nrow(zero_one), nrow(zero_two),
+                          nrow(one_zero), nrow(one_one), nrow(one_two),
+                          nrow(two_zero), nrow(two_one), nrow(two_two))
+      
+      read_frame_dist_table = matrix(read_frame_dist, nrow =3)
+      rownames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
+      colnames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
+      read_frame_dist_table
+      
+      #plot it
+      pdf(sprintf("readingframe %s with numbers.pdf", dataset_name), useDingbats = FALSE)
+      barplot(read_frame_dist, xaxt = "n", main=sprintf("Single intron read frame distribution, %s", dataset_name))
+      labels=c("0,0", "0,1", "0,2",
+               "1,0", "1,1", "1,2",
+               "2,0", "2,1", "2,2")
+      axis(1, at=(1:9), labels=labels, cex=.05)
     
-    read_frame_dist_table = matrix(read_frame_dist, nrow =3)
-    rownames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
-    colnames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
-    read_frame_dist_table
-    
-    pdf(sprintf("readingframe %s with numbers.pdf", dataset_name), useDingbats = FALSE)
-    barplot(read_frame_dist, xaxt = "n", main=sprintf("Single intron read frame distribution, %s", dataset_name))
-    labels=c("0,0", "0,1", "0,2",
-             "1,0", "1,1", "1,2",
-             "2,0", "2,1", "2,2")
-    axis(1, at=(1:9), labels=labels, cex=.05)
-    
-    read_frame_dist_weighted = c(sum(zero_zero$frag_count), sum(zero_one$frag_count), sum(zero_two$frag_count),
-                                 sum(one_zero$frag_count), sum(one_one$frag_count), sum(one_two$frag_count),
-                                 sum(two_zero$frag_count), sum(two_one$frag_count), sum(two_two$frag_count))  
-    barplot(read_frame_dist_weighted, xaxt = "n", main=sprintf("Single intron weighted read frame distribution, %s", dataset_name))
-    labels=c("0,0", "0,1", "0,2",
-             "1,0", "1,1", "1,2",
-             "2,0", "2,1", "2,2")
-    axis(1, at=(1:9), labels=labels, cex=.05)
-    
-    read_frame_dist_weighted_table = matrix(read_frame_dist_weighted, nrow =3)
-    rownames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
-    colnames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
-    read_frame_dist_weighted_table
-    dev.off()
+    #now do it again, but weighted
+      read_frame_dist_weighted = c(sum(zero_zero$frag_count), sum(zero_one$frag_count), sum(zero_two$frag_count),
+                                   sum(one_zero$frag_count), sum(one_one$frag_count), sum(one_two$frag_count),
+                                   sum(two_zero$frag_count), sum(two_one$frag_count), sum(two_two$frag_count))  
+      barplot(read_frame_dist_weighted, xaxt = "n", main=sprintf("Single intron weighted read frame distribution, %s", dataset_name))
+      labels=c("0,0", "0,1", "0,2",
+               "1,0", "1,1", "1,2",
+               "2,0", "2,1", "2,2")
+      axis(1, at=(1:9), labels=labels, cex=.05)
+      
+      read_frame_dist_weighted_table = matrix(read_frame_dist_weighted, nrow =3)
+      rownames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
+      colnames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
+      read_frame_dist_weighted_table
+      dev.off()
   
+  #return information into useful objects to use outside of the function
   list(exon_percents = exon_percents, no_introns_both = no_introns_both, zero_two = zero_two)
 }
 
 #subset into lists of in frame fragments
-  up = reading_frame_single_intron("up_orf_unique.bed", "up")
+  up = reading_frame_single_intron("up_inside_orf_unique.bed", "up")
   typeof(up)
   up$exon_percents
   head(up$no_introns_both)
@@ -180,13 +188,20 @@ post_unique = post_recomb$no_introns_both$unique
 head(post_unique)
 intersect(up_unique, post_unique)
 
+head(up_unique)
+up_dup = up_unique[duplicated(up_unique)]
+head(up_dup)
+up$no_introns_both[which(up$no_introns_both$unique=="chrV_496874_497026_-"),]
+length(duplicated(up_unique))
+length(unique(up_unique))
 length(up_unique)
+length(unique(up_unique))
 length(post_unique)
 length(intersect(up_unique, post_unique))
 length(union(up_unique, post_unique))
 length(setdiff(up_unique, post_unique))
-
-
+?unique
+?union
 summary(match(post_unique, up_unique))
 length(post_unique)
 length(up_unique) - length(post_unique)

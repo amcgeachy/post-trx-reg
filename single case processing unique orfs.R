@@ -47,7 +47,6 @@ exon_percents
     head(no_introns_neg)
     
     #combine - and + into one table
-    dim(no_introns_neg) + dim(no_introns_pos)
     no_introns_both = rbind(no_introns_neg, no_introns_pos)
     dim(no_introns_both)
     dim(no_introns_neg) + dim(no_introns_pos) #checks out
@@ -55,7 +54,7 @@ exon_percents
     no_introns_both[,"read_start_aa_in_cds"] = no_introns_both$read_start_in_cds / 3
     no_introns_both[,"start_readframe_aa_in_cds"] = no_introns_both$read_start_in_cds %% 3
     hist(no_introns_both$start_readframe_aa_in_cds)
-    
+  
     no_introns_both[,"read_end_in_cds"] = no_introns_both$read_start_in_cds + no_introns_both$read_length
     head(no_introns_both)
     no_introns_both[,"read_end_aa_in_cds"] = no_introns_both$read_end_in_cds / 3
@@ -91,7 +90,7 @@ rownames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two"
 colnames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
 read_frame_dist_table
 
-pdf(sprintf("readingframe %s with numbers.pdf", dataset_name), useDingbats = FALSE)
+pdf(sprintf("readingframe %s with numbers.pdf", "dataset_name"), useDingbats = FALSE)
 barplot(read_frame_dist, xaxt = "n", main=sprintf("Single intron read frame distribution, %s", dataset_name))
 labels=c("0,0", "0,1", "0,2",
          "1,0", "1,1", "1,2",
@@ -113,13 +112,22 @@ colnames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "end
 read_frame_dist_weighted_table
 dev.off()
 
-new_list = list(no_introns, no_introns_pos)
 
-intergenic = summary(unique_orfs$exon_number)[1]
-genic = sum(summary(unique_orfs$exon_number)[2:length(summary(unique_orfs$exon_number))])
-genic_and_not =sum(summary(unique_orfs$exon_number)[1:length(summary(unique_orfs$exon_number))])
-per_intergenic = round(intergenic/genic_and_not, digits=3)
-per_genic = round(genic/genic_and_not, digits=3)
-per_genic
-per_intergenic
-pie(c(intergenic, genic), labels=c(sprintf("intergenic, %s", per_intergenic), sprintf("genic, %s", per_genic)), main="percent in gene, up")
+#make counts for pie chart in terms of genic or not
+intergenic = unique_orfs[which(unique_orfs$exon_number=="."),]
+intergenic_weighted_count = sum(intergenic$frag_count)
+genic = unique_orfs[which(unique_orfs$exon_number!="."),]
+genic_weighted_count = sum(genic$frag_count)
+all_genicity_weighted_count = sum(unique_orfs$frag_count)
+intergenic_weighted_count + genic_weighted_count
+all_genicity_weighted_count # checks out
+
+#make them into tidy percents
+percent_genic = round(genic_weighted_count/all_genicity_weighted_count, digits = 3)
+percent_intergenic = round(intergenic_weighted_count/all_genicity_weighted_count, digits = 3)
+
+#make the pie chart
+pie(c(intergenic_weighted_count, genic_weighted_count), labels=c(sprintf("intergenic, %s", percent_intergenic), sprintf("genic, %s", percent_genic)), main="percent in gene, up")
+
+
+
