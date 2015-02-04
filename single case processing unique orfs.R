@@ -1,8 +1,9 @@
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles/")
+setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_new//")
 
-unique_orfs = read.table("down_orf_unique.bed", header=FALSE)
-colnames(unique_orfs) = c("frag_count", "chr_read", "start_read", "end_read", "strand_read",
+unique_orfs = read.table("up_inside_orf_unique.bed", header=FALSE)
+head(unique_orfs, n =10)
+colnames(unique_orfs) = c("chr_read", "start_read", "end_read", "frag_count", "arbitrary_value", "strand_read",
                           "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
                           "thick_start", "thick_end", "RGB", "exon_number", "exon_start", "exon_end", "overlap")
 
