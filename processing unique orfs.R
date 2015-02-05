@@ -4,7 +4,7 @@ setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_new/")
 reading_frame_single_intron = function(inputfile, dataset_name){
   #import data
   unique_orfs = read.table(inputfile, header=FALSE)
-  colnames(unique_orfs) = c("frag_count", "chr_read", "start_read", "end_read", "strand_read",
+  colnames(unique_orfs) = c("chr_read", "start_read", "end_read", "frag_count", "arbitrary_value", "strand_read",
                             "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
                             "thick_start", "thick_end", "RGB", "exon_number", "exon_start", "exon_end", "overlap")
   
@@ -43,9 +43,12 @@ reading_frame_single_intron = function(inputfile, dataset_name){
     percent_intergenic = round(intergenic_weighted_count/all_genicity_weighted_count, digits = 3)
     
     #make the pie chart
-    pie(c(intergenic_weighted_count, genic_weighted_count), labels=c(sprintf("intergenic, %s", percent_intergenic), sprintf("genic, %s", percent_genic)), main="percent in gene, up")
-    
-    
+    pdf(sprintf("pie chart of genecity %s.pdf", dataset_name), useDingbats = FALSE)
+    pie(c(intergenic_weighted_count, genic_weighted_count), 
+        labels=c(sprintf("intergenic, %s", percent_intergenic), sprintf("genic, %s", percent_genic)),
+        main=sprintf("percent in gene, %s", dataset_name))
+    dev.off()
+  
   #make a subset of data that we'll work with for now (single intron) and add metrics
     #make list of single intron genes 
     no_introns = unique_orfs[unique_orfs$exon_number==1,]
@@ -148,19 +151,19 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   head(up$no_introns_both)
   head(up$zero_two)
   
-  down = reading_frame_single_intron("down_orf_unique.bed", "down")
+  down = reading_frame_single_intron("down_inside_orf_unique.bed", "down")
   typeof(down)
   down$exon_percents
   head(down$no_introns_both)
   head(down$zero_two)
   
-  no_recomb = reading_frame_single_intron("no_recomb_orf_unique.bed", "no_recomb")
+  no_recomb = reading_frame_single_intron("no_recomb_inside_orf_unique.bed", "no_recomb")
   typeof(no_recomb)
   no_recomb$exon_percents
   head(no_recomb$no_introns_both)
   head(no_recomb$zero_two)
   
-  post_recomb = reading_frame_single_intron("post_recomb_orf_unique.bed", "post_recomb")
+  post_recomb = reading_frame_single_intron("post_recomb_inside_orf_unique.bed", "post_recomb")
   typeof(post_recomb)
   post_recomb$exon_percents
   head(post_recomb$no_introns_both)
