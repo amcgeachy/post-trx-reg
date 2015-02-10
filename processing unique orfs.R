@@ -206,46 +206,37 @@ head(down_dup)
 length(down_dup)
 
 up_duplicates =lapply(up_dup, function(x) up$no_introns_both[which(up$no_introns_both$unique==x),])
+up_duplicates[[2]]
 no_recomb_duplicates = lapply(no_recomb_dup, function(x) no_recomb$no_introns_both[which(no_recomb$no_introns_both$unique==x),])
 post_recomb_duplicates = lapply(post_recomb_dup, function(x) post_recomb$no_introns_both[which(post_recomb$no_introns_both$unique==x),])
 down_duplicates =lapply(down_dup, function(x) down$no_introns_both[which(down$no_introns_both$unique==x),])
 
-up$no_introns_both[,"most_unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
-                                      up$no_introns_both$end_read, up$no_introns_both$strand_read, 
-                                      up$no_introns_both$gene_name, sep="_")
-down$no_introns_both[,"most_unique"] = paste(down$no_introns_both$chr_read, down$no_introns_both$start_read, 
-                                        down$no_introns_both$end_read, down$no_introns_both$strand_read, 
-                                        down$no_introns_both$gene_name, sep="_")
-no_recomb$no_introns_both[,"most_unique"] = paste(no_recomb$no_introns_both$chr_read, no_recomb$no_introns_both$start_read,
-                                             no_recomb$no_introns_both$end_read, no_recomb$no_introns_both$strand_read, 
-                                             no_recomb$no_introns_both$gene_name, sep="_")
-post_recomb$no_introns_both[,"most_unique"] = paste(post_recomb$no_introns_both$chr_read, post_recomb$no_introns_both$start_read,
-                                               post_recomb$no_introns_both$end_read, post_recomb$no_introns_both$strand_read, 
-                                               post_recomb$no_introns_both$gene_name, sep="_")
-head(up$no_introns_both)
+# up$no_introns_both[,"most_unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
+#                                       up$no_introns_both$end_read, up$no_introns_both$strand_read, 
+#                                       up$no_introns_both$gene_name, sep="_")
+# down$no_introns_both[,"most_unique"] = paste(down$no_introns_both$chr_read, down$no_introns_both$start_read, 
+#                                         down$no_introns_both$end_read, down$no_introns_both$strand_read, 
+#                                         down$no_introns_both$gene_name, sep="_")
+# no_recomb$no_introns_both[,"most_unique"] = paste(no_recomb$no_introns_both$chr_read, no_recomb$no_introns_both$start_read,
+#                                              no_recomb$no_introns_both$end_read, no_recomb$no_introns_both$strand_read, 
+#                                              no_recomb$no_introns_both$gene_name, sep="_")
+# post_recomb$no_introns_both[,"most_unique"] = paste(post_recomb$no_introns_both$chr_read, post_recomb$no_introns_both$start_read,
+#                                                post_recomb$no_introns_both$end_read, post_recomb$no_introns_both$strand_read, 
+#                                                post_recomb$no_introns_both$gene_name, sep="_")
+# head(up$no_introns_both)
 
-up_most_unique = up$no_introns_both$most_unique
-down_most_unique = down$no_introns_both$most_unique
-no_recomb_most_unique = no_recomb$no_introns_both$most_unique
-post_recomb_most_unique = post_recomb$no_introns_both$most_unique
+# up_most_unique = up$no_introns_both$most_unique
+# down_most_unique = down$no_introns_both$most_unique
+# no_recomb_most_unique = no_recomb$no_introns_both$most_unique
+# post_recomb_most_unique = post_recomb$no_introns_both$most_unique
+# 
+# 
+# all_uniquers = c(up_most_unique, down_most_unique, no_recomb_most_unique, post_recomb_most_unique)
 
+all_uniques = c(up_unique, down_unique, no_recomb_unique, post_recomb_unique)
+all_uniques = as.data.frame(unique(all_uniques))
+colnames(all_uniques) = c("identifiers")
+head(all_uniques)
 
-all_uniquers = c(up_most_unique, down_most_unique, no_recomb_most_unique, post_recomb_most_unique)
-
-#length(up_most_unique)+length(down_most_unique)+length(no_recomb_most_unique)+length(post_recomb_most_unique)
-#length(all_uniquers)
-
-unique_all_uniquers = unique(all_uniquers)
-length(unique_all_uniquers)
-test = as.data.frame(unique_all_uniquers)
-head(test)
-test[,"up"] = 0 
-test[,"down"] = 0
-test[,"no_recomb"] = 0 
-test[,"post_recomb"] = 0 
-
-ifelse(up$no_introns_both$most_unique==test$unique_all_uniquers, up$no_introns_both$frag_count, 0)
-head(test)
-up$no_introns_both[which(up$no_introns_both$most_unique=="chrI_100399_100568_-_YAL025C"),]
-
-?ifelse
+nrow(all_uniques)
+match(all_uniques$identifiers, )
