@@ -239,4 +239,40 @@ colnames(all_uniques) = c("identifiers")
 head(all_uniques)
 
 nrow(all_uniques)
-match(all_uniques$identifiers, )
+nrow(up$no_introns_both)
+nrow(down$no_introns_both)
+summary(match(all_uniques$identifiers, up$no_introns_both$unique))
+
+all_uniques[,"up_frag"] = up$no_introns_both[match(all_uniques$identifiers, up$no_introns_both$unique), "frag_count"]
+all_uniques[,"down_frag"] = down$no_introns_both[match(all_uniques$identifiers, down$no_introns_both$unique), "frag_count"]
+all_uniques[,"no_recomb_frag"] = no_recomb$no_introns_both[match(all_uniques$identifiers, no_recomb$no_introns_both$unique), "frag_count"]
+all_uniques[,"post_recomb_frag"] = post_recomb$no_introns_both[match(all_uniques$identifiers, post_recomb$no_introns_both$unique), "frag_count"]
+head(all_uniques)
+
+all_uniques[is.na(all_uniques)] = 0
+getwd()
+pdf("test.pdf", useDingbats = FALSE)
+plot(all_uniques$post_recomb_frag, all_uniques$up_frag)
+plot(all_uniques$post_recomb_frag, all_uniques$no_recomb_frag)
+plot(all_uniques$post_recomb_frag, all_uniques$down_frag)
+plot(all_uniques$up_frag, all_uniques$down_frag, xlim=c(0, 5*10^5), ylim=c(0, 5*10^5))
+
+plot(all_uniques$no_recomb_frag, all_uniques$down_frag)
+plot(all_uniques$no_recomb_frag, all_uniques$up_frag)
+sum(all_uniques$up_frag)
+sum(all_uniques$down_frag)
+sum(all_uniques$no_recomb_frag)
+sum(all_uniques$post_recomb_frag)
+max(all_uniques$up_frag)
+all_uniques[which(all_uniques$up_frag==max(all_uniques$up_frag)),"identifiers"]
+all_uniques[which(all_uniques$down_frag==max(all_uniques$down_frag)),"identifiers"]
+            
+            
+plot(ecdf(all_uniques$no_recomb_frag))
+
+dev.off()
+
+hist(all_uniques$up_frag)
+hist(all_uniques$down_frag)
+hist(all_uniques$no_recomb_frag)
+hist(all_uniques$post_recomb_frag)
