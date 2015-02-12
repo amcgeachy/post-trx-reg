@@ -173,43 +173,86 @@ reading_frame_single_intron = function(inputfile, dataset_name){
 
 #Now combine the data into a single data frame. 
 
-#make unique identifier for each fragment
-head(up$no_introns_both)
-up$no_introns_both[,"unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
-                                      up$no_introns_both$end_read, up$no_introns_both$strand_read, sep="_")
-down$no_introns_both[,"unique"] = paste(down$no_introns_both$chr_read, down$no_introns_both$start_read, 
-                                        down$no_introns_both$end_read, down$no_introns_both$strand_read, sep="_")
-no_recomb$no_introns_both[,"unique"] = paste(no_recomb$no_introns_both$chr_read, no_recomb$no_introns_both$start_read,
-                                             no_recomb$no_introns_both$end_read, no_recomb$no_introns_both$strand_read, sep="_")
-post_recomb$no_introns_both[,"unique"] = paste(post_recomb$no_introns_both$chr_read, post_recomb$no_introns_both$start_read,
-                                               post_recomb$no_introns_both$end_read, post_recomb$no_introns_both$strand_read, sep="_")
-head(up$no_introns_both)
+#make unique identifier for each fragment (not worrying now about intersecting duplicates)
+  head(up$no_introns_both)
+  up$no_introns_both[,"unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
+                                        up$no_introns_both$end_read, up$no_introns_both$strand_read, sep="_")
+  down$no_introns_both[,"unique"] = paste(down$no_introns_both$chr_read, down$no_introns_both$start_read, 
+                                          down$no_introns_both$end_read, down$no_introns_both$strand_read, sep="_")
+  no_recomb$no_introns_both[,"unique"] = paste(no_recomb$no_introns_both$chr_read, no_recomb$no_introns_both$start_read,
+                                               no_recomb$no_introns_both$end_read, no_recomb$no_introns_both$strand_read, sep="_")
+  post_recomb$no_introns_both[,"unique"] = paste(post_recomb$no_introns_both$chr_read, post_recomb$no_introns_both$start_read,
+                                                 post_recomb$no_introns_both$end_read, post_recomb$no_introns_both$strand_read, sep="_")
+  head(up$no_introns_both)
 
-up_unique = up$no_introns_both$unique
-up_dup = up_unique[duplicated(up_unique)]
-head(up_dup)
-length(up_dup)
+  #and find the duplicates
+    up_unique = up$no_introns_both$unique
+    up_dup = up_unique[duplicated(up_unique)]
+    head(up_dup)
+    length(up_dup)
+    
+    no_recomb_unique = no_recomb$no_introns_both$unique
+    no_recomb_dup = no_recomb_unique[duplicated(no_recomb_unique)]
+    head(no_recomb_dup)
+    length(no_recomb_dup)
+    
+    post_recomb_unique = post_recomb$no_introns_both$unique
+    post_recomb_dup = post_recomb_unique[duplicated(post_recomb_unique)]
+    head(post_recomb_dup)
+    length(post_recomb_dup)
+    
+    down_unique = down$no_introns_both$unique
+    down_dup = down_unique[duplicated(down_unique)]
+    head(down_dup)
+    length(down_dup)
+    
+    up_duplicates =lapply(up_dup, function(x) up$no_introns_both[which(up$no_introns_both$unique==x),])
+    no_recomb_duplicates = lapply(no_recomb_dup, function(x) no_recomb$no_introns_both[which(no_recomb$no_introns_both$unique==x),])
+    post_recomb_duplicates = lapply(post_recomb_dup, function(x) post_recomb$no_introns_both[which(post_recomb$no_introns_both$unique==x),])
+    down_duplicates =lapply(down_dup, function(x) down$no_introns_both[which(down$no_introns_both$unique==x),])
 
-no_recomb_unique = no_recomb$no_introns_both$unique
-no_recomb_dup = no_recomb_unique[duplicated(no_recomb_unique)]
-head(no_recomb_dup)
-length(no_recomb_dup)
+  #take the unique fragments and put them into one table
+    all_uniques = c(up_unique, down_unique, no_recomb_unique, post_recomb_unique)
+    all_uniques = as.data.frame(unique(all_uniques))
+    colnames(all_uniques) = c("identifiers")
+    head(all_uniques)
+    nrow(all_uniques)
 
-post_recomb_unique = post_recomb$no_introns_both$unique
-post_recomb_dup = post_recomb_unique[duplicated(post_recomb_unique)]
-head(post_recomb_dup)
-length(post_recomb_dup)
+  #then add in the fragment counts per unique fragment
+    all_uniques[,"up_frag"] = up$no_introns_both[match(all_uniques$identifiers, up$no_introns_both$unique), "frag_count"]
+    all_uniques[,"down_frag"] = down$no_introns_both[match(all_uniques$identifiers, down$no_introns_both$unique), "frag_count"]
+    all_uniques[,"no_recomb_frag"] = no_recomb$no_introns_both[match(all_uniques$identifiers, no_recomb$no_introns_both$unique), "frag_count"]
+    all_uniques[,"post_recomb_frag"] = post_recomb$no_introns_both[match(all_uniques$identifiers, post_recomb$no_introns_both$unique), "frag_count"]
+    head(all_uniques)
 
-down_unique = down$no_introns_both$unique
-down_dup = down_unique[duplicated(down_unique)]
-head(down_dup)
-length(down_dup)
+    all_uniques[is.na(all_uniques)] = 0 #set NAs to 0
 
-up_duplicates =lapply(up_dup, function(x) up$no_introns_both[which(up$no_introns_both$unique==x),])
-up_duplicates[[2]]
-no_recomb_duplicates = lapply(no_recomb_dup, function(x) no_recomb$no_introns_both[which(no_recomb$no_introns_both$unique==x),])
-post_recomb_duplicates = lapply(post_recomb_dup, function(x) post_recomb$no_introns_both[which(post_recomb$no_introns_both$unique==x),])
-down_duplicates =lapply(down_dup, function(x) down$no_introns_both[which(down$no_introns_both$unique==x),])
+  #find the highest count up and down (ends up being a glycolysis enzyme and PAT1 (decapping) respectively)
+    all_uniques[which(all_uniques$up_frag==max(all_uniques$up_frag)),"identifiers"]
+    all_uniques[which(all_uniques$down_frag==max(all_uniques$down_frag)),"identifiers"]
+
+  #now that we have this table of condition a and condition b, lets plot to compare a v b
+    plot_a_v_b_counts = function(data, condition1, condition2){
+      temp = data[data[,condition1] + data[,condition2] >=1, c(condition1, condition2)]
+      upper_lim = log(max(c(max(temp[,condition1]), max(temp[,condition2]))))
+      
+      plot(log(temp[,condition1]), log(temp[,condition2]), ylim=c(0,upper_lim+1), xlim=c(0,upper_lim+1),
+           xlab=sprintf("log(%s)", condition1), ylab=sprintf("log(%s)", condition2), main=sprintf("%s v %s", condition1, condition2))
+      abline(a=0,b=1)
+      abline(a=-4.6,b=1)
+      abline(a=4.6,b=1)
+      abline(a=-2.3,b=1)
+      abline(a=2.3,b=1)
+      text(x=c(upper_lim-4.6,upper_lim-2.3,upper_lim), y=upper_lim+.5, labels=(c("100X", "10X", "0X")))
+    }
+    pdf("a v b logged plots.pdf", useDingbats = FALSE)
+    plot_a_v_b_counts(all_uniques, "up_frag", "down_frag")
+    plot_a_v_b_counts(all_uniques, "post_recomb_frag", "up_frag")
+    plot_a_v_b_counts(all_uniques, "post_recomb_frag", "down_frag")
+    plot_a_v_b_counts(all_uniques, "no_recomb_frag", "up_frag")
+    plot_a_v_b_counts(all_uniques, "no_recomb_frag", "down_frag")
+    plot_a_v_b_counts(all_uniques, "no_recomb_frag", "post_recomb_frag")
+    dev.off()
 
 # up$no_introns_both[,"most_unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
 #                                       up$no_introns_both$end_read, up$no_introns_both$strand_read, 
@@ -232,70 +275,3 @@ down_duplicates =lapply(down_dup, function(x) down$no_introns_both[which(down$no
 # 
 # 
 # all_uniquers = c(up_most_unique, down_most_unique, no_recomb_most_unique, post_recomb_most_unique)
-
-all_uniques = c(up_unique, down_unique, no_recomb_unique, post_recomb_unique)
-all_uniques = as.data.frame(unique(all_uniques))
-colnames(all_uniques) = c("identifiers")
-head(all_uniques)
-
-nrow(all_uniques)
-nrow(up$no_introns_both)
-nrow(down$no_introns_both)
-summary(match(all_uniques$identifiers, up$no_introns_both$unique))
-
-all_uniques[,"up_frag"] = up$no_introns_both[match(all_uniques$identifiers, up$no_introns_both$unique), "frag_count"]
-all_uniques[,"down_frag"] = down$no_introns_both[match(all_uniques$identifiers, down$no_introns_both$unique), "frag_count"]
-all_uniques[,"no_recomb_frag"] = no_recomb$no_introns_both[match(all_uniques$identifiers, no_recomb$no_introns_both$unique), "frag_count"]
-all_uniques[,"post_recomb_frag"] = post_recomb$no_introns_both[match(all_uniques$identifiers, post_recomb$no_introns_both$unique), "frag_count"]
-head(all_uniques)
-
-all_uniques[is.na(all_uniques)] = 0
-
-plot(all_uniques$post_recomb_frag, all_uniques$up_frag)
-plot(all_uniques$post_recomb_frag, all_uniques$no_recomb_frag)
-plot(log(all_uniques$post_recomb_frag), log(all_uniques$down_frag))
-plot(log2(all_uniques$up_frag), log2(all_uniques$down_frag))
-
-plot(log(all_uniques$no_recomb_frag), log(all_uniques$down_frag))
-plot(all_uniques$no_recomb_frag, all_uniques$up_frag)
-sum(all_uniques$up_frag)
-sum(all_uniques$down_frag)
-sum(all_uniques$no_recomb_frag)
-sum(all_uniques$post_recomb_frag)
-max(all_uniques$up_frag)
-
-all_uniques[which(all_uniques$up_frag==max(all_uniques$up_frag)),"identifiers"]
-all_uniques[which(all_uniques$down_frag==max(all_uniques$down_frag)),"identifiers"]
-            
-            
-plot(ecdf(all_uniques$no_recomb_frag))
-
-dev.off()
-
-hist(all_uniques$up_frag)
-hist(all_uniques$down_frag)
-hist(all_uniques$no_recomb_frag)
-hist(all_uniques$post_recomb_frag)
-head(all_uniques)
-
-plot_a_v_b_counts = function(data, condition1, condition2){
-  temp = data[data[,condition1] + data[,condition2] >=1, c(condition1, condition2)]
-  upper_lim = log(max(c(max(temp[,condition1]), max(temp[,condition2]))))
-  
-  plot(log(temp[,condition1]), log(temp[,condition2]), ylim=c(0,upper_lim+1), xlim=c(0,upper_lim+1),
-       xlab=sprintf("log(%s)", condition1), ylab=sprintf("log(%s)", condition2), main=sprintf("%s v %s", condition1, condition2))
-  abline(a=0,b=1)
-  abline(a=-4.6,b=1)
-  abline(a=4.6,b=1)
-  abline(a=-2.3,b=1)
-  abline(a=2.3,b=1)
-  text(x=c(upper_lim-4.6,upper_lim-2.3,upper_lim), y=upper_lim+.5, labels=(c("100X", "10X", "0X")))
-}
-pdf("a v b logged plots.pdf", useDingbats = FALSE)
-plot_a_v_b_counts(all_uniques, "up_frag", "down_frag")
-plot_a_v_b_counts(all_uniques, "post_recomb_frag", "up_frag")
-plot_a_v_b_counts(all_uniques, "post_recomb_frag", "down_frag")
-plot_a_v_b_counts(all_uniques, "no_recomb_frag", "up_frag")
-plot_a_v_b_counts(all_uniques, "no_recomb_frag", "down_frag")
-plot_a_v_b_counts(all_uniques, "no_recomb_frag", "post_recomb_frag")
-dev.off()
