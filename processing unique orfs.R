@@ -244,15 +244,30 @@ reading_frame_single_intron = function(inputfile, dataset_name){
       abline(a=-2.3,b=1)
       abline(a=2.3,b=1)
       text(x=c(upper_lim-4.6,upper_lim-2.3,upper_lim), y=upper_lim+.5, labels=(c("100X", "10X", "0X")))
-    }
+      }
     pdf("a v b logged plots.pdf", useDingbats = FALSE)
-    plot_a_v_b_counts(all_uniques, "up_frag", "down_frag")
-    plot_a_v_b_counts(all_uniques, "post_recomb_frag", "up_frag")
-    plot_a_v_b_counts(all_uniques, "post_recomb_frag", "down_frag")
-    plot_a_v_b_counts(all_uniques, "no_recomb_frag", "up_frag")
-    plot_a_v_b_counts(all_uniques, "no_recomb_frag", "down_frag")
-    plot_a_v_b_counts(all_uniques, "no_recomb_frag", "post_recomb_frag")
+      plot_a_v_b_counts(all_uniques, "up_frag", "down_frag")
+      plot_a_v_b_counts(all_uniques, "post_recomb_frag", "up_frag")
+      plot_a_v_b_counts(all_uniques, "post_recomb_frag", "down_frag")
+      plot_a_v_b_counts(all_uniques, "no_recomb_frag", "up_frag")
+      plot_a_v_b_counts(all_uniques, "no_recomb_frag", "down_frag")
+      plot_a_v_b_counts(all_uniques, "no_recomb_frag", "post_recomb_frag")
     dev.off()
+
+a_v_b_counts = function(data, condition1, condition2){
+  temp = data[data[,condition1] + data[,condition2] >=1, c("identifiers", condition1, condition2)]
+  temp[,condition1] = log(temp[,condition1])
+  temp[,condition2] = log(temp[,condition2])
+  return(temp)
+}
+
+head(all_uniques)
+up_v_down = a_v_b_counts(all_uniques, "up_frag", "down_frag")
+head(up_v_down)
+?ifelse
+ifelse(up_v_down)
+
+up_v_down[,"enriched in up 10x"] = ifelse(up_v_down$up_frag + 2.3 > up_v_down$down_frag, up_v_down$up_frag, NA)
 
 # up$no_introns_both[,"most_unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
 #                                       up$no_introns_both$end_read, up$no_introns_both$strand_read, 
