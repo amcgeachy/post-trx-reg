@@ -224,7 +224,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
     all_uniques[,"no_recomb_frag"] = no_recomb$no_introns_both[match(all_uniques$identifiers, no_recomb$no_introns_both$unique), "frag_count"]
     all_uniques[,"post_recomb_frag"] = post_recomb$no_introns_both[match(all_uniques$identifiers, post_recomb$no_introns_both$unique), "frag_count"]
     head(all_uniques)
-
+    typeof(all_uniques$up_frag)
     all_uniques[is.na(all_uniques)] = 0 #set NAs to 0
 
   #find the highest count up and down (ends up being a glycolysis enzyme and PAT1 (decapping) respectively)
@@ -255,20 +255,81 @@ reading_frame_single_intron = function(inputfile, dataset_name){
     dev.off()
 
 a_v_b_counts = function(data, condition1, condition2){
-  temp = data[data[,condition1] + data[,condition2] >=1, c("identifiers", condition1, condition2)]
-  temp[,condition1] = log(temp[,condition1])
-  temp[,condition2] = log(temp[,condition2])
+  temp = data[data[,condition1] + data[,condition2] >=2^6, c("identifiers", condition1, condition2)]
+  temp[,condition1] = log2(temp[,condition1])
+  temp[,condition2] = log2(temp[,condition2])
   return(temp)
 }
 
-head(all_uniques)
+?log
 up_v_down = a_v_b_counts(all_uniques, "up_frag", "down_frag")
 head(up_v_down)
-?ifelse
-ifelse(up_v_down)
+dim(up_v_down)
+typeof(up_v_down$up_frag)
 
-up_v_down[,"enriched in up 10x"] = ifelse(up_v_down$up_frag + 2.3 > up_v_down$down_frag, up_v_down$up_frag, NA)
+up_v_down[,"enriched_in_up_10x"] = ifelse(up_v_down$up_frag > 2.3 + up_v_down$down_frag, up_v_down$up_frag, NA)
+up_v_down[,"enriched_in_up_100x"] = ifelse(up_v_down$up_frag > 4.6 + up_v_down$down_frag, up_v_down$up_frag, NA)
+up_v_down[,"enriched_in_down_10x"] = ifelse(up_v_down$down_frag > 2.3 + up_v_down$up_frag, up_v_down$down_frag, NA)
+up_v_down[,"enriched_in_down_100x"] = ifelse(up_v_down$down_frag > 4.6 + up_v_down$up_frag, up_v_down$down_frag, NA)
 
+head(up_v_down)
+tail(up_v_down)
+
+enriched_in_up = up_v_down[which(!is.na(up_v_down$enriched_in_up_10x) & !is.na(up_v_down$enriched_in_up_100x)),]
+enriched_in_down = up_v_down[which(!is.na(up_v_down$enriched_in_down_10x) & !is.na(up_v_down$enriched_in_down_100x)),]
+dim(enriched_in_down)
+dim(enriched_in_up)
+background = up_v_down[which(is.na(up_v_down$enriched_in_up_10x) & is.na(up_v_down$enriched_in_up_100x) 
+                             & is.na(up_v_down$enriched_in_down_10x) & is.na(up_v_down$enriched_in_down_100x)),]
+
+#plot boxplots
+pdf("boxplots of frag count by enrichment.pdf", useDingbats = FALSE)
+boxplot(background$up_frag, background$down_frag, xaxt='n', ylab='log(frag_count)', main="background")
+axis(1, at=1:2, labels=c("up_frag", "down_frag"))
+boxplot(enriched_in_up$up_frag, enriched_in_up$down_frag, xaxt='n', ylab='log(frag_count)', main="enriched in up")
+axis(1, at=1:2, labels=c("up_frag", "down_frag"))
+boxplot(enriched_in_down$up_frag, enriched_in_down$down_frag, xaxt='n', ylab='log(frag_count)', main="enriched in down")
+axis(1, at=1:2, labels=c("up_frag", "down_frag"))
+dev.off()
+
+#look at the max enriched
+head(enriched_in_up)
+enriched_in_up$ratio = enriched_in_up$up_frag/enriched_in_up$down_frag
+
+summary(enriched_in_up$ratio)
+enriched_in_down$ratio = enriched_in_down$down_frag/enriched_in_down$up_frag
+enriched_in_up[which(enriched_in_up$up_frag==max(enriched_in_up[which(enriched_in_up$ratio==max(enriched_in_up$ratio)),"up_frag"])),]
+enriched_in_down[which(enriched_in_down$down_frag==max(enriched_in_down[which(enriched_in_down$ratio==max(enriched_in_down$ratio)),"down_frag"])),]
+enriched_in_down[which(enriched_in_down$down_frag==max(enriched_in_down$down_frag)),]
+enriched_in_up[which(enriched_in_up$up_frag==max(enriched_in_up$up_frag)),]
+enriched_in_up[which(enriched_in_up$ratio==max(enriched_in_up$ratio)),"up_frag"]
+
+head(up$no_introns_both)
+dim(enriched_in_up)
+head(enriched_in_up)
+
+
+?order
+
+enriched_up_all_info = up$no_introns_both[match(enriched_in_up$identifiers, up$no_introns_both$unique),]
+enriched_up_in_frame = up$zero_two[!is.na(match(enriched_in_up$identifiers, up$zero_two$unique)),]
+head(enriched_in_up)
+head(enriched_up_all_info)
+head(enriched_up_in_frame)
+
+dim(up$no_introns_both)
+dim(enriched_in_up)
+dim(enriched_up_in_frame)
+
+blah = head(enriched_in_up)
+match(enriched_in_up$identifiers, up$zero_two$unique)
+head(up$zero_two)
+up$zero_two[,"unique"] = paste(up$zero_two$chr_read, up$zero_two$start_read, 
+                                      up$zero_two$end_read, up$zero_two$strand_read, sep="_")
+blah
+blah[order(blah$up_frag),]
+
+?unique
 # up$no_introns_both[,"most_unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
 #                                       up$no_introns_both$end_read, up$no_introns_both$strand_read, 
 #                                       up$no_introns_both$gene_name, sep="_")
