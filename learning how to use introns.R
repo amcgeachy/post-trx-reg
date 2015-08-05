@@ -12,89 +12,8 @@ colnames(unique_orfs)
 unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
 head(unique_orfs)
 
-#another method of pulling the non-exon numbers, a bit messier than below
-# non_period_or_1_exon_numbers = as.numeric(row.names(table(unique_orfs$exon_number)[3:(length(table(unique_orfs$exon_number)))]))
-# thing = unlist(sapply(non_period_or_1_exon_numbers, grep, unique_orfs$exon_number))
-# multi_exon_unique_orfs = unique_orfs[thing,]
-# table(multi_exon_unique_orfs$exon_number)
-
-#another another method, without using dplyr
-# zero_exons = grep(".", unique_orfs$exon_number, fixed = TRUE)
-# one_exon = grep(1, unique_orfs$exon_number, fixed = TRUE)
-# zero_and_one_exons = c(zero_exons, one_exon)
-# all_rows = 1:nrow(unique_orfs)
-# multi_exon_rows = setdiff(all_rows, zero_and_one_exons)
-# 
-# multi_exons_unique_orfs = unique_orfs[multi_exon_rows,]
-# head(multi_exons_unique_orfs)
-# table(multi_exons_unique_orfs$exon_number)
-
 library("dplyr")
-# library("nycflights13")
-# colnames(table(unique_orfs$exon_number))
-# 
-# multi_exons_unique_orfs = filter(unique_orfs, exon_number!=".", exon_number!="1")
-# table(multi_exons_unique_orfs$exon_number)[[1]]
-# 
-# baby = head(multi_exons_unique_orfs)
-# 
-# library("tidyr")
-# 
-# baby = separate(baby, exon_start, into=c("start1", "start2", "start3"))
-# baby = separate(baby, exon_end, into=c("end1", "end2", "end3"))
-# baby
-# 
-# baby2 = head(multi_exons_unique_orfs)
-# baby2
-# separate(baby2, exon_end)
 
-##^----this works fine for things with just 2 exons, but what about more? 
-#try a mixed population of intron numbers
-
-#proving to myself that there are at max 8 exons in a gene
-# saccer3 = read.table("/Users/annamcgeachy/saccer3.bed")
-# head(saccer3)
-# table(saccer3$V10)
-# saccer3[which(saccer3$V10==8),]
-
-# mixed_case = multi_exons_unique_orfs[c(13,51,20,49,243),]
-# mixed_case
-# 
-# tmp = strsplit(mixed_case$exon_start, ",")
-# 
-# empty=matrix(data=NA, nrow=5, ncol=8)
-# empty
-# colnames(empty) = c(1:8)
-# 
-# for (i in 1:5){
-#   for (j in 1:8){
-#     empty[i,j]=as.numeric(tmp[[i]][j])
-#     colnames(empty)[j]=c(sprintf("start_%s", j))
-#   }
-# }
-# 
-# empty
-# 
-# tmp_end = strsplit(mixed_case$exon_end, ",")
-# 
-# empty_end=matrix(data=NA, nrow=5, ncol=8)
-# empty_end
-# colnames(empty_end) = c(1:8)
-# 
-# for (i in 1:5){
-#   for (j in 1:8){
-#     empty_end[i,j]=as.numeric(tmp[[i]][j])
-#     colnames(empty_end)[j]=c(sprintf("end_%s", j))
-#   }
-# }
-# 
-# empty_end
-# 
-# cbind(mixed_case, empty, empty_end)
-
-#it works! that's SO EXCITING!
-
-#try it for the big data set
   head(unique_orfs)
   nrow(unique_orfs)
 
@@ -166,53 +85,95 @@ neg_exons = filter(genic_exons, strand_read=="-")
     neg_exons[,ends[i]] = neg_exons$end_cds - neg_exons[,sprintf("start_%s", i)] - neg_exons[,sprintf("exon_size_%s", i)]
   }
 
-#now we need to determine which (if any) exon the fragment occurs in
-
-  # 
-  # if (two_exon_pos$start_read > two_exon_pos$start_exon_1 & two_exon_pos$end_read < two_exon_pos$end_exon_1) { 
-  #   two_exon_pos$occurs_in_exon = "start_exon_1"
-  #   } else if (!is.na(two_exon_pos$start_exon_2) & (two_exon_pos$start_read > two_exon_pos$start_exon_2 & two_exon_pos$end_read < two_exon_pos$end_exon_2)){
-  #     two_exon_pos$occurs_in_exon = "start_exon_2"
-  #   } else if (!is.na(two_exon_pos$start_exon_3) & (two_exon_pos$start_read > two_exon_pos$start_exon_3 & two_exon_pos$end_read < two_exon_pos$end_exon_3)){
-  #     two_exon_pos$occurs_in_exon = "start_exon_3"
-  #   } else if (!is.na(two_exon_pos$start_exon_4) & (two_exon_pos$start_read > two_exon_pos$start_exon_4 & two_exon_pos$end_read < two_exon_pos$end_exon_4)){
-  #     two_exon_pos$occurs_in_exon = "start_exon_4"
-  #   } else if (!is.na(two_exon_pos$start_exon_5) & (two_exon_pos$start_read > two_exon_pos$start_exon_5 & two_exon_pos$end_read < two_exon_pos$end_exon_5)){
-  #     two_exon_pos$occurs_in_exon = "start_exon_5"
-  #   } else if (!is.na(two_exon_pos$start_exon_6) & (two_exon_pos$start_read > two_exon_pos$start_exon_6 & two_exon_pos$end_read < two_exon_pos$end_exon_6)){
-  #     two_exon_pos$occurs_in_exon = "start_exon_6"
-  #   } else if (!is.na(two_exon_pos$start_exon_7) & (two_exon_pos$start_read > two_exon_pos$start_exon_7 & two_exon_pos$end_read < two_exon_pos$end_exon_7)){
-  #     two_exon_pos$occurs_in_exon = "start_exon_7"
-  #   } else if (!is.na(two_exon_pos$start_exon_8) & (two_exon_pos$start_read > two_exon_pos$start_exon_8 & two_exon_pos$end_read < two_exon_pos$end_exon_8)){
-  #     two_exon_pos$occurs_in_exon = "start_exon_8"
-  #   } else {
-  #     two_exon_pos$occurs_in_exon = "intronic"
-  # }
-  # 
-  # two_exon_pos
-  
   #function to check if exonic and if so which exon for positive strand
-  positive_exon = function(generic_positive){
-    if (generic_positive$start_read > generic_positive$start_exon_1 & generic_positive$end_read < generic_positive$end_exon_1) { 
-      generic_positive$occurs_in_exon = "start_exon_1"
-    } else if (!is.na(generic_positive$start_exon_2) & (generic_positive$start_read > generic_positive$start_exon_2 & generic_positive$end_read < generic_positive$end_exon_2)){
-      generic_positive$occurs_in_exon = "start_exon_2"
-    } else if (!is.na(generic_positive$start_exon_3) & (generic_positive$start_read > generic_positive$start_exon_3 & generic_positive$end_read < generic_positive$end_exon_3)){
-      generic_positive$occurs_in_exon = "start_exon_3"
-    } else if (!is.na(generic_positive$start_exon_4) & (generic_positive$start_read > generic_positive$start_exon_4 & generic_positive$end_read < generic_positive$end_exon_4)){
-      generic_positive$occurs_in_exon = "start_exon_4"
-    } else if (!is.na(generic_positive$start_exon_5) & (generic_positive$start_read > generic_positive$start_exon_5 & generic_positive$end_read < generic_positive$end_exon_5)){
-      generic_positive$occurs_in_exon = "start_exon_5"
-    } else if (!is.na(generic_positive$start_exon_6) & (generic_positive$start_read > generic_positive$start_exon_6 & generic_positive$end_read < generic_positive$end_exon_6)){
-      generic_positive$occurs_in_exon = "start_exon_6"
-    } else if (!is.na(generic_positive$start_exon_7) & (generic_positive$start_read > generic_positive$start_exon_7 & generic_positive$end_read < generic_positive$end_exon_7)){
-      generic_positive$occurs_in_exon = "start_exon_7"
-    } else if (!is.na(generic_positive$start_exon_8) & (generic_positive$start_read > generic_positive$start_exon_8 & generic_positive$end_read < generic_positive$end_exon_8)){
-      generic_positive$occurs_in_exon = "start_exon_8"
-    } else {
-      generic_positive$occurs_in_exon = "intronic"
-    }}
-TRUE && FALSE 
+#   positive_exon = function(generic_positive){
+#     if (generic_positive$start_read > generic_positive$start_exon_1 & generic_positive$end_read < generic_positive$end_exon_1) { 
+#       generic_positive$occurs_in_exon = "start_exon_1"
+#     } else if (!is.na(generic_positive$start_exon_2) & (generic_positive$start_read > generic_positive$start_exon_2 & generic_positive$end_read < generic_positive$end_exon_2)){
+#       generic_positive$occurs_in_exon = "start_exon_2"
+#     } else if (!is.na(generic_positive$start_exon_3) & (generic_positive$start_read > generic_positive$start_exon_3 & generic_positive$end_read < generic_positive$end_exon_3)){
+#       generic_positive$occurs_in_exon = "start_exon_3"
+#     } else if (!is.na(generic_positive$start_exon_4) & (generic_positive$start_read > generic_positive$start_exon_4 & generic_positive$end_read < generic_positive$end_exon_4)){
+#       generic_positive$occurs_in_exon = "start_exon_4"
+#     } else if (!is.na(generic_positive$start_exon_5) & (generic_positive$start_read > generic_positive$start_exon_5 & generic_positive$end_read < generic_positive$end_exon_5)){
+#       generic_positive$occurs_in_exon = "start_exon_5"
+#     } else if (!is.na(generic_positive$start_exon_6) & (generic_positive$start_read > generic_positive$start_exon_6 & generic_positive$end_read < generic_positive$end_exon_6)){
+#       generic_positive$occurs_in_exon = "start_exon_6"
+#     } else if (!is.na(generic_positive$start_exon_7) & (generic_positive$start_read > generic_positive$start_exon_7 & generic_positive$end_read < generic_positive$end_exon_7)){
+#       generic_positive$occurs_in_exon = "start_exon_7"
+#     } else if (!is.na(generic_positive$start_exon_8) & (generic_positive$start_read > generic_positive$start_exon_8 & generic_positive$end_read < generic_positive$end_exon_8)){
+#       generic_positive$occurs_in_exon = "start_exon_8"
+#     } else {
+#       generic_positive$occurs_in_exon = "intronic"
+#     }}
+
+positive_exon = function(generic_positive){
+  for (i in 1:nrow(generic_positive)){
+  if (generic_positive[i,"start_read"] > generic_positive[i,"start_exon_1"] & generic_positive[i,"end_read"] < generic_positive[i,"end_exon_1"]) { 
+    generic_positive[i,"occurs_in_exon"] = "start_exon_1"
+  } else if (!is.na(generic_positive[i,"start_exon_2"]) & (generic_positive[i,"start_read"] > generic_positive[i,"start_exon_2"] & generic_positive[i,"end_read"] < generic_positive[i,"end_exon_2"])){
+    generic_positive[i,"occurs_in_exon"] = "start_exon_2"
+  } else if (!is.na(generic_positive[i,"start_exon_3"]) & (generic_positive[i,"start_read"] > generic_positive[i,"start_exon_3"] & generic_positive[i,"end_read"] < generic_positive[i,"end_exon_3"])){
+    generic_positive[i,"occurs_in_exon"] = "start_exon_3"
+  } else if (!is.na(generic_positive[i,"start_exon_4"]) & (generic_positive[i,"start_read"] > generic_positive[i,"start_exon_4"] & generic_positive[i,"end_read"] < generic_positive[i,"end_exon_4"])){
+    generic_positive[i,"occurs_in_exon"] = "start_exon_4"
+  } else if (!is.na(generic_positive[i,"start_exon_5"]) & (generic_positive[i,"start_read"] > generic_positive[i,"start_exon_5"] & generic_positive[i,"end_read"] < generic_positive[i,"end_exon_5"])){
+    generic_positive[i,"occurs_in_exon"] = "start_exon_5"
+  } else if (!is.na(generic_positive[i,"start_exon_6"]) & (generic_positive[i,"start_read"] > generic_positive[i,"start_exon_6"] & generic_positive[i,"end_read"] < generic_positive[i,"end_exon_6"])){
+    generic_positive[i,"occurs_in_exon"] = "start_exon_6"
+  } else if (!is.na(generic_positive[i,"start_exon_7"]) & (generic_positive[i,"start_read"] > generic_positive[i,"start_exon_7"] & generic_positive[i,"end_read"] < generic_positive[i,"end_exon_7"])){
+    generic_positive[i,"occurs_in_exon"] = "start_exon_7"
+  } else if (!is.na(generic_positive[i,"start_exon_8"]) & (generic_positive[i,"start_read"] > generic_positive[i,"start_exon_8"] & generic_positive[i,"end_read"] < generic_positive[i,"end_exon_8"])){
+    generic_positive[i,"occurs_in_exon"] = "start_exon_8"
+  } else {
+    generic_positive[i,"occurs_in_exon"] = "intronic"
+  }} 
+  generic_positive }
+tester = sample_n(pos_exons, size = 5)
+complex = rbind(head(filter(pos_exons, exon_number==2), n=2),
+head(filter(pos_exons, exon_number==3), n=1),
+head(filter(pos_exons, exon_number==4), n=1),
+head(filter(pos_exons, exon_number==1), n=1))
+
+blah =  positive_exon(tester)
+nrow(tester)
+tester
+blah
+positive_exon(complex)
+
+
+#
+# fooBarFunc: Finds the first range that the input value of each row in inside of. Note this is an exclusive range (the
+# value cannot start or end at the ends of the range it is being compared with.
+#
+# df: the data frame of the input data
+# featureNameVector: a vector of the names of the features, prefixed by startPrefix and endPrefix to create the column names
+# startPrefix: The prefix prepended  to the feature name to create the column that represents the start of the feature
+# endPrefix: The prefix prepended  to the feature name to create the column that represents the end of the feature
+# testValueName: The name of the value that is under test, when combined with the prefix, 
+
+fooBarFunc <- 
+  function(df, featureNameVector, startPrefix, endPrefix, testValueName) {
+    getStart <- function(valueString) {
+      paste(startPrefix, valueString, sep = "")
+    }
+    getEnd <- function(valueString) {
+      paste(endPrefix, valueString, sep = "")
+    }
+    features <- length(featureNameVector)
+    out <- data.frame(dropMe=rep(0, nrow(df))) # just creating the output data.frame with rows so its ok to append to
+    mask <- rep(T, nrow(df))
+    for (i in 1:features) {
+      temp <- mask & df[[getStart(featureNameVector[i])]] < df[[getStart(testValueName)]] & df[[getEnd(testValueName)]] < df[[getEnd(featureNameVector[i])]]
+      mask <- (mask & !temp)
+      out[[featureNameVector[i]]] <- ifelse(temp, i, 0)
+    }
+    sumOut <- rowSums(out)
+    intronicFeatureNames <- c("intronic", featureNameVector)
+    intronicFeatureNames[sumOut +1]
+  }
+
+
 #negative strand reads
 
 
