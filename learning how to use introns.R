@@ -201,21 +201,6 @@ return(gen_pos)}
 
 pos_exon_cds_coords = exons_in_cds_coords(pos_exonic)
 head(pos_exon_cds_coords)
-filter(pos_exon_cds_coords, occurs_in_exon=="start_exon_2")[2,]
-
-lil_pos = rbind(filter(pos_exonic, occurs_in_exon=="start_exon_1")[1,], filter(pos_exonic, occurs_in_exon=="start_exon_2")[1,])
-lil_pos
-
-lil_pos$start_exon_in_cds_1 = lil_pos$start_exon_1 - lil_pos$start_cds
-lil_pos$end_exon_in_cds_1 = lil_pos$end_exon_1 - lil_pos$start_cds
-lil_pos$start_exon_in_cds_2 = lil_pos$start_exon_2 - lil_pos$start_cds
-lil_pos$end_exon_in_cds_2 = lil_pos$end_exon_2 - lil_pos$start_cds
-
-
-
-lil_pos
-
-
 
 
 lil_pos$exon_enter_frame_1 = (lil_pos$start_exon_in_cds_1 - 1) %% 3
