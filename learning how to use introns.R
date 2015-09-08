@@ -115,70 +115,29 @@ empty_start_pos
 #function to check if exonic and if so which exon for positive strand
   positive_exon = function(generic_positive){
     for (i in 1:nrow(generic_positive)){
-    if (!is.na(generic_positive[i,"start_exon_1"]) & (generic_positive[i,"start_read"] == generic_positive[i,"start_exon_1"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_1"])) { 
+    if (!is.na(generic_positive[i,"start_exon_1"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_1"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_1"])) { 
       generic_positive[i,"occurs_in_exon"] = "start_exon_1"
-    } else if (!is.na(generic_positive[i,"start_exon_2"]) & (generic_positive[i,"start_read"] == generic_positive[i,"start_exon_2"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_2"])){
+    } else if (!is.na(generic_positive[i,"start_exon_2"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_2"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_2"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_2"
-    } else if (!is.na(generic_positive[i,"start_exon_3"]) & (generic_positive[i,"start_read"] == generic_positive[i,"start_exon_3"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_3"])){
+    } else if (!is.na(generic_positive[i,"start_exon_3"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_3"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_3"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_3"
-    } else if (!is.na(generic_positive[i,"start_exon_4"]) & (generic_positive[i,"start_read"] == generic_positive[i,"start_exon_4"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_4"])){
+    } else if (!is.na(generic_positive[i,"start_exon_4"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_4"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_4"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_4"
-    } else if (!is.na(generic_positive[i,"start_exon_5"]) & (generic_positive[i,"start_read"] == generic_positive[i,"start_exon_5"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_5"])){
+    } else if (!is.na(generic_positive[i,"start_exon_5"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_5"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_5"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_5"
-    } else if (!is.na(generic_positive[i,"start_exon_6"]) & (generic_positive[i,"start_read"] == generic_positive[i,"start_exon_6"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_6"])){
+    } else if (!is.na(generic_positive[i,"start_exon_6"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_6"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_6"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_6"
-    } else if (!is.na(generic_positive[i,"start_exon_7"]) & (generic_positive[i,"start_read"] == generic_positive[i,"start_exon_7"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_7"])){
+    } else if (!is.na(generic_positive[i,"start_exon_7"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_7"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_7"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_7"
-    } else if (!is.na(generic_positive[i,"start_exon_8"]) & (generic_positive[i,"start_read"] == generic_positive[i,"start_exon_8"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_8"])){
+    } else if (!is.na(generic_positive[i,"start_exon_8"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_8"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_8"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_8"
     } else {
       generic_positive[i,"occurs_in_exon"] = "intronic"
     }} 
     generic_positive }
 
-itty = head(pos_exons, n=1)
-
-(!is.na(itty[1,"start_exon_1"]) & (itty[1,"start_read"] == itty[1,"start_exon_1"] & itty[i,"end_read"] <= itty[i,"end_exon_1"])) { 
-  
-1 == 2
-
-itty[1,"start_read"]
-itty[1,"start_exon_1"]
 pos_exons_copy = positive_exon(pos_exons)
 table(pos_exons_copy$occurs_in_exon)
-filter(pos_exons_copy, occurs_in_exon=="start_exon_1")
-sample_n(pos_exons_copy, size=5)
-# # FXN FROM JAKE THAT SHOULD BE FASTER THAN THE ABOVE, BUT I DONT KNOW HOW OR IF IT WORKS YET
-# # fooBarFunc: Finds the first range that the input value of each row in inside of. Note this is an exclusive range (the
-# # value cannot start or end at the ends of the range it is being compared with.
-# #
-# # df: the data frame of the input data
-# # featureNameVector: a vector of the names of the features, prefixed by startPrefix and endPrefix to create the column names
-# # startPrefix: The prefix prepended  to the feature name to create the column that represents the start of the feature
-# # endPrefix: The prefix prepended  to the feature name to create the column that represents the end of the feature
-# # testValueName: The name of the value that is under test, when combined with the prefix, 
-# 
-# fooBarFunc <- 
-#   function(df, featureNameVector, startPrefix, endPrefix, testValueName) {
-#     getStart <- function(valueString) {
-#       paste(startPrefix, valueString, sep = "")
-#     }
-#     getEnd <- function(valueString) {
-#       paste(endPrefix, valueString, sep = "")
-#     }
-#     features <- length(featureNameVector)
-#     out <- data.frame(dropMe=rep(0, nrow(df))) # just creating the output data.frame with rows so its ok to append to
-#     mask <- rep(T, nrow(df))
-#     for (i in 1:features) {
-#       temp <- mask & df[[getStart(featureNameVector[i])]] < df[[getStart(testValueName)]] & df[[getEnd(testValueName)]] < df[[getEnd(featureNameVector[i])]]
-#       mask <- (mask & !temp)
-#       out[[featureNameVector[i]]] <- ifelse(temp, i, 0)
-#     }
-#     sumOut <- rowSums(out)
-#     intronicFeatureNames <- c("intronic", featureNameVector)
-#     intronicFeatureNames[sumOut +1]
-#   }
-
 
 #function to check if exonic and if so which exon for negative strand
   negative_exon = function(generic_negative){
