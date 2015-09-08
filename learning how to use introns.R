@@ -104,7 +104,8 @@ empty_start_pos
   genic_exons = rbind(pos_exons, neg_exons)
   
     for (i in 1:8){
-      genic_exons[,starts[i]] = genic_exons$start_cds + genic_exons[,sprintf("start_%s", i)]
+      genic_exons[,starts[i]] = genic_exons$start_cds + genic_exons[,sprintf("start_%s", i)] + 1 
+      #this +1 is important because start_cds = n-1, where n == A of ATG (eg YAL003W ATG has A at 142174 but start cds is 142713; seq shown below in frameness)
       genic_exons[,ends[i]] = genic_exons$start_cds + genic_exons[,sprintf("start_%s", i)] + genic_exons[,sprintf("exon_size_%s", i)]
     }
   
@@ -167,6 +168,133 @@ neg_exons_copy = negative_exon(neg_exons)
 table(neg_exons_copy$occurs_in_exon)
 
 ## now we need to see if the exonic fragments are in frame or not
+#pull exonic fragments
+pos_exonic = filter(pos_exons_copy, occurs_in_exon!="intronic")
+head(pos_exonic)
+
+neg_exonic = filter(neg_exons_copy, occurs_in_exon!="intronic")
+head(neg_exonic)
+
+## BUT exons can enter or leave in ANY frame, so we need to figure out what the frame is of each exon (UGH)
+## start by defining exons in transcript coordinates
+
+#define columns that will exist
+start_exon_n = NULL
+start_exon_in_cds_n = NULL
+end_exon_n = NULL
+end_exon_in_cds_n = NULL
+for (i in 1:8){
+  start_exon_n[i] = sprintf("start_exon_%s", i)
+  start_exon_in_cds_n[i] = sprintf("start_exon_in_cds_%s", i)
+  end_exon_n[i] = sprintf("end_exon_%s", i)
+  end_exon_in_cds_n[i] = sprintf("end_exon_in_cds_%s", i)
+}
+
+#for positive exons, it goes like this
+exons_in_cds_coords = function(gen_pos){
+  for (i in 1:8){
+    for (j in 1:nrow(gen_pos)){
+    gen_pos[j,start_exon_in_cds_n[i]] = gen_pos[j,start_exon_n[i]] - gen_pos[j,"start_cds"]
+    gen_pos[j,end_exon_in_cds_n[i]] = gen_pos[j,end_exon_n[i]] - gen_pos[j,"start_cds"]
+  }}
+return(gen_pos)}
+
+pos_exon_cds_coords = exons_in_cds_coords(pos_exonic)
+head(pos_exon_cds_coords)
+filter(pos_exon_cds_coords, occurs_in_exon=="start_exon_2")[2,]
+
+lil_pos = rbind(filter(pos_exonic, occurs_in_exon=="start_exon_1")[1,], filter(pos_exonic, occurs_in_exon=="start_exon_2")[1,])
+lil_pos
+
+lil_pos$start_exon_in_cds_1 = lil_pos$start_exon_1 - lil_pos$start_cds
+lil_pos$end_exon_in_cds_1 = lil_pos$end_exon_1 - lil_pos$start_cds
+lil_pos$start_exon_in_cds_2 = lil_pos$start_exon_2 - lil_pos$start_cds
+lil_pos$end_exon_in_cds_2 = lil_pos$end_exon_2 - lil_pos$start_cds
+
+
+
+lil_pos
+
+
+
+
+lil_pos$exon_enter_frame_1 = (lil_pos$start_exon_in_cds_1 - 1) %% 3
+#this adjustment is because we're counting by base 0, not base 1
+lil_pos$exon_leave_frame_1 = (lil_pos$end_exon_in_cds_1 - lil_pos$start_exon_in_cds_1) %% 3
+lil_pos
+
+(570) %% 3
+(570 - 1 ) %% 3
+
+#example of start_cds to ATG from YAL003W
+#chr I 142173-142253
+#non coding A is 142173, coding starts at 142174 (a of atg)
+# Aatggcatccaccgatttctccaagattgaaactttgaaacaattaaacgcttctttggct
+# M  A  S  T  D  F  S  K  I  E  T  L  K  Q  L  N  A  S  L  A 
+# gacaagtcatacattgaa gg (so exits in frame 1)
+# D  K  S  Y  I  E 
+
+lil_pos$exon_enter_frame_2 = ifelse(!is.na(lil_pos$start_exon_in_cds_2), ((lil_pos$exon_enter_frame_1 + 1) %% 3), NA)
+#the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+lil_pos$exon_leave_frame_2 = (lil_pos$end_exon_in_cds_2 - lil_pos$start_exon_in_cds_2 + lil_pos$exon_enter_frame_2 + 1) %% 3
+987-447
+
+
+lil_pos
+>sacCer3_dna range=chrI:142620-143160 5'pad=0 3'pad=0 strand=+ repeatMasking=none
+(143160 - 142620 + 1 + lil_pos[2,"exon_enter_frame_2"]) %% 3 #where + 1 is it coming out of exon 1 in frame 1 
+TACTGCTGTTTCTCAAGCTGACGTCACTGTCTTCAAGGCTTTCCAATCT
+GCTTACCCAGAATTCTCCAGATGGTTCAACCACATCGCTTCCAAGGCCGA
+TGAATTCGACTCTTTCCCAGCTGCCTCTGCTGCCGCTGCCGAAGAAGAAG
+AAGATGACGATGTCGATTTATTCGGTTCCGACGATGAAGAAGCTGACGCT
+GAAGCTGAAAAGTTGAAGGCTGAAAGAATTGCCGCATACAACGCTAAGAA
+GGCTGCTAAGCCAGCTAAGCCAGCTGCTAAGTCCATTGTCACTCTAGATG
+TCAAGCCATGGGATGATGAAACCAATTTGGAAGAAATGGTTGCTAACGTC
+AAGGCCATCGAAATGGAAGGTTTGACCTGGGGTGCTCACCAATTTATCCC
+AATTGGTTTCGGTATCAAGAAGTTGCAAATTAACTGTGTTGTCGAAGATG
+ACAAGGTTTCCTTGGATGACTTGCAACAAAGCATTGAAGAAGACGAAGAC
+CACGTCCAATCTACCGATATTGCTGCTATGCAAAAATTATAA
+
+
+lil_pos[2,]
+
+(987 - 447) %%3
+#lets start by putting everything back from genomic coordinates to transcript coordinates
+lil_pos$start_read_in_cds = lil_pos$start_read - lil_pos$start_cds
+lil_pos$end_read_in_cds = lil_pos$end_read - lil_pos$start_cds
+
+
+lil_pos
+0 %% 3
+1 %% 3 
+ATGGCATCCACCGATTTCTCCAAGATTGAAACTTTGAAACAATTAAACGC
+TTCTTTGGCTGACAAGTCATACATTGAAGGgtatgttccgatttagttta
+ctttatagatcgttgtttttctttcttttttttttttcctatggttacat
+gtaaagggaagttaactaataatgattactttttttcgcttatgtgaatg
+atgaatttaattctttggtccgtgtttatgatgggaagtaagacccccga
+tatgagtgacaaaagagatgtggttgactatcacagtatctgacgatagc
+acagagcagagtatcattattagttatctgttatttttttttcctttttt
+gttcaaaaaaagaaagacagagtctaaagattgcattacaagaaaaaagt
+tctcattactaacaagcaaaatgttttgtttctccttttaaaatagTACT
+GCTGTTTCTCAAGCTGACGTCACTGTCTTCAAGGCTTTCCAATCTGCTTA
+CCCAGAATTCTCCAGATGGTTCAACCACATCGCTTCCAAGGCCGATGAAT
+TCGACTCTTTCCCAGCTGCCTCTGCTGCCGCTGCCGAAGAAGAAGAAGAT
+GACGATGTCGATTTATTCGGTTCCGACGATGAAGAAGCTGACGCTGAAGC
+TGAAAAGTTGAAGGCTGAAAGAATTGCCGCATACAACGCTAAGAAGGCTG
+CTAAGCCAGCTAAGCCAGCTGCTAAGTCCATTGTCACTCTAGATGTCAAG
+CCATGGGATGATGAAACCAATTTGGAAGAAATGGTTGCTAACGTCAAGGC
+CATCGAAATGGAAGGTTTGACCTGGGGTGCTCACCAATTTATCCCAATTG
+GTTTCGGTATCAAGAAGTTGCAAATTAACTGTGTTGTCGAAGATGACAAG
+GTTTCCTTGGATGACTTGCAACAAAGCATTGAAGAAGACGAAGACCACGT
+CCAATCTACCGATATTGCTGCTATGCAAAAATTATAA
+
+
+
+baby = lil_pos[2,]
+baby$start_1 %% 3
+baby$end_
+baby$start_2 %% 3
+#########
 # first, pull all the exonic fragments for positive strand
 test_pos = filter(pos_exons_copy, occurs_in_exon!="intronic")
 nrow(test_pos)
