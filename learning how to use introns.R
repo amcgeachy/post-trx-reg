@@ -202,14 +202,7 @@ return(gen_pos)}
 pos_exon_cds_coords = exons_in_cds_coords(pos_exonic)
 head(pos_exon_cds_coords)
 
-
-lil_pos$exon_enter_frame_1 = (lil_pos$start_exon_in_cds_1 - 1) %% 3
-#this adjustment is because we're counting by base 0, not base 1
-lil_pos$exon_leave_frame_1 = (lil_pos$end_exon_in_cds_1 - lil_pos$start_exon_in_cds_1) %% 3
-lil_pos
-
-(570) %% 3
-(570 - 1 ) %% 3
+#then we actually calculate frameness information
 
 #example of start_cds to ATG from YAL003W
 #chr I 142173-142253
@@ -219,156 +212,56 @@ lil_pos
 # gacaagtcatacattgaa gg (so exits in frame 1)
 # D  K  S  Y  I  E 
 
-lil_pos$exon_enter_frame_2 = ifelse(!is.na(lil_pos$start_exon_in_cds_2), ((lil_pos$exon_enter_frame_1 + 1) %% 3), NA)
-#the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
-lil_pos$exon_leave_frame_2 = (lil_pos$end_exon_in_cds_2 - lil_pos$start_exon_in_cds_2 + lil_pos$exon_enter_frame_2 + 1) %% 3
-987-447
+pos_exon_frameness = function(gen_pos){
+  gen_pos$exon_enter_frame_1 = (gen_pos$start_exon_in_cds_1 - 1) %% 3
+    #this adjustment is because we're counting by base 0, not base 1
+  gen_pos$exon_leave_frame_1 = (gen_pos$end_exon_in_cds_1 - gen_pos$start_exon_in_cds_1) %% 3
+  
+  gen_pos$exon_enter_frame_2 = ifelse(!is.na(gen_pos$start_exon_in_cds_2), ((gen_pos$exon_leave_frame_1 + 1) %% 3), NA)
+    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+  gen_pos$exon_leave_frame_2 = (gen_pos$end_exon_in_cds_2 - gen_pos$start_exon_in_cds_2 + gen_pos$exon_enter_frame_2 ) %% 3
+  
+  gen_pos$exon_enter_frame_3 = ifelse(!is.na(gen_pos$start_exon_in_cds_3), ((gen_pos$exon_leave_frame_2 + 1) %% 3), NA)
+    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+  gen_pos$exon_leave_frame_3 = (gen_pos$end_exon_in_cds_3 - gen_pos$start_exon_in_cds_3 + gen_pos$exon_enter_frame_3 ) %% 3
+  
+  gen_pos$exon_enter_frame_4 = ifelse(!is.na(gen_pos$start_exon_in_cds_4), ((gen_pos$exon_leave_frame_3 + 1) %% 3), NA)
+  #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+  gen_pos$exon_leave_frame_4 = (gen_pos$end_exon_in_cds_4 - gen_pos$start_exon_in_cds_4 + gen_pos$exon_enter_frame_4 ) %% 3
+  
+  gen_pos$exon_enter_frame_5 = ifelse(!is.na(gen_pos$start_exon_in_cds_5), ((gen_pos$exon_leave_frame_4 + 1) %% 3), NA)
+    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+  gen_pos$exon_leave_frame_5 = (gen_pos$end_exon_in_cds_5 - gen_pos$start_exon_in_cds_5 + gen_pos$exon_enter_frame_5 ) %% 3
+  
+  gen_pos$exon_enter_frame_6 = ifelse(!is.na(gen_pos$start_exon_in_cds_6), ((gen_pos$exon_leave_frame_5 + 1) %% 3), NA)
+    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+  gen_pos$exon_leave_frame_6 = (gen_pos$end_exon_in_cds_6 - gen_pos$start_exon_in_cds_6 + gen_pos$exon_enter_frame_6 ) %% 3
+  
+  gen_pos$exon_enter_frame_7 = ifelse(!is.na(gen_pos$start_exon_in_cds_7), ((gen_pos$exon_leave_frame_6 + 1) %% 3), NA)
+    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+  gen_pos$exon_leave_frame_7 = (gen_pos$end_exon_in_cds_7 - gen_pos$start_exon_in_cds_7 + gen_pos$exon_enter_frame_7 ) %% 3
+  
+  gen_pos$exon_enter_frame_8 = ifelse(!is.na(gen_pos$start_exon_in_cds_8), ((gen_pos$exon_leave_frame_7 + 1) %% 3), NA)
+    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+  gen_pos$exon_leave_frame_8 = (gen_pos$end_exon_in_cds_8 - gen_pos$start_exon_in_cds_8 + gen_pos$exon_enter_frame_8 ) %% 3
+  
+  return(gen_pos)
+}
 
+pos_exon_frames = pos_exon_frameness(pos_exon_cds_coords)
+head(pos_exon_frames)
 
-lil_pos
->sacCer3_dna range=chrI:142620-143160 5'pad=0 3'pad=0 strand=+ repeatMasking=none
-(143160 - 142620 + 1 + lil_pos[2,"exon_enter_frame_2"]) %% 3 #where + 1 is it coming out of exon 1 in frame 1 
-TACTGCTGTTTCTCAAGCTGACGTCACTGTCTTCAAGGCTTTCCAATCT
-GCTTACCCAGAATTCTCCAGATGGTTCAACCACATCGCTTCCAAGGCCGA
-TGAATTCGACTCTTTCCCAGCTGCCTCTGCTGCCGCTGCCGAAGAAGAAG
-AAGATGACGATGTCGATTTATTCGGTTCCGACGATGAAGAAGCTGACGCT
-GAAGCTGAAAAGTTGAAGGCTGAAAGAATTGCCGCATACAACGCTAAGAA
-GGCTGCTAAGCCAGCTAAGCCAGCTGCTAAGTCCATTGTCACTCTAGATG
-TCAAGCCATGGGATGATGAAACCAATTTGGAAGAAATGGTTGCTAACGTC
-AAGGCCATCGAAATGGAAGGTTTGACCTGGGGTGCTCACCAATTTATCCC
-AATTGGTTTCGGTATCAAGAAGTTGCAAATTAACTGTGTTGTCGAAGATG
-ACAAGGTTTCCTTGGATGACTTGCAACAAAGCATTGAAGAAGACGAAGAC
-CACGTCCAATCTACCGATATTGCTGCTATGCAAAAATTATAA
+# #checking a handful of examples to make sure things work
+# sample_n(filter(pos_exon_frames, exon_number!=1), size = 1)
+# filter(pos_exon_frames, gene_name==c("YGR214W")) # checks out
+# filter(pos_exon_frames, gene_name==c("YML034W")) # checks out
+# filter(pos_exon_frames, gene_name==c("YBR186W")) # checks out
+# sample_n(filter(pos_exon_frames, exon_number!=1, exon_leave_frame_1!=2), size = 1)
+# filter(pos_exon_frames, gene_name==c("YPL081W")) # checks out
 
-
-lil_pos[2,]
-
-(987 - 447) %%3
-#lets start by putting everything back from genomic coordinates to transcript coordinates
-lil_pos$start_read_in_cds = lil_pos$start_read - lil_pos$start_cds
-lil_pos$end_read_in_cds = lil_pos$end_read - lil_pos$start_cds
-
-
-lil_pos
-0 %% 3
-1 %% 3 
-ATGGCATCCACCGATTTCTCCAAGATTGAAACTTTGAAACAATTAAACGC
-TTCTTTGGCTGACAAGTCATACATTGAAGGgtatgttccgatttagttta
-ctttatagatcgttgtttttctttcttttttttttttcctatggttacat
-gtaaagggaagttaactaataatgattactttttttcgcttatgtgaatg
-atgaatttaattctttggtccgtgtttatgatgggaagtaagacccccga
-tatgagtgacaaaagagatgtggttgactatcacagtatctgacgatagc
-acagagcagagtatcattattagttatctgttatttttttttcctttttt
-gttcaaaaaaagaaagacagagtctaaagattgcattacaagaaaaaagt
-tctcattactaacaagcaaaatgttttgtttctccttttaaaatagTACT
-GCTGTTTCTCAAGCTGACGTCACTGTCTTCAAGGCTTTCCAATCTGCTTA
-CCCAGAATTCTCCAGATGGTTCAACCACATCGCTTCCAAGGCCGATGAAT
-TCGACTCTTTCCCAGCTGCCTCTGCTGCCGCTGCCGAAGAAGAAGAAGAT
-GACGATGTCGATTTATTCGGTTCCGACGATGAAGAAGCTGACGCTGAAGC
-TGAAAAGTTGAAGGCTGAAAGAATTGCCGCATACAACGCTAAGAAGGCTG
-CTAAGCCAGCTAAGCCAGCTGCTAAGTCCATTGTCACTCTAGATGTCAAG
-CCATGGGATGATGAAACCAATTTGGAAGAAATGGTTGCTAACGTCAAGGC
-CATCGAAATGGAAGGTTTGACCTGGGGTGCTCACCAATTTATCCCAATTG
-GTTTCGGTATCAAGAAGTTGCAAATTAACTGTGTTGTCGAAGATGACAAG
-GTTTCCTTGGATGACTTGCAACAAAGCATTGAAGAAGACGAAGACCACGT
-CCAATCTACCGATATTGCTGCTATGCAAAAATTATAA
+#so we have the transcript coordinates and frameness information. 
+#how do we then relate the reads to this information?
 
 
 
-baby = lil_pos[2,]
-baby$start_1 %% 3
-baby$end_
-baby$start_2 %% 3
-#########
-# first, pull all the exonic fragments for positive strand
-test_pos = filter(pos_exons_copy, occurs_in_exon!="intronic")
-nrow(test_pos)
 
-pos_intronic = filter(pos_exons_copy, occurs_in_exon=="intronic")
-nrow(pos_intronic)
-
-pos_tiny = rbind(head(filter(test_pos, occurs_in_exon=="start_exon_1"), n=1),
-                 head(filter(test_pos, occurs_in_exon=="start_exon_2"), n=1))
-
-pos_tiny
-
-CATGTTGCTGAGTGAACTCGTAGCAACCGCCTCCTCTCTGCCATACACGG
-CCATCAGCATCCACAATAACTGTCGTGTCCCAGCCGCACGCCACATCCAC
-CACGGGTGCCGGTACTTCCACGGGCCTCCAGTCATGCACCTGCCGCAGTG
-CTTGCGCACTATCCAGTTCTCCCCGTCTGTTATCTCCACATCCTACCAGA
-TTCCCGTCATTTGTCAGCATCACGCTGTGGTTCCCACCGCACGCTATCTT
-CCTGACTATTGCTCCATCATCTCCTGGCACAGACCTCTGTGGGGTATCCA
-TATCCTCATCGTGCCCCAGTCCCAGTTGCCTTTGCCCATTAGACCCAAAC
-GCATACACACAACTCATCGATACAAGCCTGTTATAGCCTTTAATGATCAC
-ATTCCATCACTTGCGCTTTGGATCTGCCTGCATTATCAAGGCTCAAACGG
-CTGCGTTACCCCCGTCGCCGCGAAATTTTTCATAATTTTTCACTTTGTAG
-GATTAAAAGAGATCATGAGCCCATCTCGCAATGCAACACGTAACTTAAAT
-CAGTACTGGCGTGTGCTATAG
-#"start" 114249
-A 114250 T 114251 G 114252 
-
-#end 114819
-T 114817 A 114818 G 114819
-
-
-# first, pull all the exonic fragments for negative strand
-test = filter(neg_exons_copy, occurs_in_exon!="intronic")
-nrow(test)
-head(test)
-
-neg_intronic = filter(neg_exons_copy, occurs_in_exon=="intronic")
-nrow(neg_intronic)
-
-neg_tiny = rbind(head(filter(test, occurs_in_exon=="start_exon_1"), n=1),
- head(filter(test, occurs_in_exon=="start_exon_2"), n=1))
-
-neg_tiny
-
-#now that we have absolute genomic coordinates for the cds we can determine frame information
-#figuring out how to do math for what's in frame for negative strand
-#START
-#G 101143 T 101144 A 101145
-#2        1        0  -- intuitive/biological frame
-#1        2        0  -- computation frame (end_read - start_exon)
-(101145 - 101145 ) %% 3 #A, in frame --> 0
-(101144 - 101145 ) %% 3 #T 
-(101143 - 101145 ) %% 3 #G
-
-#END
-#A 100224 A 100223 T 100222
-#2        1        0  -- intuitive/biological frame
-#1        0        2  -- computation frame (start_read - end_exon)
-(100222 - 100224 + 1) %% 3 #T
-(100223 - 100224 + 1) %% 3 #A
-(100224 - 100224 + 1) %% 3 #A, in frame --> 1
-
-
-#at the start 
-neg_tiny[1,"read_start_frame"] = (neg_tiny[1,"end_read"] - neg_tiny[1,neg_tiny[1,"occurs_in_exon"]] )%%3
-neg_tiny[2,"read_start_frame"] = (neg_tiny[2,"end_read"] - neg_tiny[2,neg_tiny[2,"occurs_in_exon"]] )%%3
-
-#...and at the end
-neg_tiny[1,"read_end_frame"] = (neg_tiny[1,"start_read"] - neg_tiny[1,sprintf("end_exon_%s", unlist(strsplit(neg_tiny[1,"occurs_in_exon"], "_"))[3])])%%3
-neg_tiny[2,"read_end_frame"] = (neg_tiny[2,"start_read"] - neg_tiny[2,sprintf("end_exon_%s", unlist(strsplit(neg_tiny[2,"occurs_in_exon"], "_"))[3])])%%3
-
-
-seq(from=312950, to=313362, by=3)
-neg_tiny
-(100224 - 100567 )%% 3
-seq(from=100224, to=100567, by=3)
-seq(from=100224, to=101145, by=3)
-?seq
-
-?split
-split(neg_tiny[1,"occurs_in_exon"], "_")
-#gets the exon number from exon determination (start_exon_#) and writes corresponding end exon column name
-sprintf("end_exon_%s", unlist(strsplit(neg_tiny[1,"occurs_in_exon"], "_"))[3])
-
-
-neg_tiny(neg_tiny[1,"start_exon_1"] - neg_tiny[1,"end_read"])%%3
-neg_tiny[2,"occurs_in_exon"]
-
-
-(neg_tiny[1,"start_exon_1"] - neg_tiny[1,"start_exon_1"]) %% 3
-(neg_tiny[1,"start_exon_1"] - neg_tiny[1,"start_exon_1"] + 1) %% 3
-(neg_tiny[1,"start_exon_1"] - neg_tiny[1,"start_exon_1"] + 2) %% 3
