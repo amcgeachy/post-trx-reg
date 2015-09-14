@@ -175,6 +175,21 @@ head(pos_exonic)
 neg_exonic = filter(neg_exons_copy, occurs_in_exon!="intronic")
 head(neg_exonic)
 
+sample_n(filter(pos_exonic, exon_number!=1), size=1)
+
+pretend gene exons:
+0-50
+100-150
+
+e == start 0,100
+s == size 50,50
+
+g == genomic 90 - 100
+
+g - e1  = 90 - 0 = 90 #no
+g - e1 - s1 = 90 - 0 - 50 = 40 #nope
+e1 + s1 = 0 + 50 = 50 
+
 ## BUT exons can enter or leave in ANY frame, so we need to figure out what the frame is of each exon (UGH)
 ## start by defining exons in transcript coordinates
 
