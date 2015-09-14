@@ -175,114 +175,153 @@ head(pos_exonic)
 neg_exonic = filter(neg_exons_copy, occurs_in_exon!="intronic")
 head(neg_exonic)
 
-sample_n(filter(pos_exonic, exon_number!=1), size=1)
 
-pretend gene exons:
-0-50
-100-150
 
-e == start 0,100
-s == size 50,50
+#we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
+# start read CDS loc == sum(exon sizes from 1 to exon before the read occurs in) + (start read genomic location - start exon genomic location for the exon the read is in)
+# or when s is size, e is exon start site, g is start read genomic location, CDS location is c
+# there are 1 to n exons in a gene, and the read is in exon j
+# c = Σ(s[sub 1:j-1]) + (g - e[sub j])
 
-g == genomic 90 - 100
+#start with a toy example
+tester = filter(pos_exonic, occurs_in_exon=="start_exon_3")[1,]
+tester
+tester[,"occurs_in_exon"] # getting what exon it is in
 
-g - e1  = 90 - 0 = 90 #no
-g - e1 - s1 = 90 - 0 - 50 = 40 #nope
-e1 + s1 = 0 + 50 = 50 
-
-## BUT exons can enter or leave in ANY frame, so we need to figure out what the frame is of each exon (UGH)
-## start by defining exons in transcript coordinates
-
-#define columns that will exist
-start_exon_n = NULL
-start_exon_in_trans_n = NULL
-end_exon_n = NULL
-end_exon_in_trans_n = NULL
-for (i in 1:8){
-  start_exon_n[i] = sprintf("start_exon_%s", i)
-  start_exon_in_trans_n[i] = sprintf("start_exon_in_trans_%s", i)
-  end_exon_n[i] = sprintf("end_exon_%s", i)
-  end_exon_in_trans_n[i] = sprintf("end_exon_in_trans_%s", i)
+#make a list of all the exon sizes up to the exon the read is located in
+exon_size_list = NULL
+for (i in 1:(strtoi(strsplit(tester[,"occurs_in_exon"], split="_")[[1]][3])-1)){
+  exon_size_list[i] = sprintf("exon_size_%s", i)
 }
 
-#for positive exons, it goes like this
-exons_in_trans_coords = function(gen_pos){
-  for (i in 1:8){
-    for (j in 1:nrow(gen_pos)){
-    gen_pos[j,start_exon_in_trans_n[i]] = gen_pos[j,start_exon_n[i]] - gen_pos[j,"start_cds"]
-    gen_pos[j,end_exon_in_trans_n[i]] = gen_pos[j,end_exon_n[i]] - gen_pos[j,"start_cds"]
-  }}
-return(gen_pos)}
+exon_size_list
 
-pos_exon_trans_coords = exons_in_trans_coords(pos_exonic)
-head(pos_exon_trans_coords)
+#then sum those exons
+size_sums = sum(tester[,exon_size_list]) #Σ(s[sub 1:j-1]) 
 
-#then we actually calculate frameness information
+#find start and end location in current exon
+tester
+tester[,"start_read"] #g[start]
+tester[,"end_read"] #g[end]
+tester[,tester[,"occurs_in_exon"]] #e[sub j]
 
-#example of start_cds to ATG from YAL003W
-#chr I 142173-142253
-#non coding A is 142173, coding starts at 142174 (a of atg)
-# Aatggcatccaccgatttctccaagattgaaactttgaaacaattaaacgcttctttggct
-# M  A  S  T  D  F  S  K  I  E  T  L  K  Q  L  N  A  S  L  A 
-# gacaagtcatacattgaa gg (so exits in frame 1)
-# D  K  S  Y  I  E 
+g_minus_e_start = tester[,"start_read"] - tester[,tester[,"occurs_in_exon"]] #g[start] - e[sub j]
+g_minus_e_end = tester[,"end_read"] - tester[,tester[,"occurs_in_exon"]] #g[end] - e[sub j]
 
-pos_exon_frameness = function(gen_pos){
-  gen_pos$exon_enter_frame_1 = (gen_pos$start_exon_in_trans_1 - 1) %% 3
-    #this adjustment is because we're counting by base 0, not base 1
-  gen_pos$exon_leave_frame_1 = (gen_pos$end_exon_in_trans_1 - gen_pos$start_exon_in_trans_1) %% 3
-  
-  gen_pos$exon_enter_frame_2 = ifelse(!is.na(gen_pos$start_exon_in_trans_2), ((gen_pos$exon_leave_frame_1 + 1) %% 3), NA)
-    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
-  gen_pos$exon_leave_frame_2 = (gen_pos$end_exon_in_trans_2 - gen_pos$start_exon_in_trans_2 + gen_pos$exon_enter_frame_2 ) %% 3
-  
-  gen_pos$exon_enter_frame_3 = ifelse(!is.na(gen_pos$start_exon_in_trans_3), ((gen_pos$exon_leave_frame_2 + 1) %% 3), NA)
-    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
-  gen_pos$exon_leave_frame_3 = (gen_pos$end_exon_in_trans_3 - gen_pos$start_exon_in_trans_3 + gen_pos$exon_enter_frame_3 ) %% 3
-  
-  gen_pos$exon_enter_frame_4 = ifelse(!is.na(gen_pos$start_exon_in_trans_4), ((gen_pos$exon_leave_frame_3 + 1) %% 3), NA)
-  #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
-  gen_pos$exon_leave_frame_4 = (gen_pos$end_exon_in_trans_4 - gen_pos$start_exon_in_trans_4 + gen_pos$exon_enter_frame_4 ) %% 3
-  
-  gen_pos$exon_enter_frame_5 = ifelse(!is.na(gen_pos$start_exon_in_trans_5), ((gen_pos$exon_leave_frame_4 + 1) %% 3), NA)
-    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
-  gen_pos$exon_leave_frame_5 = (gen_pos$end_exon_in_trans_5 - gen_pos$start_exon_in_trans_5 + gen_pos$exon_enter_frame_5 ) %% 3
-  
-  gen_pos$exon_enter_frame_6 = ifelse(!is.na(gen_pos$start_exon_in_trans_6), ((gen_pos$exon_leave_frame_5 + 1) %% 3), NA)
-    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
-  gen_pos$exon_leave_frame_6 = (gen_pos$end_exon_in_trans_6 - gen_pos$start_exon_in_trans_6 + gen_pos$exon_enter_frame_6 ) %% 3
-  
-  gen_pos$exon_enter_frame_7 = ifelse(!is.na(gen_pos$start_exon_in_trans_7), ((gen_pos$exon_leave_frame_6 + 1) %% 3), NA)
-    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
-  gen_pos$exon_leave_frame_7 = (gen_pos$end_exon_in_trans_7 - gen_pos$start_exon_in_trans_7 + gen_pos$exon_enter_frame_7 ) %% 3
-  
-  gen_pos$exon_enter_frame_8 = ifelse(!is.na(gen_pos$start_exon_in_trans_8), ((gen_pos$exon_leave_frame_7 + 1) %% 3), NA)
-    #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
-  gen_pos$exon_leave_frame_8 = (gen_pos$end_exon_in_trans_8 - gen_pos$start_exon_in_trans_8 + gen_pos$exon_enter_frame_8 ) %% 3
-  
-  return(gen_pos)
-}
+#then add g_minus_e to size_sums to find read location in CDS
+size_sums + g_minus_e_start #c = Σ(s[sub 1:j-1]) + (g[start] - e[sub j])
+size_sums + g_minus_e_end #c = Σ(s[sub 1:j-1]) + (g[end] - e[sub j])
 
-pos_exon_frames = pos_exon_frameness(pos_exon_trans_coords)
-head(pos_exon_frames)
+#store those in the table
+colnames(tester)
+tester$start_read_in_cds = size_sums + g_minus_e_start #c = Σ(s[sub 1:j-1]) + (g[start] - e[sub j])
+tester$end_read_in_cds = size_sums + g_minus_e_end #c = Σ(s[sub 1:j-1]) + (g[end] - e[sub j])
+tester
 
-# #checking a handful of examples to make sure things work
-# sample_n(filter(pos_exon_frames, exon_number!=1), size = 1)
-# filter(pos_exon_frames, gene_name==c("YGR214W")) # checks out
-# filter(pos_exon_frames, gene_name==c("YML034W")) # checks out
- #filter(pos_exon_frames, gene_name==c("YBR186W")) # checks out
-# sample_n(filter(pos_exon_frames, exon_number!=1, exon_leave_frame_1!=2), size = 1)
- #filter(pos_exon_frames, gene_name==c("YPL081W")) # checks out
+#then find out what frame it is in
+tester$start_read_cds_frame = tester$start_read_in_cds %% 3
+tester$end_read_cds_frame = tester$end_read_in_cds %% 3
 
-#so we have the transcript coordinates and frameness information. 
-#how do we then relate the reads to this information?
+tester #totally checks out!
 
-#start by putting the reads into transcript coordinates
-pos_exon_frames$start_read_in_cds = pos_exon_frames$start_read - pos_exon_frames$start_cds
-pos_exon_frames$end_read_in_cds = pos_exon_frames$end_read - pos_exon_frames$start_cds
 
-sample_n(pos_exon_frames, size = 1)
-?cut
-strtrim("happy", width = -1)
-table(pos_exon_frames$occurs_in_exon)
-strtoi(strsplit("start_exon_1", split = "_")[[1]][3])
+
+
+#and what we *really* care about is if it's in frame
+
+# ## BUT exons can enter or leave in ANY frame, so we need to figure out what the frame is of each exon (UGH)
+# ## start by defining exons in transcript coordinates
+# 
+# #define columns that will exist
+# start_exon_n = NULL
+# start_exon_in_trans_n = NULL
+# end_exon_n = NULL
+# end_exon_in_trans_n = NULL
+# for (i in 1:8){
+#   start_exon_n[i] = sprintf("start_exon_%s", i)
+#   start_exon_in_trans_n[i] = sprintf("start_exon_in_trans_%s", i)
+#   end_exon_n[i] = sprintf("end_exon_%s", i)
+#   end_exon_in_trans_n[i] = sprintf("end_exon_in_trans_%s", i)
+# }
+# 
+# #for positive exons, it goes like this
+# exons_in_trans_coords = function(gen_pos){
+#   for (i in 1:8){
+#     for (j in 1:nrow(gen_pos)){
+#     gen_pos[j,start_exon_in_trans_n[i]] = gen_pos[j,start_exon_n[i]] - gen_pos[j,"start_cds"]
+#     gen_pos[j,end_exon_in_trans_n[i]] = gen_pos[j,end_exon_n[i]] - gen_pos[j,"start_cds"]
+#   }}
+# return(gen_pos)}
+# 
+# pos_exon_trans_coords = exons_in_trans_coords(pos_exonic)
+# head(pos_exon_trans_coords)
+# 
+# #then we actually calculate frameness information
+# 
+# #example of start_cds to ATG from YAL003W
+# #chr I 142173-142253
+# #non coding A is 142173, coding starts at 142174 (a of atg)
+# # Aatggcatccaccgatttctccaagattgaaactttgaaacaattaaacgcttctttggct
+# # M  A  S  T  D  F  S  K  I  E  T  L  K  Q  L  N  A  S  L  A 
+# # gacaagtcatacattgaa gg (so exits in frame 1)
+# # D  K  S  Y  I  E 
+# 
+# pos_exon_frameness = function(gen_pos){
+#   gen_pos$exon_enter_frame_1 = (gen_pos$start_exon_in_trans_1 - 1) %% 3
+#     #this adjustment is because we're counting by base 0, not base 1
+#   gen_pos$exon_leave_frame_1 = (gen_pos$end_exon_in_trans_1 - gen_pos$start_exon_in_trans_1) %% 3
+#   
+#   gen_pos$exon_enter_frame_2 = ifelse(!is.na(gen_pos$start_exon_in_trans_2), ((gen_pos$exon_leave_frame_1 + 1) %% 3), NA)
+#     #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+#   gen_pos$exon_leave_frame_2 = (gen_pos$end_exon_in_trans_2 - gen_pos$start_exon_in_trans_2 + gen_pos$exon_enter_frame_2 ) %% 3
+#   
+#   gen_pos$exon_enter_frame_3 = ifelse(!is.na(gen_pos$start_exon_in_trans_3), ((gen_pos$exon_leave_frame_2 + 1) %% 3), NA)
+#     #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+#   gen_pos$exon_leave_frame_3 = (gen_pos$end_exon_in_trans_3 - gen_pos$start_exon_in_trans_3 + gen_pos$exon_enter_frame_3 ) %% 3
+#   
+#   gen_pos$exon_enter_frame_4 = ifelse(!is.na(gen_pos$start_exon_in_trans_4), ((gen_pos$exon_leave_frame_3 + 1) %% 3), NA)
+#   #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+#   gen_pos$exon_leave_frame_4 = (gen_pos$end_exon_in_trans_4 - gen_pos$start_exon_in_trans_4 + gen_pos$exon_enter_frame_4 ) %% 3
+#   
+#   gen_pos$exon_enter_frame_5 = ifelse(!is.na(gen_pos$start_exon_in_trans_5), ((gen_pos$exon_leave_frame_4 + 1) %% 3), NA)
+#     #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+#   gen_pos$exon_leave_frame_5 = (gen_pos$end_exon_in_trans_5 - gen_pos$start_exon_in_trans_5 + gen_pos$exon_enter_frame_5 ) %% 3
+#   
+#   gen_pos$exon_enter_frame_6 = ifelse(!is.na(gen_pos$start_exon_in_trans_6), ((gen_pos$exon_leave_frame_5 + 1) %% 3), NA)
+#     #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+#   gen_pos$exon_leave_frame_6 = (gen_pos$end_exon_in_trans_6 - gen_pos$start_exon_in_trans_6 + gen_pos$exon_enter_frame_6 ) %% 3
+#   
+#   gen_pos$exon_enter_frame_7 = ifelse(!is.na(gen_pos$start_exon_in_trans_7), ((gen_pos$exon_leave_frame_6 + 1) %% 3), NA)
+#     #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+#   gen_pos$exon_leave_frame_7 = (gen_pos$end_exon_in_trans_7 - gen_pos$start_exon_in_trans_7 + gen_pos$exon_enter_frame_7 ) %% 3
+#   
+#   gen_pos$exon_enter_frame_8 = ifelse(!is.na(gen_pos$start_exon_in_trans_8), ((gen_pos$exon_leave_frame_7 + 1) %% 3), NA)
+#     #the ifelse checks to make sure this next exon even exists, since the frame info here really is determined by the previous exon
+#   gen_pos$exon_leave_frame_8 = (gen_pos$end_exon_in_trans_8 - gen_pos$start_exon_in_trans_8 + gen_pos$exon_enter_frame_8 ) %% 3
+#   
+#   return(gen_pos)
+# }
+# 
+# pos_exon_frames = pos_exon_frameness(pos_exon_trans_coords)
+# head(pos_exon_frames)
+# 
+# # #checking a handful of examples to make sure things work
+# # sample_n(filter(pos_exon_frames, exon_number!=1), size = 1)
+# # filter(pos_exon_frames, gene_name==c("YGR214W")) # checks out
+# # filter(pos_exon_frames, gene_name==c("YML034W")) # checks out
+#  #filter(pos_exon_frames, gene_name==c("YBR186W")) # checks out
+# # sample_n(filter(pos_exon_frames, exon_number!=1, exon_leave_frame_1!=2), size = 1)
+#  #filter(pos_exon_frames, gene_name==c("YPL081W")) # checks out
+# 
+# #so we have the transcript coordinates and frameness information. 
+# #how do we then relate the reads to this information?
+# 
+# #start by putting the reads into transcript coordinates
+# pos_exon_frames$start_read_in_cds = pos_exon_frames$start_read - pos_exon_frames$start_cds
+# pos_exon_frames$end_read_in_cds = pos_exon_frames$end_read - pos_exon_frames$start_cds
+# 
+# sample_n(pos_exon_frames, size = 1)
+# ?cut
+# strtrim("happy", width = -1)
+# table(pos_exon_frames$occurs_in_exon)
+# strtoi(strsplit("start_exon_1", split = "_")[[1]][3])
