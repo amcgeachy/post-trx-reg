@@ -171,11 +171,12 @@ table(neg_exons_copy$occurs_in_exon)
 ## now we need to see if the exonic fragments are in frame or not
 #pull exonic fragments
 pos_exonic = filter(pos_exons_copy, occurs_in_exon!="intronic")
+pos_intronic = filter(pos_exons_copy, occurs_in_exon=="intronic") #just saving these for later
 head(pos_exonic)
 
 neg_exonic = filter(neg_exons_copy, occurs_in_exon!="intronic")
+neg_intronic = filter(neg_exons_copy, occurs_in_exon=="intronic") #just saving these for later
 head(neg_exonic)
-
 
 #for positive strand genes
 #we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
@@ -216,13 +217,14 @@ head(neg_exonic)
   head(pos_exonic)
   
   pos_exonic$read_start_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_start_in_exon 
-  pos_exonic$read_end_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_end_in_exon
+  pos_exonic$read_end_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_end_in_exon + 1 #(because it ends on the NEXT nucleotide)
   
-  pos_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds - 1) %% 3
-  pos_exonic$read_end_cds_frame = pos_exonic$read_end_in_cds %% 3
+  pos_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds - 1) %% 3 #because counting in 0 space
+  pos_exonic$read_end_cds_frame = (pos_exonic$read_end_in_cds - 1) %% 3 #because counting in 0 space
   
   table(pos_exonic$read_start_cds_frame)
   #filter(pos_exonic, start_read==351124) # one example that checks out
+  #filter(pos_exonic, start_read==189856) # another example thats checks out for frame info
 
 #for negative strand genes
 #we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
