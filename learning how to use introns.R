@@ -212,20 +212,21 @@ head(neg_exonic)
   #find start and end location in current exon
   for (i in 1:nrow(pos_exonic)){
     pos_exonic[i,"read_start_in_exon"] = pos_exonic[i,"start_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] + 1 #g[start] - e[sub j], +1 is b/c oddities of 0 counting
-    pos_exonic[i,"read_end_in_exon"] = pos_exonic[i,"end_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[end] - e[sub j]
+    pos_exonic[i,"read_end_in_exon"] = pos_exonic[i,"end_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] + 1 #g[end] - e[sub j]
   }
   
   head(pos_exonic)
   
   pos_exonic$read_start_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_start_in_exon 
-  pos_exonic$read_end_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_end_in_exon + 1 #(because it ends on the NEXT nucleotide)
+  pos_exonic$read_end_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_end_in_exon 
   
   pos_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds - 1) %% 3 #because counting in 0 space
   pos_exonic$read_end_cds_frame = (pos_exonic$read_end_in_cds - 1) %% 3 #because counting in 0 space
   
   table(pos_exonic$read_start_cds_frame)
-  #filter(pos_exonic, start_read==351124) # one example that checks out
-  #filter(pos_exonic, start_read==189856) # another example thats checks out for frame info
+  filter(pos_exonic, start_read==351124) # one example that checks out
+  filter(pos_exonic, start_read==189856) # another example thats checks out for frame info
+  head(pos_exonic)[1,]
 
 #for negative strand genes
 #we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
@@ -257,17 +258,8 @@ head(neg_exonic)
     }}
   
   head(neg_exonic) #check to make sure things look good
-  filter(neg_exonic, exon_number!=1)[1,] #and still look good for things where you're actually doing summation
 
   #find location in current exon, order of g and e different than positive strand
-  filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_exon_2"] #one example
-  filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"end_read"] #    " " 
-
-  #read start
-  filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_exon_2"] - filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"end_read"] #one example
-  #read end
-  filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_exon_2"] - filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_read"] #one example
-  
   for (i in 1:nrow(neg_exonic)){
     neg_exonic[i,"read_start_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"end_read"] + 1 # e[sub j] - g[start] , +1 is b/c oddities of 0 counting
     neg_exonic[i,"read_end_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"start_read"] + 1 #e[sub j] - g[end], +1 is b/c oddities of 0 counting
@@ -297,3 +289,14 @@ head(neg_exonic)
 neg_exonic$joint_frame = paste(neg_exonic$read_start_cds_frame, neg_exonic$read_end_cds_frame, sep=",")
 table(neg_exonic$joint_frame)
 barplot(table(neg_exonic$joint_frame))
+
+filter(pos_exonic, joint_frame=="2,1")
+filter(pos_exonic, gene_name=="YAL017W", start_read==121508)
+filter(pos_exonic, gene_name=="YFR019W", read_start_in_cds==5355)
+sum(filter(pos_exonic, joint_frame=="2,1")[,"frag_count"])
+sum(filter(pos_exonic, joint_frame=="0,2")[,"frag_count"])
+hist(filter(pos_exonic, joint_frame=="2,1")[,"frag_count"])
+
+sample_n(filter(pos_exonic, joint_frame=="2,1"), size=1)
+table(filter(pos_exonic, gene_name=="YPR204W")[,"joint_frame"])
+filter()
