@@ -114,8 +114,6 @@ head(pos)
       #this +1 is important because start_cds = n-1, where n == A of ATG (eg YAL003W ATG has A at 142174 but start cds is 142713; seq shown below in frameness)
     }
 
-filter(neg_exons, gene_name=="YBR090C")
-
 #function to check if exonic and if so which exon for positive strand
   positive_exon = function(generic_positive){
     for (i in 1:nrow(generic_positive)){
@@ -142,7 +140,6 @@ filter(neg_exons, gene_name=="YBR090C")
 
 pos_exons_copy = positive_exon(pos_exons)
 table(pos_exons_copy$occurs_in_exon)
-head(pos_exons_copy, n=1)
 
 #function to check if exonic and if so which exon for negative strand
 negative_exon = function(generic_negative){
@@ -170,14 +167,7 @@ negative_exon = function(generic_negative){
 
 neg_exons_copy = negative_exon(neg_exons)
 table(neg_exons_copy$occurs_in_exon)
-sample_n(filter(neg_exons_copy, occurs_in_exon=="intronic", gene_name!="YHL050C"))
-filter(neg_exons_copy, occurs_in_exon=="intronic", gene_name!=c("YBR090C", "YHL050C", "YNL098C", "YDL087C"))
-filter(neg_exons_copy, gene_name=="YML124C")
 
-YNL098C YDL087C #cases wherein it misses by 1nt
-table(pos_exons_copy$occurs_in_exon)
-pos_intronic = filter(pos_exons_copy, occurs_in_exon=="intronic")
-pos_intronic[order(pos_intronic$gene_name),]
 ## now we need to see if the exonic fragments are in frame or not
 #pull exonic fragments
 pos_exonic = filter(pos_exons_copy, occurs_in_exon!="intronic")
