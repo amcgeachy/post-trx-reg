@@ -224,7 +224,47 @@ tester$end_read_cds_frame = tester$end_read_in_cds %% 3
 
 tester #totally checks out!
 
+#but that shit don't work for the big table, and I can't figure out why. so we do this instead.
+for (i in 1:nrow(pos_exonic)){
+  if (pos_exonic[i,"occurs_in_exon"]=="start_exon_1"){
+    pos_exonic[i,"prior_exon_sums"] = 0
+  } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_2"){
+    pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"]
+  } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_3"){
+    pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"]
+  } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_4"){
+    pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] 
+  } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_5"){
+    pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] 
+  } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_6"){
+    pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] 
+  } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_7"){
+    pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] + pos_exonic[i,"exon_size_6"]
+  } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_8"){
+    pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] + pos_exonic[i,"exon_size_6"] + pos_exonic[i,"exon_size_7"]
+  } else {
+    pos_exonic[i,"prior_exon_sums"] = NA
+  }}
 
+head(pos_exonic)
+
+#find start and end location in current exon
+for (i in 1:nrow(pos_exonic)){
+  pos_exonic[i,"read_start_in_exon"] = g_minus_e_start = pos_exonic[i,"start_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] + 1 #g[start] - e[sub j], +1 is b/c oddities of 0 counting
+  pos_exonic[i,"read_end_in_exon"] = pos_exonic[i,"end_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[end] - e[sub j]
+}
+
+head(pos_exonic)
+
+pos_exonic$read_start_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_start_in_exon 
+pos_exonic$read_end_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_end_in_exon
+
+pos_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds - 1) %% 3
+pos_exonic$read_end_cds_frame = pos_exonic$read_end_in_cds %% 3
+
+table(pos_exonic$read_start_cds_frame)
+sample_n(filter(pos_exonic, occurs_in_exon!="start_exon_1"), size = 1)
+#filter(pos_exonic, start_read==351124) # one example that checks out
 
 
 #and what we *really* care about is if it's in frame
