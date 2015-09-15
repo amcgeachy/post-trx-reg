@@ -146,10 +146,10 @@ pos_exons_copy = positive_exon(pos_exons)
 table(pos_exons_copy$occurs_in_exon)
 
 #three examples to make sure it worked 
-head(pos_exons_copy)[1,]
-filter(pos_exons_copy, exon_number!=1)[1,]
-filter(pos_exons_copy, occurs_in_exon=="intronic")[1,]
-filter(pos_exons_copy, occurs_in_exon=="intronic")
+head(pos_exons_copy)[1,] #checked
+filter(pos_exons_copy, exon_number!=1)[1,] #checked
+filter(pos_exons_copy, occurs_in_exon=="intronic")[1,] #checked
+filter(pos_exons_copy, occurs_in_exon=="intronic") #checked
 
 #reads that line up exactly with the ucsc start (n-1), but the ATG is actually at n
 #31     chrV      19588    19883       5066             100           +     chrV     19588   21097
@@ -186,6 +186,15 @@ negative_exon = function(generic_negative){
 
 neg_exons_copy = negative_exon(neg_exons)
 table(neg_exons_copy$occurs_in_exon)
+
+#three examples to make sure it worked 
+head(neg_exons_copy)[1,] #checked
+filter(neg_exons_copy, exon_number!=1)[1,] #checked
+filter(neg_exons_copy, occurs_in_exon=="intronic")[1,] #checked
+filter(neg_exons_copy, occurs_in_exon=="intronic")
+
+#reads that line up exactly with the ucsc start (n-1), but the ATG is actually at n
+#1     chrII     426869   427058          3             100           -    chrII    426332  427058
 
 ## now we need to see if the exonic fragments are in frame or not
 #pull exonic fragments
