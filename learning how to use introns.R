@@ -103,35 +103,39 @@ head(pos)
 #for both positive genes  
     for (i in 1:8){
       pos_exons[,starts[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)] + 1 
-      #this +1 is important because start_cds = n-1, where n == A of ATG (eg YAL003W ATG has A at 142174 but start cds is 142713; seq shown below in frameness)
+      #this +1 is important because start_cds = n-1, where n == A of ATG (eg YAL003W ATG has A at 142174 but start cds is 142713)
       pos_exons[,ends[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)] + pos_exons[,sprintf("exon_size_%s", i)]
     }
   
 #and for negative strand genes
     for (i in 1:8){
       neg_exons[,ends[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)] + 1 
+      #this +1 is important because start_cds = n-1, where n == second A of TAA (eg YAL025C TAA has second A at 100225 but start_cds is 100224)
       neg_exons[,starts[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)] + neg_exons[,sprintf("exon_size_%s", i)]   
-      #this +1 is important because start_cds = n-1, where n == A of ATG (eg YAL003W ATG has A at 142174 but start cds is 142713; seq shown below in frameness)
     }
+
+#two examples just to check that it works out
+filter(neg_exons, exon_number!=1)[1,]
+filter(pos_exons, exon_number!=1)[1,]
 
 #function to check if exonic and if so which exon for positive strand
   positive_exon = function(generic_positive){
     for (i in 1:nrow(generic_positive)){
-    if (!is.na(generic_positive[i,"start_exon_1"]) & (generic_positive[i,"start_read"] >= (generic_positive[i,"start_exon_1"] -1) & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_1"])) { 
+    if (!is.na(generic_positive[i,"start_exon_1"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_1"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_1"])) { 
       generic_positive[i,"occurs_in_exon"] = "start_exon_1"
-    } else if (!is.na(generic_positive[i,"start_exon_2"]) & (generic_positive[i,"start_read"] >= (generic_positive[i,"start_exon_2"] -1) & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_2"])){
+    } else if (!is.na(generic_positive[i,"start_exon_2"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_2"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_2"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_2"
-    } else if (!is.na(generic_positive[i,"start_exon_3"]) & (generic_positive[i,"start_read"] >= (generic_positive[i,"start_exon_3"] -1) & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_3"])){
+    } else if (!is.na(generic_positive[i,"start_exon_3"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_3"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_3"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_3"
-    } else if (!is.na(generic_positive[i,"start_exon_4"]) & (generic_positive[i,"start_read"] >= (generic_positive[i,"start_exon_4"] -1) & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_4"])){
+    } else if (!is.na(generic_positive[i,"start_exon_4"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_4"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_4"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_4"
-    } else if (!is.na(generic_positive[i,"start_exon_5"]) & (generic_positive[i,"start_read"] >= (generic_positive[i,"start_exon_5"] -1) & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_5"])){
+    } else if (!is.na(generic_positive[i,"start_exon_5"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_5"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_5"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_5"
-    } else if (!is.na(generic_positive[i,"start_exon_6"]) & (generic_positive[i,"start_read"] >= (generic_positive[i,"start_exon_6"] -1) & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_6"])){
+    } else if (!is.na(generic_positive[i,"start_exon_6"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_6"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_6"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_6"
-    } else if (!is.na(generic_positive[i,"start_exon_7"]) & (generic_positive[i,"start_read"] >= (generic_positive[i,"start_exon_7"] -1) & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_7"])){
+    } else if (!is.na(generic_positive[i,"start_exon_7"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_7"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_7"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_7"
-    } else if (!is.na(generic_positive[i,"start_exon_8"]) & (generic_positive[i,"start_read"] >= (generic_positive[i,"start_exon_8"] -1) & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_8"])){
+    } else if (!is.na(generic_positive[i,"start_exon_8"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_8"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_8"])){
       generic_positive[i,"occurs_in_exon"] = "start_exon_8"
     } else {
       generic_positive[i,"occurs_in_exon"] = "intronic"
@@ -141,24 +145,39 @@ head(pos)
 pos_exons_copy = positive_exon(pos_exons)
 table(pos_exons_copy$occurs_in_exon)
 
+#three examples to make sure it worked 
+head(pos_exons_copy)[1,]
+filter(pos_exons_copy, exon_number!=1)[1,]
+filter(pos_exons_copy, occurs_in_exon=="intronic")[1,]
+filter(pos_exons_copy, occurs_in_exon=="intronic")
+
+#reads that line up exactly with the ucsc start (n-1), but the ATG is actually at n
+#31     chrV      19588    19883       5066             100           +     chrV     19588   21097
+#32     chrV     349979   350111          4             100           +     chrV    349979  351182
+#36  chrVIII     325597   325812          1             100           +  chrVIII    325597  326626
+#41    chrXI     171782   171967      15317             100           +    chrXI    171782  173861
+#42  chrXIII     250434   250678         11             100           +  chrXIII    250434  250911
+#46   chrXIV     707787   708067         20             100           +   chrXIV    707787  708195
+#47    chrXV     482032   482148        467             100           +    chrXV    482032  483085
+
 #function to check if exonic and if so which exon for negative strand
 negative_exon = function(generic_negative){
   for (i in 1:nrow(generic_negative)){
-    if (!is.na(generic_negative[i,"start_exon_1"]) & generic_negative[i,"end_read"] <= (generic_negative[i,"start_exon_1"] +1) & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_1"]){
+    if (!is.na(generic_negative[i,"start_exon_1"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_1"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_1"]){
       generic_negative[i,"occurs_in_exon"] = "start_exon_1"
-    } else if (!is.na(generic_negative[i,"start_exon_2"]) & generic_negative[i,"end_read"] <= (generic_negative[i,"start_exon_2"] +1) & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_2"]){
+    } else if (!is.na(generic_negative[i,"start_exon_2"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_2"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_2"]){
       generic_negative[i,"occurs_in_exon"] = "start_exon_2"
-    } else if (!is.na(generic_negative[i,"start_exon_3"]) & generic_negative[i,"end_read"] <= (generic_negative[i,"start_exon_3"] +1) & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_3"]){
+    } else if (!is.na(generic_negative[i,"start_exon_3"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_3"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_3"]){
       generic_negative[i,"occurs_in_exon"] = "start_exon_3"
-    } else if (!is.na(generic_negative[i,"start_exon_4"]) & generic_negative[i,"end_read"] <= (generic_negative[i,"start_exon_4"] +1) & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_4"]){
+    } else if (!is.na(generic_negative[i,"start_exon_4"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_4"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_4"]){
       generic_negative[i,"occurs_in_exon"] = "start_exon_4"
-    } else if (!is.na(generic_negative[i,"start_exon_5"]) & generic_negative[i,"end_read"] <= (generic_negative[i,"start_exon_5"] +1) & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_5"]){
+    } else if (!is.na(generic_negative[i,"start_exon_5"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_5"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_5"]){
       generic_negative[i,"occurs_in_exon"] = "start_exon_5"
-    } else if (!is.na(generic_negative[i,"start_exon_5"]) & generic_negative[i,"end_read"] <= (generic_negative[i,"start_exon_6"] +1) & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_5"]){
+    } else if (!is.na(generic_negative[i,"start_exon_5"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_6"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_5"]){
       generic_negative[i,"occurs_in_exon"] = "start_exon_6"
-    } else if (!is.na(generic_negative[i,"start_exon_7"]) & generic_negative[i,"end_read"] <= (generic_negative[i,"start_exon_7"] +1) & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_7"]){
+    } else if (!is.na(generic_negative[i,"start_exon_7"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_7"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_7"]){
       generic_negative[i,"occurs_in_exon"] = "start_exon_7"
-    } else if (!is.na(generic_negative[i,"start_exon_8"]) & generic_negative[i,"end_read"] <= (generic_negative[i,"start_exon_8"] +1) & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_8"]){
+    } else if (!is.na(generic_negative[i,"start_exon_8"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_8"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_8"]){
       generic_negative[i,"occurs_in_exon"] = "start_exon_8"
     } else {
       generic_negative[i,"occurs_in_exon"] = "intronic"
