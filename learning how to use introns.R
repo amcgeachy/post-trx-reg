@@ -169,7 +169,13 @@ table(pos_exons_copy$occurs_in_exon)
 
 neg_exons_copy = negative_exon(neg_exons)
 table(neg_exons_copy$occurs_in_exon)
+sample_n(filter(neg_exons_copy, occurs_in_exon=="intronic", gene_name!="YHL050C"), size=1)
+filter(neg_exons_copy, occurs_in_exon=="intronic", gene_name!="YHL050C")
 
+YNL098C YDL087C #cases wherein it misses by 1nt
+table(pos_exons_copy$occurs_in_exon)
+pos_intronic = filter(pos_exons_copy, occurs_in_exon=="intronic")
+pos_intronic[order(pos_intronic$gene_name),]
 ## now we need to see if the exonic fragments are in frame or not
 #pull exonic fragments
 pos_exonic = filter(pos_exons_copy, occurs_in_exon!="intronic")
