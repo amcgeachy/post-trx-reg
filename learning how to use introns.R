@@ -185,6 +185,7 @@ head(neg_exonic)
 # there are 1 to n exons in a gene, and the read is in exon j
 # c = Σ(s[sub 1:j-1]) + (g - e[sub j])
 
+  #sum previous exons
   for (i in 1:nrow(pos_exonic)){
     if (pos_exonic[i,"occurs_in_exon"]=="start_exon_1"){
       pos_exonic[i,"prior_exon_sums"] = 0
@@ -210,7 +211,7 @@ head(neg_exonic)
 
   #find start and end location in current exon
   for (i in 1:nrow(pos_exonic)){
-    pos_exonic[i,"read_start_in_exon"] = g_minus_e_start = pos_exonic[i,"start_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] + 1 #g[start] - e[sub j], +1 is b/c oddities of 0 counting
+    pos_exonic[i,"read_start_in_exon"] = pos_exonic[i,"start_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] + 1 #g[start] - e[sub j], +1 is b/c oddities of 0 counting
     pos_exonic[i,"read_end_in_exon"] = pos_exonic[i,"end_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[end] - e[sub j]
   }
   
@@ -231,39 +232,56 @@ head(neg_exonic)
 # start read CDS loc == sum(exon sizes from 1 to exon before the read occurs in) + (start exon genomic location for the exon the read is in - end read genomic location)
 # or when s is size, e is exon start site, g is start read genomic location, CDS location is c
 # there are 1 to n exons in a gene, and the read is in exon j
-# c = Σ(s[sub 1:j-1]) + (g - e[sub j])
+# c = Σ(s[sub 1:j-1]) + (e[sub j] - g)
 
 #summing the preceding exon sizes should be the same
+  for (i in 1:nrow(neg_exonic)){
+    if (neg_exonic[i,"occurs_in_exon"]=="start_exon_1"){
+      neg_exonic[i,"prior_exon_sums"] = 0
+    } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_2"){
+      neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"]
+    } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_3"){
+      neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"]
+    } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_4"){
+      neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] 
+    } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_5"){
+      neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] 
+    } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_6"){
+      neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] 
+    } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_7"){
+      neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] + neg_exonic[i,"exon_size_6"]
+    } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_8"){
+      neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] + neg_exonic[i,"exon_size_6"] + neg_exonic[i,"exon_size_7"]
+    } else {
+      neg_exonic[i,"prior_exon_sums"] = NA
+    }}
+  
+  head(neg_exonic) #check to make sure things look good
+  filter(neg_exonic, exon_number!=1)[1,] #and still look good for things where you're actually doing summation
 
-for (i in 1:nrow(neg_exonic)){
-  if (neg_exonic[i,"occurs_in_exon"]=="start_exon_1"){
-    neg_exonic[i,"prior_exon_sums"] = 0
-  } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_2"){
-    neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"]
-  } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_3"){
-    neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"]
-  } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_4"){
-    neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] 
-  } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_5"){
-    neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] 
-  } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_6"){
-    neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] 
-  } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_7"){
-    neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] + neg_exonic[i,"exon_size_6"]
-  } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_8"){
-    neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] + neg_exonic[i,"exon_size_6"] + neg_exonic[i,"exon_size_7"]
-  } else {
-    neg_exonic[i,"prior_exon_sums"] = NA
-  }}
+  #find location in current exon, order of g and e different than positive strand
+  filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_exon_2"] #one example
+  filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"end_read"] #    " " 
 
-head(neg_exonic) #check to make sure things look good
-filter(neg_exonic, exon_number!=1)[1,] #and still look good for things where you're actually doing summation
+  #read start
+  filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_exon_2"] - filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"end_read"] #one example
+  #read end
+  filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_exon_2"] - filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_read"] #one example
+  
+  for (i in 1:nrow(neg_exonic)){
+    neg_exonic[i,"read_start_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"end_read"] + 1 # e[sub j] - g[start] , +1 is b/c oddities of 0 counting
+    neg_exonic[i,"read_end_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"start_read"] + 1 #e[sub j] - g[end], +1 is b/c oddities of 0 counting
+  }
 
+head(neg_exonic)
+sample_n(filter(neg_exonic, exon_number!=1), size=1)
 
-filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_exon_2"]
-filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"end_read"]
+#translate position in exon to position in CDS, same as in positive strand?
+neg_exonic$read_start_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_start_in_exon 
+neg_exonic$read_end_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_end_in_exon + 1 #(because it ends on the NEXT nucleotide)
 
-filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"start_exon_2"] - filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,"end_read"]
+neg_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds - 1) %% 3 #because counting in 0 space
+neg_exonic$read_end_cds_frame = (pos_exonic$read_end_in_cds - 1) %% 3 #because counting in 0 space
 #and what we *really* care about is if it's in frame
 
 # ## BUT exons can enter or leave in ANY frame, so we need to figure out what the frame is of each exon (UGH)
