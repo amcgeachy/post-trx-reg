@@ -55,12 +55,12 @@ head(pos)
       colnames(empty_exon_size_pos)[j]=c(sprintf("exon_size_%s", j))
     }
   }
-head(pos)
-empty_start_pos  
+
   proc.time()
 
   pos_exons = cbind(pos, empty_start_pos, empty_exon_size_pos)
   head(pos_exons)
+
 #negative
 
   start_split_neg = lapply(strsplit(neg$exon_start, ","), rev)
@@ -100,18 +100,21 @@ empty_start_pos
     ends[i] = paste("end_exon_", i, sep="")
   }
  
-#for both positive and negative strand genes
-  genic_exons = rbind(pos_exons, neg_exons)
-  
+#for both positive genes  
     for (i in 1:8){
-      genic_exons[,starts[i]] = genic_exons$start_cds + genic_exons[,sprintf("start_%s", i)] + 1 
+      pos_exons[,starts[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)] + 1 
       #this +1 is important because start_cds = n-1, where n == A of ATG (eg YAL003W ATG has A at 142174 but start cds is 142713; seq shown below in frameness)
-      genic_exons[,ends[i]] = genic_exons$start_cds + genic_exons[,sprintf("start_%s", i)] + genic_exons[,sprintf("exon_size_%s", i)]
+      pos_exons[,ends[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)] + pos_exons[,sprintf("exon_size_%s", i)]
     }
   
-#separate them again for checking which exon they occur in since math is slightly different
-  neg_exons = filter(genic_exons, strand_read=="-")
-  pos_exons = filter(genic_exons, strand_read=="+")
+#and for negative strand genes
+    for (i in 1:8){
+      neg_exons[,starts[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)] + neg_exons[,sprintf("exon_size_%s", i)]
+      neg_exons[,ends[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)] + 1 
+      #this +1 is important because start_cds = n-1, where n == A of ATG (eg YAL003W ATG has A at 142174 but start cds is 142713; seq shown below in frameness)
+    }
+
+filter(neg_exons, gene_name=="YBL040C")
 
 #function to check if exonic and if so which exon for positive strand
   positive_exon = function(generic_positive){
