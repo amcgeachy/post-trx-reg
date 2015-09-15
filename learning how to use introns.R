@@ -223,7 +223,14 @@ head(neg_exonic)
   table(pos_exonic$read_start_cds_frame)
   #filter(pos_exonic, start_read==351124) # one example that checks out
 
+#for negative strand genes
+#we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
+# start read CDS loc == sum(exon sizes from 1 to exon before the read occurs in) + (start read genomic location - start exon genomic location for the exon the read is in)
+# or when s is size, e is exon start site, g is start read genomic location, CDS location is c
+# there are 1 to n exons in a gene, and the read is in exon j
+# c = Σ(s[sub 1:j-1]) + (g - e[sub j])
 
+filter(neg_exonic, occurs_in_exon!="start_exon_1")[1,]
 #and what we *really* care about is if it's in frame
 
 # ## BUT exons can enter or leave in ANY frame, so we need to figure out what the frame is of each exon (UGH)
