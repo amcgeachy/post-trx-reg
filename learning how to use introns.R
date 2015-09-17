@@ -33,7 +33,7 @@ head(pos)
 #split exons from column with commas into distinct columns
 #positive
   start_split_pos = strsplit(pos$exon_start, ",")
-  
+  head(pos)
   empty_start_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
   colnames(empty_start_pos) = c(1:8)
   
@@ -59,8 +59,8 @@ head(pos)
   proc.time()
 
   pos_exons = cbind(pos, empty_start_pos, empty_exon_size_pos)
-  head(pos_exons)
-
+  head(pos_exons)[1,]
+  filter(pos_exons, exon_number!=1)[1,]
 #negative
 
   start_split_neg = lapply(strsplit(neg$exon_start, ","), rev)
@@ -90,7 +90,8 @@ head(pos)
   proc.time()
   
   neg_exons = cbind(neg, empty_start_neg, empty_exon_size_neg)
-  
+  head(neg_exons)
+filter(neg_exons, exon_number!=1)[1,]
 #define absolute genomic coordinates of exons
   starts=NULL
   ends=NULL
@@ -102,17 +103,21 @@ head(pos)
  
 #for both positive genes  
     for (i in 1:8){
-      pos_exons[,starts[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)] + 1 
-      #this +1 is important because start_cds = n-1, where n == A of ATG (eg YAL003W ATG has A at 142174 but start cds is 142713)
-      pos_exons[,ends[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)] + pos_exons[,sprintf("exon_size_%s", i)]
+      pos_exons[,starts[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)]  
+      #DON'T DO +1 b/c it's 0 base
+      pos_exons[,ends[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)] + pos_exons[,sprintf("exon_size_%s", i)] -1
+      #need -1 because it's 0 base
     }
   
 #and for negative strand genes
     for (i in 1:8){
-      neg_exons[,ends[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)] + 1 
-      #this +1 is important because start_cds = n-1, where n == second A of TAA (eg YAL025C TAA has second A at 100225 but start_cds is 100224)
-      neg_exons[,starts[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)] + neg_exons[,sprintf("exon_size_%s", i)]   
+      neg_exons[,ends[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)]  
+      #don't do +1 b/c its 0 based
+      neg_exons[,starts[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)] + neg_exons[,sprintf("exon_size_%s", i)] -1
+      #need -1 because it's 0 base
     }
+
+head(neg_exons)[1,]
 
 #two examples just to check that it works out
 filter(neg_exons, exon_number!=1)[1,]
@@ -151,6 +156,8 @@ filter(pos_exons_copy, exon_number!=1)[1,] #checked
 filter(pos_exons_copy, occurs_in_exon=="intronic")[1,] #checked
 filter(pos_exons_copy, occurs_in_exon=="intronic") #checked
 
+filter(pos_exonic, gene_name=="YML034W")
+
 #reads that line up exactly with the ucsc start (n-1), but the ATG is actually at n
 #31     chrV      19588    19883       5066             100           +     chrV     19588   21097
 #32     chrV     349979   350111          4             100           +     chrV    349979  351182
@@ -184,34 +191,34 @@ negative_exon = function(generic_negative){
     }}
   generic_negative}
 
-neg_exons_copy = negative_exon(neg_exons)
-table(neg_exons_copy$occurs_in_exon)
-
-#three examples to make sure it worked 
-head(neg_exons_copy)[1,] #checked
-filter(neg_exons_copy, exon_number!=1)[1,] #checked
-filter(neg_exons_copy, occurs_in_exon=="intronic")[1,] #checked
-filter(neg_exons_copy, occurs_in_exon=="intronic")
-
-#reads that line up exactly with the ucsc start (n-1), but the ATG is actually at n
-#1     chrII     426869   427058          3             100           -    chrII    426332  427058
+  neg_exons_copy = negative_exon(neg_exons)
+  table(neg_exons_copy$occurs_in_exon)
+  
+  #three examples to make sure it worked 
+  head(neg_exons_copy)[1,] #checked
+  filter(neg_exons_copy, exon_number!=1)[1,] #checked
+  filter(neg_exons_copy, occurs_in_exon=="intronic")[1,] #checked
+  filter(neg_exons_copy, occurs_in_exon=="intronic")
+  
+  #reads that line up exactly with the ucsc start (n-1), but the ATG is actually at n
+  #1     chrII     426869   427058          3             100           -    chrII    426332  427058
 
 ## now we need to see if the exonic fragments are in frame or not
-#pull exonic fragments
-pos_exonic = filter(pos_exons_copy, occurs_in_exon!="intronic")
-pos_intronic = filter(pos_exons_copy, occurs_in_exon=="intronic") #just saving these for later
-head(pos_exonic)
+  #pull exonic fragments
+  pos_exonic = filter(pos_exons_copy, occurs_in_exon!="intronic")
+  pos_intronic = filter(pos_exons_copy, occurs_in_exon=="intronic") #just saving these for later
+  head(pos_exonic)
+  
+  neg_exonic = filter(neg_exons_copy, occurs_in_exon!="intronic")
+  neg_intronic = filter(neg_exons_copy, occurs_in_exon=="intronic") #just saving these for later
+  head(neg_exonic)
 
-neg_exonic = filter(neg_exons_copy, occurs_in_exon!="intronic")
-neg_intronic = filter(neg_exons_copy, occurs_in_exon=="intronic") #just saving these for later
-head(neg_exonic)
-
-#for positive strand genes
-#we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
-# start read CDS loc == sum(exon sizes from 1 to exon before the read occurs in) + (start read genomic location - start exon genomic location for the exon the read is in)
-# or when s is size, e is exon start site, g is start read genomic location, CDS location is c
-# there are 1 to n exons in a gene, and the read is in exon j
-# c = Σ(s[sub 1:j-1]) + (g - e[sub j])
+  #for positive strand genes
+  #we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
+  # start read CDS loc == sum(exon sizes from 1 to exon before the read occurs in) + (start read genomic location - start exon genomic location for the exon the read is in)
+  # or when s is size, e is exon start site, g is start read genomic location, CDS location is c
+  # there are 1 to n exons in a gene, and the read is in exon j
+  # c = Σ(s[sub 1:j-1]) + (g - e[sub j])
 
   #sum previous exons
   for (i in 1:nrow(pos_exonic)){
@@ -235,22 +242,35 @@ head(neg_exonic)
       pos_exonic[i,"prior_exon_sums"] = NA
     }}
   
-  head(pos_exonic)
+    #check if it worked
+    head(pos_exonic)[1,] #checked
+    filter(pos_exonic, exon_number!=1)[1,] #checked
+    filter(pos_exonic, occurs_in_exon=="start_exon_3")[1,] #checked
 
   #find start and end location in current exon
   for (i in 1:nrow(pos_exonic)){
-    pos_exonic[i,"read_start_in_exon"] = pos_exonic[i,"start_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] + 1 #g[start] - e[sub j], +1 is b/c oddities of 0 counting
-    pos_exonic[i,"read_end_in_exon"] = pos_exonic[i,"end_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] + 1 #g[end] - e[sub j]
+    pos_exonic[i,"read_start_in_exon"] = pos_exonic[i,"start_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[start] - e[sub j]
+    pos_exonic[i,"read_end_in_exon"] = (pos_exonic[i,"end_read"] -1) - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[end] - e[sub j], b/c its first nt not in read
   }
   
-  head(pos_exonic)
-  
+  #check to make sure they worked
+  head(pos_exonic)[1,] #checked
+  filter(pos_exonic, exon_number!=1)[1,] #checked
+
+  #define the location in the cds
   pos_exonic$read_start_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_start_in_exon 
   pos_exonic$read_end_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_end_in_exon 
   
-  pos_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds - 1) %% 3 #because counting in 0 space
-  pos_exonic$read_end_cds_frame = (pos_exonic$read_end_in_cds - 1) %% 3 #because counting in 0 space
+  filter(pos_exonic, exon_number!=1)[1,]
+
+  pos_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds) %% 3 #because counting in 0 space
+  pos_exonic$read_end_cds_frame = (pos_exonic$read_end_in_cds) %% 3 #because counting in 0 space
   
+  head(pos_exonic)[1,] #checked
+  filter(pos_exonic, exon_number!=1)[1,] #checked
+  filter(pos_exonic, read_start_cds_frame==2, read_end_cds_frame==1)[1,]
+  filter(pos_exonic, read_start_cds_frame==2, read_end_cds_frame==1)[2,]
+
   table(pos_exonic$read_start_cds_frame)
   filter(pos_exonic, start_read==351124) # one example that checks out
   filter(pos_exonic, start_read==189856) # another example thats checks out for frame info
@@ -289,10 +309,11 @@ head(neg_exonic)
 
   #find location in current exon, order of g and e different than positive strand
   for (i in 1:nrow(neg_exonic)){
-    neg_exonic[i,"read_start_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"end_read"] + 1 # e[sub j] - g[start] , +1 is b/c oddities of 0 counting
-    neg_exonic[i,"read_end_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"start_read"] + 1 #e[sub j] - g[end], +1 is b/c oddities of 0 counting
+    neg_exonic[i,"read_start_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - (neg_exonic[i,"end_read"] -1 )# e[sub j] - g[start], -1 b/c 1st nt outside of read
+    neg_exonic[i,"read_end_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"start_read"] #e[sub j] - g[end]
   }
-
+head(neg_exonic)[1,]
+100568- 101144
   head(neg_exonic)
   sample_n(filter(neg_exonic, exon_number!=1), size=1)
   
@@ -300,13 +321,14 @@ head(neg_exonic)
   neg_exonic$read_start_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_start_in_exon 
   neg_exonic$read_end_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_end_in_exon
   
-  neg_exonic$read_start_cds_frame = (neg_exonic$read_start_in_cds - 1) %% 3 #because counting in 0 space
-  neg_exonic$read_end_cds_frame = (neg_exonic$read_end_in_cds - 1) %% 3 #because counting in 0 space
+  neg_exonic$read_start_cds_frame = (neg_exonic$read_start_in_cds) %% 3 #because counting in 0 space
+  neg_exonic$read_end_cds_frame = (neg_exonic$read_end_in_cds) %% 3 #because counting in 0 space
   
   #head(neg_exonic, n=1) #YAL025C with start at 100399 seems to check out
   #filter(neg_exonic, gene_name=="YHR203C", start_read==504614) #also seems to check out, woo.
   table(neg_exonic$read_start_cds_frame)
-
+  table(neg_exonic$read_end_cds_frame)
+  table(pos_exonic$read_end_cds_frame)
 #now lets try to see how the framing distribution works out (0,0 vs 0,1, vs 0,2... etc)
 head(pos_exonic)
 pos_exonic$joint_frame = paste(pos_exonic$read_start_cds_frame, pos_exonic$read_end_cds_frame, sep=",")
@@ -318,13 +340,30 @@ neg_exonic$joint_frame = paste(neg_exonic$read_start_cds_frame, neg_exonic$read_
 table(neg_exonic$joint_frame)
 barplot(table(neg_exonic$joint_frame))
 
-filter(pos_exonic, joint_frame=="2,1")
-filter(pos_exonic, gene_name=="YAL017W", start_read==121508)
-filter(pos_exonic, gene_name=="YFR019W", read_start_in_cds==5355)
-sum(filter(pos_exonic, joint_frame=="2,1")[,"frag_count"])
-sum(filter(pos_exonic, joint_frame=="0,2")[,"frag_count"])
-hist(filter(pos_exonic, joint_frame=="2,1")[,"frag_count"])
+#because of the untemplated T at the start, we get pushed into nucleotide frame 0
+#BUT there's also an untempalted T at the end, so things that end in frame 1 are actually going to 
+#be the things that translate downstream. hence 0,1 being our frame here.
 
-sample_n(filter(pos_exonic, joint_frame=="2,1"), size=1)
-table(filter(pos_exonic, gene_name=="YPR204W")[,"joint_frame"])
-filter()
+#reorder the tables so we can join them
+matrix(c(colnames(neg_exonic), colnames(pos_exonic)), ncol=2)
+matrix(c(colnames(neg_exonic[,colnames(pos_exonic)]), colnames(pos_exonic)), ncol=2)
+matrix(c(colnames(neg_exonic[,colnames(pos_exonic)]), colnames(pos_exonic)), ncol=2)
+
+neg_exonic_copy = neg_exonic[,colnames(pos_exonic)]
+matrix(c(colnames(neg_exonic_copy), colnames(neg_exonic)), ncol=2)
+matrix(c(colnames(neg_exonic_copy), colnames(pos_exonic)), ncol=2)
+
+tot_exonic_with_cds = rbind(pos_exonic, neg_exonic_copy)
+
+#put in the aa coordinates
+tot_exonic_with_cds$aa_start = trunc(tot_exonic_with_cds$read_start_in_cds/3)
+tot_exonic_with_cds$aa_end = trunc(tot_exonic_with_cds$read_end_in_cds/3)
+
+hist(tot_exonic_with_cds$aa_start)
+hist(tot_exonic_with_cds$aa_end)
+
+filter(tot_exonic_with_cds, aa_start==max(tot_exonic_with_cds$aa_start))
+filter(tot_exonic_with_cds, aa_start==min(tot_exonic_with_cds$aa_start))
+
+filter(tot_exonic_with_cds, aa_end==max(tot_exonic_with_cds$aa_end))
+filter(tot_exonic_with_cds, aa_end==min(tot_exonic_with_cds$aa_end))
