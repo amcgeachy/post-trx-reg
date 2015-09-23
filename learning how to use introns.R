@@ -342,6 +342,20 @@ neg_exonic$joint_frame = paste(neg_exonic$read_start_cds_frame, neg_exonic$read_
 table(neg_exonic$joint_frame)
 barplot(table(neg_exonic$joint_frame))
 
+weighted_neg_read_frame = matrix(c(table(neg_exonic$joint_frame),
+c(sum(neg_exonic[which(neg_exonic$joint_frame=="0,0"),"frag_count"]),
+sum(neg_exonic[which(neg_exonic$joint_frame=="0,1"),"frag_count"]),
+sum(neg_exonic[which(neg_exonic$joint_frame=="0,2"),"frag_count"]),
+sum(neg_exonic[which(neg_exonic$joint_frame=="1,0"),"frag_count"]),
+sum(neg_exonic[which(neg_exonic$joint_frame=="1,1"),"frag_count"]),
+sum(neg_exonic[which(neg_exonic$joint_frame=="1,2"),"frag_count"]),
+sum(neg_exonic[which(neg_exonic$joint_frame=="2,0"),"frag_count"]),
+sum(neg_exonic[which(neg_exonic$joint_frame=="2,1"),"frag_count"]),
+sum(neg_exonic[which(neg_exonic$joint_frame=="2,2"),"frag_count"]))), ncol=2)
+barplot(weighted_neg_read_frame[,2], main="weighted")
+barplot(weighted_neg_read_frame[,1])
+barplot(table(neg_exonic$joint_frame))
+
 #because of the untemplated T at the start, we get pushed into nucleotide frame 0
 #BUT there's also an untempalted T at the end, so things that end in frame 1 are actually going to 
 #be the things that translate downstream. hence 0,1 being our frame here.
