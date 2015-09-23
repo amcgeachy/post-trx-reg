@@ -1,5 +1,5 @@
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_20140910_seq/")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq/")
 
 unique_orfs = read.table("up_inside_orf_unique.bed", header=FALSE, stringsAsFactors = FALSE)
 head(unique_orfs)
@@ -11,7 +11,7 @@ colnames(unique_orfs)
 
 unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
 hist(unique_orfs$read_length)
-head(unique_orfs)
+head(unique_orfs$exon_start)
 
 library("dplyr")
 
@@ -30,6 +30,7 @@ library("dplyr")
   nrow(neg) + nrow(pos)
   nrow(genic)
 head(pos)
+
 
 #split exons from column with commas into distinct columns
 #positive
