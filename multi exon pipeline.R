@@ -103,6 +103,174 @@ reading_frame_single_intron = function(inputfile, dataset_name){
     neg_exons = cbind(neg, empty_start_neg, empty_exon_size_neg)
     head(neg_exons)
   
+    #define absolute genomic coordinates of exons
+    starts=NULL
+    ends=NULL
+    
+    for (i in 1:8){
+      starts[i] = paste("start_exon_", i, sep="")
+      ends[i] = paste("end_exon_", i, sep="")
+    }
+    
+    #for both positive genes  
+    for (i in 1:8){
+      pos_exons[,starts[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)]  
+      #DON'T DO +1 b/c it's 0 base
+      pos_exons[,ends[i]] = pos_exons$start_cds + pos_exons[,sprintf("start_%s", i)] + pos_exons[,sprintf("exon_size_%s", i)] -1
+      #need -1 because it's 0 base
+    }
+    
+    #and for negative strand genes
+    for (i in 1:8){
+      neg_exons[,ends[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)]  
+      #don't do +1 b/c its 0 based
+      neg_exons[,starts[i]] = neg_exons$start_cds + neg_exons[,sprintf("start_%s", i)] + neg_exons[,sprintf("exon_size_%s", i)] -1
+      #need -1 because it's 0 base
+    }
+    
+    head(neg_exons)[1,]
+  
+  #function to check if exonic and if so which exon for positive strand
+    positive_exon = function(generic_positive){
+      for (i in 1:nrow(generic_positive)){
+        if (!is.na(generic_positive[i,"start_exon_1"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_1"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_1"])) { 
+          generic_positive[i,"occurs_in_exon"] = "start_exon_1"
+        } else if (!is.na(generic_positive[i,"start_exon_2"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_2"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_2"])){
+          generic_positive[i,"occurs_in_exon"] = "start_exon_2"
+        } else if (!is.na(generic_positive[i,"start_exon_3"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_3"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_3"])){
+          generic_positive[i,"occurs_in_exon"] = "start_exon_3"
+        } else if (!is.na(generic_positive[i,"start_exon_4"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_4"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_4"])){
+          generic_positive[i,"occurs_in_exon"] = "start_exon_4"
+        } else if (!is.na(generic_positive[i,"start_exon_5"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_5"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_5"])){
+          generic_positive[i,"occurs_in_exon"] = "start_exon_5"
+        } else if (!is.na(generic_positive[i,"start_exon_6"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_6"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_6"])){
+          generic_positive[i,"occurs_in_exon"] = "start_exon_6"
+        } else if (!is.na(generic_positive[i,"start_exon_7"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_7"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_7"])){
+          generic_positive[i,"occurs_in_exon"] = "start_exon_7"
+        } else if (!is.na(generic_positive[i,"start_exon_8"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_8"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_8"])){
+          generic_positive[i,"occurs_in_exon"] = "start_exon_8"
+        } else {
+          generic_positive[i,"occurs_in_exon"] = "intronic"
+        }} 
+      generic_positive }
+    
+    pos_exons_copy = positive_exon(pos_exons)
+  
+    #function to check if exonic and if so which exon for negative strand
+    negative_exon = function(generic_negative){
+      for (i in 1:nrow(generic_negative)){
+        if (!is.na(generic_negative[i,"start_exon_1"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_1"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_1"]){
+          generic_negative[i,"occurs_in_exon"] = "start_exon_1"
+        } else if (!is.na(generic_negative[i,"start_exon_2"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_2"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_2"]){
+          generic_negative[i,"occurs_in_exon"] = "start_exon_2"
+        } else if (!is.na(generic_negative[i,"start_exon_3"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_3"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_3"]){
+          generic_negative[i,"occurs_in_exon"] = "start_exon_3"
+        } else if (!is.na(generic_negative[i,"start_exon_4"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_4"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_4"]){
+          generic_negative[i,"occurs_in_exon"] = "start_exon_4"
+        } else if (!is.na(generic_negative[i,"start_exon_5"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_5"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_5"]){
+          generic_negative[i,"occurs_in_exon"] = "start_exon_5"
+        } else if (!is.na(generic_negative[i,"start_exon_5"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_6"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_5"]){
+          generic_negative[i,"occurs_in_exon"] = "start_exon_6"
+        } else if (!is.na(generic_negative[i,"start_exon_7"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_7"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_7"]){
+          generic_negative[i,"occurs_in_exon"] = "start_exon_7"
+        } else if (!is.na(generic_negative[i,"start_exon_8"]) & generic_negative[i,"end_read"] <= generic_negative[i,"start_exon_8"] & generic_negative[i,"start_read"] >= generic_negative[i,"end_exon_8"]){
+          generic_negative[i,"occurs_in_exon"] = "start_exon_8"
+        } else {
+          generic_negative[i,"occurs_in_exon"] = "intronic"
+        }}
+      generic_negative}
+    
+    neg_exons_copy = negative_exon(neg_exons)
+  
+    ## now we need to see if the exonic fragments are in frame or not
+    #pull exonic fragments
+    pos_exonic = filter(pos_exons_copy, occurs_in_exon!="intronic")
+    pos_intronic = filter(pos_exons_copy, occurs_in_exon=="intronic") #just saving these for later
+    head(pos_exonic)
+    
+    neg_exonic = filter(neg_exons_copy, occurs_in_exon!="intronic")
+    neg_intronic = filter(neg_exons_copy, occurs_in_exon=="intronic") #just saving these for later
+    head(neg_exonic)
+    
+    #for positive strand genes
+    #we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
+    # start read CDS loc == sum(exon sizes from 1 to exon before the read occurs in) + (start read genomic location - start exon genomic location for the exon the read is in)
+    # or when s is size, e is exon start site, g is start read genomic location, CDS location is c
+    # there are 1 to n exons in a gene, and the read is in exon j
+    # c = Σ(s[sub 1:j-1]) + (g - e[sub j])
+    
+    #sum previous exons
+    for (i in 1:nrow(pos_exonic)){
+      if (pos_exonic[i,"occurs_in_exon"]=="start_exon_1"){
+        pos_exonic[i,"prior_exon_sums"] = 0
+      } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_2"){
+        pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"]
+      } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_3"){
+        pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"]
+      } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_4"){
+        pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] 
+      } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_5"){
+        pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] 
+      } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_6"){
+        pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] 
+      } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_7"){
+        pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] + pos_exonic[i,"exon_size_6"]
+      } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_8"){
+        pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] + pos_exonic[i,"exon_size_6"] + pos_exonic[i,"exon_size_7"]
+      } else {
+        pos_exonic[i,"prior_exon_sums"] = NA
+      }}
+    
+    #find start and end location in current exon
+    for (i in 1:nrow(pos_exonic)){
+      pos_exonic[i,"read_start_in_exon"] = pos_exonic[i,"start_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[start] - e[sub j]
+      pos_exonic[i,"read_end_in_exon"] = (pos_exonic[i,"end_read"] -1) - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[end] - e[sub j], b/c its first nt not in read
+    }
+    
+    #define the location in the cds
+    pos_exonic$read_start_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_start_in_exon 
+    pos_exonic$read_end_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_end_in_exon 
+    
+    pos_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds) %% 3 #because counting in 0 space
+    pos_exonic$read_end_cds_frame = (pos_exonic$read_end_in_cds) %% 3 #because counting in 0 space
+    
+    #for negative strand genes
+    #we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
+    # start read CDS loc == sum(exon sizes from 1 to exon before the read occurs in) + (start exon genomic location for the exon the read is in - end read genomic location)
+    # or when s is size, e is exon start site, g is start read genomic location, CDS location is c
+    # there are 1 to n exons in a gene, and the read is in exon j
+    # c = Σ(s[sub 1:j-1]) + (e[sub j] - g)
+    
+    #summing the preceding exon sizes should be the same
+    for (i in 1:nrow(neg_exonic)){
+      if (neg_exonic[i,"occurs_in_exon"]=="start_exon_1"){
+        neg_exonic[i,"prior_exon_sums"] = 0
+      } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_2"){
+        neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"]
+      } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_3"){
+        neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"]
+      } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_4"){
+        neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] 
+      } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_5"){
+        neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] 
+      } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_6"){
+        neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] 
+      } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_7"){
+        neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] + neg_exonic[i,"exon_size_6"]
+      } else if (neg_exonic[i,"occurs_in_exon"]=="start_exon_8"){
+        neg_exonic[i,"prior_exon_sums"] = neg_exonic[i,"exon_size_1"] + neg_exonic[i,"exon_size_2"] + neg_exonic[i,"exon_size_3"] + neg_exonic[i,"exon_size_4"] + neg_exonic[i,"exon_size_5"] + neg_exonic[i,"exon_size_6"] + neg_exonic[i,"exon_size_7"]
+      } else {
+        neg_exonic[i,"prior_exon_sums"] = NA
+      }}
+    
+    head(neg_exonic) #check to make sure things look good
+    
+    #find location in current exon, order of g and e different than positive strand
+    for (i in 1:nrow(neg_exonic)){
+      neg_exonic[i,"read_start_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - (neg_exonic[i,"end_read"] -1 )# e[sub j] - g[start], -1 b/c 1st nt outside of read
+      neg_exonic[i,"read_end_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"start_read"] #e[sub j] - g[end]
+    }
+  
   
   #subset the table by what reading frame the fragments are in
   zero_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==0),]
