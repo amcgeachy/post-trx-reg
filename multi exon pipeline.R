@@ -287,11 +287,35 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
     table(pos_exonic$joint_frame)
     pdf(sprintf("reading frame distribution %s.pdf", dataset_name), useDingbats = FALSE)
     barplot(table(pos_exonic$joint_frame), main=sprintf("reading frame dist, +, %s", dataset_name))
-    
-    head(neg_exonic)
+      #do one weighted by frag count
+      weighted_pos_read_frame = matrix(c(table(pos_exonic$joint_frame),
+                                         c(sum(pos_exonic[which(pos_exonic$joint_frame=="0,0"),"frag_count"]),
+                                           sum(pos_exonic[which(pos_exonic$joint_frame=="0,1"),"frag_count"]),
+                                           sum(pos_exonic[which(pos_exonic$joint_frame=="0,2"),"frag_count"]),
+                                           sum(pos_exonic[which(pos_exonic$joint_frame=="1,0"),"frag_count"]),
+                                           sum(pos_exonic[which(pos_exonic$joint_frame=="1,1"),"frag_count"]),
+                                           sum(pos_exonic[which(pos_exonic$joint_frame=="1,2"),"frag_count"]),
+                                           sum(pos_exonic[which(pos_exonic$joint_frame=="2,0"),"frag_count"]),
+                                           sum(pos_exonic[which(pos_exonic$joint_frame=="2,1"),"frag_count"]),
+                                           sum(pos_exonic[which(pos_exonic$joint_frame=="2,2"),"frag_count"]))), ncol=2)
+      barplot(weighted_pos_read_frame[,2], main=sprintf("weighted reading frame dist, +, %s", dataset_name))
+              
     neg_exonic$joint_frame = paste(neg_exonic$read_start_cds_frame, neg_exonic$read_end_cds_frame, sep=",")
     table(neg_exonic$joint_frame)
     barplot(table(neg_exonic$joint_frame), main=sprintf("reading frame dist, -, %s", dataset_name))
+      #do one weighted by frag count
+      weighted_neg_read_frame = matrix(c(table(neg_exonic$joint_frame),
+                                         c(sum(neg_exonic[which(neg_exonic$joint_frame=="0,0"),"frag_count"]),
+                                           sum(neg_exonic[which(neg_exonic$joint_frame=="0,1"),"frag_count"]),
+                                           sum(neg_exonic[which(neg_exonic$joint_frame=="0,2"),"frag_count"]),
+                                           sum(neg_exonic[which(neg_exonic$joint_frame=="1,0"),"frag_count"]),
+                                           sum(neg_exonic[which(neg_exonic$joint_frame=="1,1"),"frag_count"]),
+                                           sum(neg_exonic[which(neg_exonic$joint_frame=="1,2"),"frag_count"]),
+                                           sum(neg_exonic[which(neg_exonic$joint_frame=="2,0"),"frag_count"]),
+                                           sum(neg_exonic[which(neg_exonic$joint_frame=="2,1"),"frag_count"]),
+                                           sum(neg_exonic[which(neg_exonic$joint_frame=="2,2"),"frag_count"]))), ncol=2)
+      barplot(weighted_neg_read_frame[,2], main=sprintf("weighted reading frame dist, -, %s", dataset_name))
+  
     dev.off()
   
     #because of the untemplated T at the start, we get pushed into nucleotide frame 0
