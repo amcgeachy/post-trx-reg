@@ -10,6 +10,7 @@ colnames(unique_orfs) = c("chr_read", "start_read", "end_read", "frag_count", "a
 colnames(unique_orfs)
 
 unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
+hist(unique_orfs$read_length)
 head(unique_orfs)
 
 library("dplyr")
@@ -359,11 +360,30 @@ tot_exonic_with_cds = rbind(pos_exonic, neg_exonic_copy)
 tot_exonic_with_cds$aa_start = trunc(tot_exonic_with_cds$read_start_in_cds/3)
 tot_exonic_with_cds$aa_end = trunc(tot_exonic_with_cds$read_end_in_cds/3)
 
+#see how the starts and stops look
 hist(tot_exonic_with_cds$aa_start)
 hist(tot_exonic_with_cds$aa_end)
 
-filter(tot_exonic_with_cds, aa_start==max(tot_exonic_with_cds$aa_start))
-filter(tot_exonic_with_cds, aa_start==min(tot_exonic_with_cds$aa_start))
+#but more relevant to see starts and stops in context of whole protein
+tot_exonic_with_cds$total_cds_length = NA
+for (i in 1:nrow(tot_exonic_with_cds)){
+  tot_exonic_with_cds[i, "total_cds_length"] = sum(ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_1"]), tot_exonic_with_cds[i,"exon_size_1"], 0),
+      ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_2"]), tot_exonic_with_cds[i,"exon_size_2"], 0),
+      ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_3"]), tot_exonic_with_cds[i,"exon_size_3"], 0),
+      ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_4"]), tot_exonic_with_cds[i,"exon_size_4"], 0),
+      ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_5"]), tot_exonic_with_cds[i,"exon_size_5"], 0),
+      ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_6"]), tot_exonic_with_cds[i,"exon_size_6"], 0),
+      ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_7"]), tot_exonic_with_cds[i,"exon_size_7"], 0),
+      ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_8"]), tot_exonic_with_cds[i,"exon_size_8"], 0))  
+}
 
-filter(tot_exonic_with_cds, aa_end==max(tot_exonic_with_cds$aa_end))
-filter(tot_exonic_with_cds, aa_end==min(tot_exonic_with_cds$aa_end))
+tot_exonic_with_cds$total_cds_length_in_aa = tot_exonic_with_cds$total_cds_length/3
+tot_exonic_with_cds$dist_aa_start = tot_exonic_with_cds$aa_start/tot_exonic_with_cds$total_cds_length_in_aa
+tot_exonic_with_cds$dist_aa_end = tot_exonic_with_cds$aa_end/tot_exonic_with_cds$total_cds_length_in_aa
+
+hist(tot_exonic_with_cds$dist_aa_start)
+hist(tot_exonic_with_cds$dist_aa_end)
+
+plot(log(tot_exonic_with_cds$frag_count, base = 10), tot_exonic_with_cds$read_length)
+
+
