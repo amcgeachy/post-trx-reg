@@ -271,41 +271,87 @@ reading_frame_single_intron = function(inputfile, dataset_name){
       neg_exonic[i,"read_end_in_exon"] = neg_exonic[i,neg_exonic[i,"occurs_in_exon"]] - neg_exonic[i,"start_read"] #e[sub j] - g[end]
     }
   
+    #translate position in exon to position in CDS, same as in positive strand?
+    neg_exonic$read_start_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_start_in_exon 
+    neg_exonic$read_end_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_end_in_exon
+    
+    neg_exonic$read_start_cds_frame = (neg_exonic$read_start_in_cds) %% 3 #because counting in 0 space
+    neg_exonic$read_end_cds_frame = (neg_exonic$read_end_in_cds) %% 3 #because counting in 0 space
+    
+    #now lets try to see how the framing distribution works out (0,0 vs 0,1, vs 0,2... etc)
+    head(pos_exonic)
+    pos_exonic$joint_frame = paste(pos_exonic$read_start_cds_frame, pos_exonic$read_end_cds_frame, sep=",")
+    table(pos_exonic$joint_frame)
+    pdf(sprintf("reading frame distribution %s.pdf", dataset_name), useDingbats = FALSE)
+    barplot(table(pos_exonic$joint_frame), main=sprintf("reading frame dist, +, %s", dataset_name))
+    
+    head(neg_exonic)
+    neg_exonic$joint_frame = paste(neg_exonic$read_start_cds_frame, neg_exonic$read_end_cds_frame, sep=",")
+    table(neg_exonic$joint_frame)
+    barplot(table(neg_exonic$joint_frame), main=sprintf("reading frame dist, -, %s", dataset_name))
+    dev.off()
   
-  #subset the table by what reading frame the fragments are in
-  zero_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==0),]
-  head(zero_zero)
-  zero_one = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==1),]
-  zero_two = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==2),]
-  head(zero_two)
-  nrow(zero_two)
-  one_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==1 & no_introns_both$end_readframe_aa_in_cds==0),]
-  head(one_zero)
-  one_one = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==1 & no_introns_both$end_readframe_aa_in_cds==1),]
-  one_two = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==1 & no_introns_both$end_readframe_aa_in_cds==2),]
+    #because of the untemplated T at the start, we get pushed into nucleotide frame 0
+    #BUT there's also an untempalted T at the end, so things that end in frame 1 are actually going to 
+    #be the things that translate downstream. hence 0,1 being our frame here.
+    
+    #reorder the tables so we can join them
+    matrix(c(colnames(neg_exonic[,colnames(pos_exonic)]), colnames(pos_exonic)), ncol=2)
+    
+    neg_exonic_copy = neg_exonic[,colnames(pos_exonic)]
+    matrix(c(colnames(neg_exonic_copy), colnames(pos_exonic)), ncol=2)
+    
+    tot_exonic_with_cds = rbind(pos_exonic, neg_exonic_copy)
+    
+    #put in the aa coordinates
+    tot_exonic_with_cds$aa_start = trunc(tot_exonic_with_cds$read_start_in_cds/3)
+    tot_exonic_with_cds$aa_end = trunc(tot_exonic_with_cds$read_end_in_cds/3)
+    
+    #see how the starts and stops look
+    pdf(sprintf("aa_start_and_end %s", dataset_name), useDingbats = FALSE)
+    hist(tot_exonic_with_cds$aa_start, main=sprintf("aa_start %s", dataset_name))
+    hist(tot_exonic_with_cds$aa_end, main=sprintf("aa_end %s", dataset_name))
+    dev.off()
+    
+    #but more relevant to see starts and stops in context of whole protein
+    tot_exonic_with_cds$total_cds_length = NA
+    for (i in 1:nrow(tot_exonic_with_cds)){
+      tot_exonic_with_cds[i, "total_cds_length"] = sum(ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_1"]), tot_exonic_with_cds[i,"exon_size_1"], 0),
+                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_2"]), tot_exonic_with_cds[i,"exon_size_2"], 0),
+                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_3"]), tot_exonic_with_cds[i,"exon_size_3"], 0),
+                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_4"]), tot_exonic_with_cds[i,"exon_size_4"], 0),
+                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_5"]), tot_exonic_with_cds[i,"exon_size_5"], 0),
+                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_6"]), tot_exonic_with_cds[i,"exon_size_6"], 0),
+                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_7"]), tot_exonic_with_cds[i,"exon_size_7"], 0),
+                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_8"]), tot_exonic_with_cds[i,"exon_size_8"], 0))  
+    }
+    
+    tot_exonic_with_cds$total_cds_length_in_aa = tot_exonic_with_cds$total_cds_length/3
+    tot_exonic_with_cds$dist_aa_start = tot_exonic_with_cds$aa_start/tot_exonic_with_cds$total_cds_length_in_aa
+    tot_exonic_with_cds$dist_aa_end = tot_exonic_with_cds$aa_end/tot_exonic_with_cds$total_cds_length_in_aa
+    
+    pdf(sprintf("aa_start_and_end fract of cds %s", dataset_name), useDingbats = FALSE)
+    hist(tot_exonic_with_cds$dist_aa_start, main=sprintf("aa_start fract of orf %s", dataset_name))
+    hist(tot_exonic_with_cds$dist_aa_end, main=sprintf("aa_end fract of orf %s", dataset_name))
+    dev.off()
+    
+    #out of curiousity, see length of read vs count
+    pdf(sprintf("frag count v readlength %s", dataset_name), useDingbats = FALSE)
+    plot(log(tot_exonic_with_cds$frag_count, base = 10), tot_exonic_with_cds$read_length,
+         main=sprintf("frag count v length %s", dataset_name))
+    dev.off()
+    
+    return(tot_exonic_with_cds)
+}
+    
+getwd()
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq/")    
+    
+    
+    
+    
+    
   
-  two_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==2 & no_introns_both$end_readframe_aa_in_cds==0),]
-  head(two_zero)
-  two_one = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==2 & no_introns_both$end_readframe_aa_in_cds==1),]
-  two_two = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==2 & no_introns_both$end_readframe_aa_in_cds==2),]
-  
-  #make a table of unweighted counts for each reading frame combo
-  read_frame_dist = c(nrow(zero_zero), nrow(zero_one), nrow(zero_two),
-                      nrow(one_zero), nrow(one_one), nrow(one_two),
-                      nrow(two_zero), nrow(two_one), nrow(two_two))
-  
-  read_frame_dist_table = matrix(read_frame_dist, nrow =3)
-  rownames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
-  colnames(read_frame_dist_table) = c("ends in zero", "ends in one", "ends in two")
-  read_frame_dist_table
-  
-  #plot it
-  pdf(sprintf("readingframe %s with numbers.pdf", dataset_name), useDingbats = FALSE)
-  barplot(read_frame_dist, xaxt = "n", main=sprintf("Single intron read frame distribution, %s", dataset_name))
-  labels=c("0,0", "0,1", "0,2",
-           "1,0", "1,1", "1,2",
-           "2,0", "2,1", "2,2")
-  axis(1, at=(1:9), labels=labels, cex=.05)
   
   #now do it again, but weighted
   read_frame_dist_weighted = c(sum(zero_zero$frag_count), sum(zero_one$frag_count), sum(zero_two$frag_count),
