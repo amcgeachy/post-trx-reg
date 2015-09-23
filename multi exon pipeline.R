@@ -312,8 +312,8 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
     
     #see how the starts and stops look
     pdf(sprintf("aa_start_and_end %s.pdf", dataset_name), useDingbats = FALSE)
-    hist(tot_exonic_with_cds$aa_start, main=sprintf("aa_start %s", dataset_name))
-    hist(tot_exonic_with_cds$aa_end, main=sprintf("aa_end %s", dataset_name))
+    hist(tot_exonic_with_cds$aa_start, breaks=20, main=sprintf("aa_start %s", dataset_name)) #want smaller hist bins
+    hist(tot_exonic_with_cds$aa_end, breaks=20, main=sprintf("aa_end %s", dataset_name)) #want smaller hist bins
     dev.off()
     
     #but more relevant to see starts and stops in context of whole protein
@@ -339,7 +339,7 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
     dev.off()
     
     #out of curiousity, see length of read vs count
-    pdf(sprintf("frag count v readlength %s".pdf, dataset_name), useDingbats = FALSE)
+    pdf(sprintf("frag count v readlength %s.pdf", dataset_name), useDingbats = FALSE)
     plot(log(tot_exonic_with_cds$frag_count, base = 10), tot_exonic_with_cds$read_length,
          main=sprintf("frag count v length %s", dataset_name))
     dev.off()
