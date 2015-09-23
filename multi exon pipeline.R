@@ -5,13 +5,16 @@ library("dplyr")
 
 reading_frame_multi_intron = function(inputfile, dataset_name){
   #import data
-  unique_orfs = read.table(inputfile, header=FALSE)
+  unique_orfs = read.table(inputfile, header=FALSE, stringsAsFactors = FALSE)
   colnames(unique_orfs) = c("chr_read", "start_read", "end_read", "frag_count", "arbitrary_value", "strand_read",
                             "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
                             "thick_start", "thick_end", "RGB", "exon_number", "exon_size", "exon_start", "overlap")
   head(unique_orfs)
   
   unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
+  pdf(sprintf("read length %s.pdf", dataset_name), useDingbats = FALSE)
+  hist(unique_orfs$read_length, main=sprintf("read length %s", dataset_name))
+  dev.off()
   head(unique_orfs)
   
   
