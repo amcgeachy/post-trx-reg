@@ -1,18 +1,18 @@
 getwd()
 setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_20140910_seq/")
 
+library("dplyr")
+
 reading_frame_single_intron = function(inputfile, dataset_name){
   #import data
   unique_orfs = read.table(inputfile, header=FALSE)
   colnames(unique_orfs) = c("chr_read", "start_read", "end_read", "frag_count", "arbitrary_value", "strand_read",
                             "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
-                            "thick_start", "thick_end", "RGB", "exon_number", "exon_start", "exon_end", "overlap")
-  
+                            "thick_start", "thick_end", "RGB", "exon_number", "exon_size", "exon_start", "overlap")
   head(unique_orfs)
   
   unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
   head(unique_orfs)
-  
   
   
   #make counts for pie chart in terms of genic or not
@@ -35,7 +35,73 @@ reading_frame_single_intron = function(inputfile, dataset_name){
       main=sprintf("percent in gene, %s", dataset_name))
   dev.off()
   
-  #make a subset of data that we'll work with for now (single intron) and add metrics
+  #processing exon genes. 
+    #separate by + and -
+    neg = filter(genic, strand_read=="-")
+    pos = filter(genic, strand_read=="+")
+  
+    #split exons from column with commas into distinct columns
+    #positive
+    start_split_pos = strsplit(pos$exon_start, ",")
+    head(pos)
+    empty_start_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
+    colnames(empty_start_pos) = c(1:8)
+    
+    for (i in 1:nrow(pos)){
+      for (j in 1:8){
+        empty_start_pos[i,j]=as.numeric(start_split_pos[[i]][j])
+        colnames(empty_start_pos)[j]=c(sprintf("start_%s", j))
+      }
+    }
+    
+    exon_size_split_pos = strsplit(pos$exon_size, ",")
+    
+    empty_exon_size_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
+    colnames(empty_exon_size_pos) = c(1:8)
+    
+    for (i in 1:nrow(pos)){
+      for (j in 1:8){
+        empty_exon_size_pos[i,j]=as.numeric(exon_size_split_pos[[i]][j])
+        colnames(empty_exon_size_pos)[j]=c(sprintf("exon_size_%s", j))
+      }
+    }
+    
+    proc.time()
+    
+    pos_exons = cbind(pos, empty_start_pos, empty_exon_size_pos)
+    head(pos_exons)[1,]
+    filter(pos_exons, exon_number!=1)[1,]
+  
+    #negative
+    
+    start_split_neg = lapply(strsplit(neg$exon_start, ","), rev)
+    
+    empty_start_neg=matrix(data=NA, nrow=nrow(neg), ncol=8)
+    colnames(empty_start_neg) = c(1:8)
+    
+    for (i in 1:nrow(neg)){
+      for (j in 1:8){
+        empty_start_neg[i,j]=as.numeric(start_split_neg[[i]][j])
+        colnames(empty_start_neg)[j]=c(sprintf("start_%s", j))
+      }
+    }
+    
+    exon_size_split_neg = lapply(strsplit(neg$exon_size, ","), rev)
+    
+    empty_exon_size_neg=matrix(data=NA, nrow=nrow(neg), ncol=8)
+    colnames(empty_exon_size_neg) = c(1:8)
+    
+    for (i in 1:nrow(neg)){
+      for (j in 1:8){
+        empty_exon_size_neg[i,j]=as.numeric(exon_size_split_neg[[i]][j])
+        colnames(empty_exon_size_neg)[j]=c(sprintf("exon_size_%s", j))
+      }
+    }
+    
+    proc.time()
+    
+    neg_exons = cbind(neg, empty_start_neg, empty_exon_size_neg)
+    head(neg_exons)
   
   
   #subset the table by what reading frame the fragments are in
