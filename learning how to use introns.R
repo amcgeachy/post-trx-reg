@@ -1,7 +1,7 @@
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq/")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq copy/")
 
-unique_orfs = read.table("up_inside_orf_unique.bed", header=FALSE, stringsAsFactors = FALSE)
+unique_orfs = read.table("post_recomb_inside_orf_unique.bed", header=FALSE, stringsAsFactors = FALSE)
 head(unique_orfs)
 colnames(unique_orfs) = c("chr_read", "start_read", "end_read", "frag_count", "arbitrary_value", "strand_read",
                           "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
@@ -30,72 +30,40 @@ library("dplyr")
   
   nrow(neg) + nrow(pos)
   nrow(genic)
-head(pos)
 
-
-#split exons from column with commas into distinct columns
-#positive
-
-head(pos)
-
-test = head(filter(pos, exon_number!=1), n=1)
-test
-strsplit(test$exon_start, ",")
+  #split exons from column with commas into distinct columns
+  #positive
+  
   start_split_pos = strsplit(pos$exon_start, ",")
-  head(start_split_pos)
   empty_start_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
   colnames(empty_start_pos) = c(1:8)
   
-  for (i in 1:nrow(pos)){
-    for (j in 1:8){
-      empty_start_pos[i,j]=as.numeric(start_split_pos[[i]][j])
-      colnames(empty_start_pos)[j]=c(sprintf("start_%s", j))
-    }
+  for (j in 1:8){
+    empty_start_pos[,j]=as.numeric(sapply(start_split_pos, function(x){x[j]}))
+    colnames(empty_start_pos)[j]=c(sprintf("start_%s", j))
   }
-  thing = list(c(1,2,3), c(4,5,6))
-thing
-
-lfl = sapply(start_split_pos, function(x){x[1]})
-lfl2 = sapply(start_split_pos, function(x){x[2]})
-table(lfl2)
-
-dim(empty_start_pos)
-head(empty_start_pos)
-for (j in 1:8){
-  empty_start_pos[,j]=as.numeric(sapply(start_split_pos, function(x){x[j]}))
-}
-which(!is.na(empty_start_pos[,2]))
-empty_start_pos[28,]
-head(lfl2)
-  exon_size_split_pos = strsplit(pos$exon_size, ",")
   
+  exon_size_split_pos = strsplit(pos$exon_size, ",")
   empty_exon_size_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
   colnames(empty_exon_size_pos) = c(1:8)
   
-  for (i in 1:nrow(pos)){
-    for (j in 1:8){
-      empty_exon_size_pos[i,j]=as.numeric(exon_size_split_pos[[i]][j])
-      colnames(empty_exon_size_pos)[j]=c(sprintf("exon_size_%s", j))
-    }
+  for (j in 1:8){
+    empty_exon_size_pos[,j]=as.numeric(sapply(exon_size_split_pos, function(x){x[j]}))
+    colnames(empty_exon_size_pos)[j]=c(sprintf("exon_size_%s", j))
   }
-
-  proc.time()
-
+  
   pos_exons = cbind(pos, empty_start_pos, empty_exon_size_pos)
-  head(pos_exons)[1,]
-  filter(pos_exons, exon_number!=1)[1,]
-#negative
-
+  
+  #negative
+  
   start_split_neg = lapply(strsplit(neg$exon_start, ","), rev)
-
+  
   empty_start_neg=matrix(data=NA, nrow=nrow(neg), ncol=8)
   colnames(empty_start_neg) = c(1:8)
   
-  for (i in 1:nrow(neg)){
-    for (j in 1:8){
-      empty_start_neg[i,j]=as.numeric(start_split_neg[[i]][j])
-      colnames(empty_start_neg)[j]=c(sprintf("start_%s", j))
-    }
+  for (j in 1:8){
+    empty_start_neg[,j]=as.numeric(sapply(start_split_neg, function(x){x[j]}))
+    colnames(empty_start_neg)[j]=c(sprintf("start_%s", j))
   }
   
   exon_size_split_neg = lapply(strsplit(neg$exon_size, ","), rev)
@@ -103,18 +71,14 @@ head(lfl2)
   empty_exon_size_neg=matrix(data=NA, nrow=nrow(neg), ncol=8)
   colnames(empty_exon_size_neg) = c(1:8)
   
-  for (i in 1:nrow(neg)){
-    for (j in 1:8){
-      empty_exon_size_neg[i,j]=as.numeric(exon_size_split_neg[[i]][j])
-      colnames(empty_exon_size_neg)[j]=c(sprintf("exon_size_%s", j))
-    }
+  for (j in 1:8){
+    empty_exon_size_neg[,j]=as.numeric(sapply(exon_size_split_neg, function(x){x[j]}))
+    colnames(empty_exon_size_neg)[j]=c(sprintf("exon_size_%s", j))
   }
-  
-  proc.time()
   
   neg_exons = cbind(neg, empty_start_neg, empty_exon_size_neg)
   head(neg_exons)
-filter(neg_exons, exon_number!=1)[1,]
+
 #define absolute genomic coordinates of exons
   starts=NULL
   ends=NULL

@@ -42,68 +42,53 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
     neg = filter(genic, strand_read=="-")
     pos = filter(genic, strand_read=="+")
   
-    #split exons from column with commas into distinct columns
-    #positive
-    start_split_pos = strsplit(pos$exon_start, ",")
-    head(pos)
-    empty_start_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
-    colnames(empty_start_pos) = c(1:8)
-    
-    for (i in 1:nrow(pos)){
-      for (j in 1:8){
-        empty_start_pos[i,j]=as.numeric(start_split_pos[[i]][j])
-        colnames(empty_start_pos)[j]=c(sprintf("start_%s", j))
-      }
-    }
-    
-    exon_size_split_pos = strsplit(pos$exon_size, ",")
-    
-    empty_exon_size_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
-    colnames(empty_exon_size_pos) = c(1:8)
-    
-    for (i in 1:nrow(pos)){
-      for (j in 1:8){
-        empty_exon_size_pos[i,j]=as.numeric(exon_size_split_pos[[i]][j])
-        colnames(empty_exon_size_pos)[j]=c(sprintf("exon_size_%s", j))
-      }
-    }
-    
-    proc.time()
-    
-    pos_exons = cbind(pos, empty_start_pos, empty_exon_size_pos)
-    head(pos_exons)[1,]
-    filter(pos_exons, exon_number!=1)[1,]
+  #split exons from column with commas into distinct columns
+  #positive
   
-    #negative
-    
-    start_split_neg = lapply(strsplit(neg$exon_start, ","), rev)
-    
-    empty_start_neg=matrix(data=NA, nrow=nrow(neg), ncol=8)
-    colnames(empty_start_neg) = c(1:8)
-    
-    for (i in 1:nrow(neg)){
-      for (j in 1:8){
-        empty_start_neg[i,j]=as.numeric(start_split_neg[[i]][j])
-        colnames(empty_start_neg)[j]=c(sprintf("start_%s", j))
-      }
-    }
-    
-    exon_size_split_neg = lapply(strsplit(neg$exon_size, ","), rev)
-    
-    empty_exon_size_neg=matrix(data=NA, nrow=nrow(neg), ncol=8)
-    colnames(empty_exon_size_neg) = c(1:8)
-    
-    for (i in 1:nrow(neg)){
-      for (j in 1:8){
-        empty_exon_size_neg[i,j]=as.numeric(exon_size_split_neg[[i]][j])
-        colnames(empty_exon_size_neg)[j]=c(sprintf("exon_size_%s", j))
-      }
-    }
-    
-    proc.time()
-    
-    neg_exons = cbind(neg, empty_start_neg, empty_exon_size_neg)
-    head(neg_exons)
+  start_split_pos = strsplit(pos$exon_start, ",")
+  empty_start_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
+  colnames(empty_start_pos) = c(1:8)
+  
+  for (j in 1:8){
+    empty_start_pos[,j]=as.numeric(sapply(start_split_pos, function(x){x[j]}))
+    colnames(empty_start_pos)[j]=c(sprintf("start_%s", j))
+  }
+  
+  exon_size_split_pos = strsplit(pos$exon_size, ",")
+  empty_exon_size_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
+  colnames(empty_exon_size_pos) = c(1:8)
+  
+  for (j in 1:8){
+    empty_exon_size_pos[,j]=as.numeric(sapply(exon_size_split_pos, function(x){x[j]}))
+    colnames(empty_exon_size_pos)[j]=c(sprintf("exon_size_%s", j))
+  }
+  
+  pos_exons = cbind(pos, empty_start_pos, empty_exon_size_pos)
+  
+  #negative
+  
+  start_split_neg = lapply(strsplit(neg$exon_start, ","), rev)
+  
+  empty_start_neg=matrix(data=NA, nrow=nrow(neg), ncol=8)
+  colnames(empty_start_neg) = c(1:8)
+  
+  for (j in 1:8){
+    empty_start_neg[,j]=as.numeric(sapply(start_split_neg, function(x){x[j]}))
+    colnames(empty_start_neg)[j]=c(sprintf("start_%s", j))
+  }
+  
+  exon_size_split_neg = lapply(strsplit(neg$exon_size, ","), rev)
+  
+  empty_exon_size_neg=matrix(data=NA, nrow=nrow(neg), ncol=8)
+  colnames(empty_exon_size_neg) = c(1:8)
+  
+  for (j in 1:8){
+    empty_exon_size_neg[,j]=as.numeric(sapply(exon_size_split_neg, function(x){x[j]}))
+    colnames(empty_exon_size_neg)[j]=c(sprintf("exon_size_%s", j))
+  }
+  
+  neg_exons = cbind(neg, empty_start_neg, empty_exon_size_neg)
+  head(neg_exons)
   
     #define absolute genomic coordinates of exons
     starts=NULL
@@ -378,9 +363,11 @@ down = reading_frame_multi_intron("down_inside_orf_unique.bed", "down")
 post = reading_frame_multi_intron("post_recomb_inside_orf_unique.bed", "post")
 pre = reading_frame_multi_intron("no_recomb_inside_orf_unique.bed", "pre")
 
+getwd()
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen3_miseq/")
 
 
-
+s1 = reading_frame_multi_intron("s1_inside_orf_unique.bed", "s1")
 
 read.table("up")
 
