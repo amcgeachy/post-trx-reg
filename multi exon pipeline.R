@@ -13,21 +13,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
   head(unique_orfs)
   
-  #note % with single exon, since we're only doing 1 exon currently
-  number_multi_exon_genes = sum((summary(unique_orfs$exon_number)[3:length(summary(unique_orfs$exon_number))]))
-  number_single_exon_genes = summary(unique_orfs$exon_number)[2]
-  number_all_exon_genes = sum(summary(unique_orfs$exon_number)[2:length(summary(unique_orfs$exon_number))])
-  number_multi_exon_genes
-  number_single_exon_genes
-  number_all_exon_genes
   
-  percent_single_exon_genes = number_single_exon_genes/number_all_exon_genes
-  percent_single_exon_genes
-  percent_multi_exon_genes = number_multi_exon_genes/number_all_exon_genes
-  percent_multi_exon_genes
-  exon_percents = matrix(c(percent_single_exon_genes, percent_multi_exon_genes))
-  rownames(exon_percents) = c("single exon genes", "multi exon genes")
-  exon_percents  
   
   #make counts for pie chart in terms of genic or not
   intergenic = unique_orfs[which(unique_orfs$exon_number=="."),]
@@ -50,44 +36,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   dev.off()
   
   #make a subset of data that we'll work with for now (single intron) and add metrics
-  #make list of single intron genes 
-  no_introns = unique_orfs[unique_orfs$exon_number==1,]
-  head(no_introns)
   
-  #subset it by + strand and make metrics
-  no_introns_pos = no_introns[no_introns$strand_read=="+",]
-  head(no_introns_pos)
-  
-  no_introns_pos[,"read_start_in_cds"] = no_introns_pos$start_read - no_introns_pos$start_cds
-  head(no_introns_pos)
-  
-  #subset it by - strand and make metrics
-  no_introns_neg = no_introns[no_introns$strand_read=="-",]
-  head(no_introns_neg)
-  
-  no_introns_neg[,"read_start_in_cds"] = no_introns_neg$end_cds - no_introns_neg$end_read 
-  head(no_introns_neg)
-  
-  #combine - and + into one table
-  dim(no_introns_neg) + dim(no_introns_pos)
-  no_introns_both = rbind(no_introns_neg, no_introns_pos)
-  dim(no_introns_both)
-  dim(no_introns_neg) + dim(no_introns_pos) #checks out
-  
-  pdf(sprintf("start end reading frame for %s.pdf", dataset_name), useDingbats = FALSE)
-  no_introns_both[,"read_start_aa_in_cds"] = no_introns_both$read_start_in_cds / 3
-  no_introns_both[,"start_readframe_aa_in_cds"] = no_introns_both$read_start_in_cds %% 3
-  hist(no_introns_both$start_readframe_aa_in_cds)
-  
-  no_introns_both[,"read_end_in_cds"] = no_introns_both$read_start_in_cds + no_introns_both$read_length
-  head(no_introns_both)
-  no_introns_both[,"read_end_aa_in_cds"] = no_introns_both$read_end_in_cds / 3
-  no_introns_both[,"end_readframe_aa_in_cds"] = no_introns_both$read_end_in_cds %% 3
-  hist(no_introns_both$end_readframe_aa_in_cds, add=TRUE, col=NULL, border=2)
-  
-  no_introns_both[,"readframe_tot"] = no_introns_both$end_readframe_aa_in_cds + no_introns_both$start_readframe_aa_in_cds
-  hist(no_introns_both$readframe_tot)
-  dev.off()
   
   #subset the table by what reading frame the fragments are in
   zero_zero = no_introns_both[which(no_introns_both$start_readframe_aa_in_cds==0 & no_introns_both$end_readframe_aa_in_cds==0),]
