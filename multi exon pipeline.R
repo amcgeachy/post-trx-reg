@@ -1,5 +1,4 @@
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_20140910_seq/")
 
 library("dplyr")
 
@@ -374,8 +373,16 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
 getwd()
 setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq/")    
     
-up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")    
-head(up)  
+up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
+down = reading_frame_multi_intron("down_inside_orf_unique.bed", "down")
+post = reading_frame_multi_intron("post_recomb_inside_orf_unique.bed", "post")
+pre = reading_frame_multi_intron("no_recomb_inside_orf_unique.bed", "pre")
+
+
+
+
+
+read.table("up")
 
 head(strsplit(up$exon_start, ","))
 head(up$exon_start)
