@@ -8,6 +8,7 @@ colnames(unique_orfs) = c("chr_read", "start_read", "end_read", "frag_count", "a
                           "thick_start", "thick_end", "RGB", "exon_number", "exon_size", "exon_start", "overlap")
 
 colnames(unique_orfs)
+head(unique_orfs)
 
 unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
 hist(unique_orfs$read_length)
@@ -34,8 +35,14 @@ head(pos)
 
 #split exons from column with commas into distinct columns
 #positive
+
+head(pos)
+
+test = head(filter(pos, exon_number!=1), n=1)
+test
+strsplit(test$exon_start, ",")
   start_split_pos = strsplit(pos$exon_start, ",")
-  head(pos)
+  head(start_split_pos)
   empty_start_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
   colnames(empty_start_pos) = c(1:8)
   
@@ -45,7 +52,21 @@ head(pos)
       colnames(empty_start_pos)[j]=c(sprintf("start_%s", j))
     }
   }
-  
+  thing = list(c(1,2,3), c(4,5,6))
+thing
+
+lfl = sapply(start_split_pos, function(x){x[1]})
+lfl2 = sapply(start_split_pos, function(x){x[2]})
+table(lfl2)
+
+dim(empty_start_pos)
+head(empty_start_pos)
+for (j in 1:8){
+  empty_start_pos[,j]=as.numeric(sapply(start_split_pos, function(x){x[j]}))
+}
+which(!is.na(empty_start_pos[,2]))
+empty_start_pos[28,]
+head(lfl2)
   exon_size_split_pos = strsplit(pos$exon_size, ",")
   
   empty_exon_size_pos=matrix(data=NA, nrow=nrow(pos), ncol=8)
