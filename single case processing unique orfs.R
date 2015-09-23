@@ -1,16 +1,36 @@
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_new//")
+setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_20140910_seq/")
 
-unique_orfs = read.table("up_inside_orf_unique.bed", header=FALSE)
+unique_orfs = read.table("up_inside_orf_unique.bed", header=FALSE, stringsAsFactors = FALSE)
 head(unique_orfs, n =10)
 colnames(unique_orfs) = c("chr_read", "start_read", "end_read", "frag_count", "arbitrary_value", "strand_read",
                           "chr_gene", "start_cds", "end_cds", "gene_name", "bed_score", "strand_cds", 
-                          "thick_start", "thick_end", "RGB", "exon_number", "exon_start", "exon_end", "overlap")
+                          "thick_start", "thick_end", "RGB", "exon_number", "exon_sizes", "exon_start", "overlap")
 
 head(unique_orfs)
+typeof(two_exon$exon_sizes)
+as.numeric(strsplit(two_exon$exon_sizes[1], ",")[[1]][1])
+sizes = strsplitAsListOfIntegerVectors(two_exon$exon_sizes)
+starts = strsplitAsListOfIntegerVectors(two_exon$exon_start)
+sizes[[1]]
+starts[[1]]
 
+
+thing = matrix(rep(NA, 236), nrow=236)
+thing
+for(i in 1:236){
+thing[i] = test[i][[1]]
+}
+thing
+?strsplit  
+.libPaths()
+library(GenomicRanges)
+library(rtracklayer)
 unique_orfs[,"read_length"] = unique_orfs$end_read - unique_orfs$start_read
 head(unique_orfs)
+two_exon = unique_orfs[which(unique_orfs$exon_number==2),]
+head(two_exon)
+??rtracklayer
 
 number_multi_exon_genes = sum((summary(unique_orfs$exon_number)[3:length(summary(unique_orfs$exon_number))]))
 length(summary(unique_orfs$exon_number))
