@@ -1,5 +1,5 @@
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_new/")
+setwd("/Users/annamcgeachy/Google Drive/post-trx reg/datafiles_20140910_seq/")
 
 reading_frame_single_intron = function(inputfile, dataset_name){
   #import data
@@ -141,7 +141,7 @@ reading_frame_single_intron = function(inputfile, dataset_name){
       dev.off()
   
   #return information into useful objects to use outside of the function
-  list(exon_percents = exon_percents, no_introns_both = no_introns_both, zero_two = zero_two)
+  list(exon_percents = exon_percents, no_introns_both = no_introns_both, zero_two = zero_two, read_frame_dist_weighted = read_frame_dist_weighted)
 }
 
 #subset into lists of in frame fragments
@@ -173,6 +173,28 @@ reading_frame_single_intron = function(inputfile, dataset_name){
   head(post_recomb$zero_two)
   nrow(post_recomb$zero_two)
 
+
+read_frame_dist_weighted = c(sum(zero_zero$frag_count), sum(zero_one$frag_count), sum(zero_two$frag_count),
+                             sum(one_zero$frag_count), sum(one_one$frag_count), sum(one_two$frag_count),
+                             sum(two_zero$frag_count), sum(two_one$frag_count), sum(two_two$frag_count))  
+barplot(read_frame_dist_weighted, xaxt = "n", main=sprintf("Single intron weighted read frame distribution, %s", dataset_name))
+labels=c("0,0", "0,1", "0,2",
+         "1,0", "1,1", "1,2",
+         "2,0", "2,1", "2,2")
+axis(1, at=(1:9), labels=labels, cex=.05)
+barplot(up$read_frame_dist_weighted, xaxt = "n")
+labels=c("0,0", "0,1", "0,2",
+         "1,0", "1,1", "1,2",
+         "2,0", "2,1", "2,2")
+axis(1, at=(1:9), labels=labels, cex=.05)
+no_recomb$read_frame_dist_weighted
+barplot(no_recomb$read_frame_dist_weighted, xaxt = "n")
+labels=c("0,0", "0,1", "0,2",
+         "1,0", "1,1", "1,2",
+         "2,0", "2,1", "2,2")
+axis(1, at=(1:9), labels=labels, cex=.05)
+
+up$read_frame_dist_weighted
 #####
 
 #Now combine the data into a single data frame. 
@@ -266,11 +288,9 @@ a_v_b_counts = function(data, condition1, condition2){
   return(temp)
 }
 
-?log
 up_v_down = a_v_b_counts(all_uniques, "up_frag", "down_frag")
 head(up_v_down)
 dim(up_v_down)
-typeof(up_v_down$up_frag)
 
 up_v_down[,"enriched_in_up_10x"] = ifelse(up_v_down$up_frag > 2.3 + up_v_down$down_frag, up_v_down$up_frag, NA)
 up_v_down[,"enriched_in_up_100x"] = ifelse(up_v_down$up_frag > 4.6 + up_v_down$down_frag, up_v_down$up_frag, NA)
@@ -319,6 +339,7 @@ xref = read.delim("SGD_features.tab", header=FALSE, quote="")
     enriched_up_more_info$enriched_in_up_100x = enriched_in_up[match(enriched_up_more_info$unique, enriched_in_up$identifiers),"enriched_in_up_100x"]
     enriched_up_more_info$ratio = enriched_in_up[match(enriched_up_more_info$unique, enriched_in_up$identifiers),"ratio"]
     
+head(enriched_up_more_info)
     #now cross reference it with xref to add gene description
     enriched_up_more_info$gene_useful = xref[match(enriched_up_more_info$gene_name, xref$V4),"V5"]
     enriched_up_more_info$gene_desc = xref[match(enriched_up_more_info$gene_name, xref$V4),"V16"]
@@ -410,27 +431,55 @@ head(all_uniques)
 summary(all_uniques$up_frag)
 hist(as.data.frame(table(all_uniques[which(all_uniques$up_frag>3 & all_uniques$up_frag<100),"up_frag"])))
 
-?hist
-all_uniques$up_frag>3
 #now look at these (up and down) versus post recombination
 head(all_uniques)
 up_v_post = a_v_b_counts(all_uniques, "up_frag", "post_recomb_frag")
 down_v_post = a_v_b_counts(all_uniques, "down_frag", "post_recomb_frag")
 
-head(up_v_post)
+#A v B plot for up v down using opacity to show density
+all_uniques_copy = all_uniques
+head(all_uniques_copy)
+all_uniques_copy$up_frag = ifelse(all_uniques_copy$up_frag==0, .5, all_uniques_copy$up_frag)
+all_uniques_copy$down_frag = ifelse(all_uniques_copy$down_frag==0, .5, all_uniques_copy$down_frag)
 
+pdf("up v down opacity with genes of interest.pdf", useDingbats = FALSE)
+plot(log2(all_uniques_copy$down_frag), log2(all_uniques_copy$up_frag), pch=16, col="#808D8D4A",
+     xlab="log2(unique fragment counts in down library)",
+     ylab="log2(unique fragment counts in up library)",
+     main="unique fragments counts in up v down")
+abline(a=0,b=1)
+abline(a=-4.6,b=1)
+abline(a=4.6,b=1)
+abline(a=-2.3,b=1)
+abline(a=2.3,b=1)
 
-YMR295C = enriched_down_zero_two[which(enriched_down_zero_two$gene_name=="YMR295C"),] #most enriched in down 
-YMR295C[,c("read_start_in_cds", "read_end_in_cds")]+ 1
+#pull unique identifiers
+PAT1_unique = enriched_down_more_info[grep("PAT1", enriched_down_more_info$gene_useful),"unique"]
+YMR295C_unique = enriched_down_more_info[grep("YMR295C", enriched_down_more_info$gene_name),"unique"]
 
-YPR204W = enriched_up_zero_two[which(enriched_up_zero_two$gene_name=="YPR204W"),] #most enriched in up
-YPR204W[,c("read_start_in_cds", "read_end_in_cds")] + 1
+CDC19_unique = enriched_up_more_info[grep("CDC19", enriched_up_more_info$gene_useful),"unique"]
+YPR204W_unique = enriched_up_more_info[grep("YPR204W", enriched_up_more_info$gene_name),"unique"]
 
-YAL038W = enriched_up_zero_two[which(enriched_up_zero_two$gene_name=="YAL038W"),] #PAT1
-YAL038W[,c("read_start_in_cds", "read_end_in_cds")] + 1
+#and the coordinations
+PAT1_coord = all_uniques_copy[match(PAT1_unique, all_uniques_copy$identifiers),]
+YMR295C_coord = all_uniques_copy[match(YMR295C_unique, all_uniques_copy$identifiers),]
 
-YDL160C = enriched_up_zero_two[which(enriched_up_zero_two$gene_name=="YDL160C"),] #DHH1
-(YDL160C[,c("read_start_in_cds", "read_end_in_cds")] + 1) /3
+CDC19_coord = all_uniques_copy[match(CDC19_unique, all_uniques_copy$identifiers),]
+YPR204W_coord = all_uniques_copy[match(YPR204W_unique, all_uniques_copy$identifiers),]
+
+PAT1_coord[order(PAT1_coord$identifiers),]
+
+#then plot
+points(log2(PAT1_coord$down_frag), log2(PAT1_coord$up_frag),
+       pch=16, col="red")
+points(log2(YMR295C_coord$down_frag), log2(YMR295C_coord$up_frag),
+       pch=16, col="orange")
+
+points(log2(CDC19_coord$down_frag), log2(CDC19_coord$up_frag),
+       pch=16, col="green")
+points(log2(YPR204W_coord$down_frag), log2(YPR204W_coord$up_frag),
+       pch=16, col="blue")
+dev.off()
 
 # up$no_introns_both[,"most_unique"] = paste(up$no_introns_both$chr_read, up$no_introns_both$start_read, 
 #                                       up$no_introns_both$end_read, up$no_introns_both$strand_read, 
