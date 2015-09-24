@@ -363,11 +363,44 @@ down = reading_frame_multi_intron("down_inside_orf_unique.bed", "down")
 post = reading_frame_multi_intron("post_recomb_inside_orf_unique.bed", "post")
 pre = reading_frame_multi_intron("no_recomb_inside_orf_unique.bed", "pre")
 
+write.csv(up, "up screen1.csv")
+write.csv(down, "down screen1.csv")
+write.csv(post, "post screen1.csv")
+
 getwd()
 setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen3_miseq/")
 
 
 s1 = reading_frame_multi_intron("s1_inside_orf_unique.bed", "s1")
+s2 = reading_frame_multi_intron("s2_inside_orf_unique.bed", "s2")
+s3 = reading_frame_multi_intron("s3_inside_orf_unique.bed", "s3")
+s4 = reading_frame_multi_intron("s4_inside_orf_unique.bed", "s4")
+s5 = reading_frame_multi_intron("s5_inside_orf_unique.bed", "s5")
+s6 = reading_frame_multi_intron("s6_inside_orf_unique.bed", "s6")
+s7 = reading_frame_multi_intron("s7_inside_orf_unique.bed", "s7")
+s8 = reading_frame_multi_intron("s8_inside_orf_unique.bed", "s8")
+
+write.csv(s1, "s1.csv")
+write.csv(s2, "s2.csv")
+write.csv(s3, "s3.csv")
+write.csv(s4, "s4.csv")
+write.csv(s5, "s5.csv")
+write.csv(s6, "s6.csv")
+write.csv(s7, "s7.csv")
+write.csv(s8, "s8.csv")
+
+pdf("frag count hist screen 1 and 3.pdf", useDingbats = FALSE)
+hist(s1$frag_count, main="2t post recomb, screen3")
+hist(s5$frag_count, main="4t post recomb, screen3")
+hist(post$frag_count, main="post recomb, screen1")
+dev.off()
+
+nrow(s1)
+sum(s1$frag_count)
+nrow(s5)
+sum(s5$frag_count)
+nrow(post)
+sum(post$frag_count)
 
 read.table("up")
 
