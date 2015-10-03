@@ -361,7 +361,28 @@ setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_mise
 up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
 down = reading_frame_multi_intron("down_inside_orf_unique.bed", "down")
 post = reading_frame_multi_intron("post_recomb_inside_orf_unique.bed", "post")
-pre = reading_frame_multi_intron("no_recomb_inside_orf_unique.bed", "pre")
+#pre = reading_frame_multi_intron("no_recomb_inside_orf_unique.bed", "pre") WAY too big to run correctly
+
+pre_one = reading_frame_multi_intron("no_recomb_1.bed", "pre1")
+write.csv(pre_one, "pre_one.csv")
+pre_two = reading_frame_multi_intron("no_recomb_2.bed", "pre2")
+write.csv(pre_two, "pre_two.csv")
+pre_three = reading_frame_multi_intron("no_recomb_3.bed", "pre3")
+pre_four = reading_frame_multi_intron("no_recomb_4.bed", "pre4")
+pre_five = reading_frame_multi_intron("no_recomb_5.bed", "pre5")
+pre_six = reading_frame_multi_intron("no_recomb_6.bed", "pre6")
+pre_seven = reading_frame_multi_intron("no_recomb_7.bed", "pre7")
+pre_eight = reading_frame_multi_intron("no_recomb_8.bed", "pre8")
+pre_nine = reading_frame_multi_intron("no_recomb_9.bed", "pre9")
+pre_ten = reading_frame_multi_intron("no_recomb_10.bed", "pre10")
+pre_eleven = reading_frame_multi_intron("no_recomb_11.bed", "pre11")
+pre_twelve = reading_frame_multi_intron("no_recomb_12.bed", "pre12")
+pre_thirteen = reading_frame_multi_intron("no_recomb_13.bed", "pre13")
+pre_fourteen = reading_frame_multi_intron("no_recomb_14.bed", "pre14")
+pre_fifteen = reading_frame_multi_intron("no_recomb_15.bed", "pre15")
+pre_sixteen = reading_frame_multi_intron("no_recomb_16.bed", "pre16")
+pre_seventeen = reading_frame_multi_intron("no_recomb_17.bed", "pre17")
+pre_eighteen = reading_frame_multi_intron("no_recomb_18.bed", "pre18")
 
 write.csv(up, "up screen1.csv")
 write.csv(down, "down screen1.csv")
@@ -388,6 +409,20 @@ write.csv(s5, "s5.csv")
 write.csv(s6, "s6.csv")
 write.csv(s7, "s7.csv")
 write.csv(s8, "s8.csv")
+
+
+
+getwd()
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_and_2_hiseq/")
+
+one_up = reading_frame_multi_intron("1up_inside_orf_unique.bed", "one_up")
+one_mid = reading_frame_multi_intron("1mid_inside_orf_unique.bed", "one_mid")
+one_down = reading_frame_multi_intron("1down_inside_orf_unique.bed", "one_down")
+one_post = reading_frame_multi_intron("1post_inside_orf_unique.bed", "one_post")
+one_pre = reading_frame_multi_intron("1pre_inside_orf_unique.bed", "one_pre")
+
+
+
 
 pdf("frag count hist screen 1 and 3.pdf", useDingbats = FALSE)
 hist(s1$frag_count, main="2t post recomb, screen3")
