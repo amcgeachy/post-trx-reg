@@ -354,62 +354,15 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
     
     return(tot_exonic_with_cds)
 }
-    
-getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq/")    
-    
-up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
-down = reading_frame_multi_intron("down_inside_orf_unique.bed", "down")
-post = reading_frame_multi_intron("post_recomb_inside_orf_unique.bed", "post")
-#pre = reading_frame_multi_intron("no_recomb_inside_orf_unique.bed", "pre") WAY too big to run correctly
 
-pre_one = reading_frame_multi_intron("no_recomb_1.bed", "pre1")
-write.csv(pre_one, "pre_one.csv")
-pre_two = reading_frame_multi_intron("no_recomb_2.bed", "pre2")
-write.csv(pre_two, "pre_two.csv")
-# pre_three = reading_frame_multi_intron("no_recomb_3.bed", "pre3")
-# pre_four = reading_frame_multi_intron("no_recomb_4.bed", "pre4")
-# pre_five = reading_frame_multi_intron("no_recomb_5.bed", "pre5")
-# pre_six = reading_frame_multi_intron("no_recomb_6.bed", "pre6")
-# pre_seven = reading_frame_multi_intron("no_recomb_7.bed", "pre7")
-# pre_eight = reading_frame_multi_intron("no_recomb_8.bed", "pre8")
-# pre_nine = reading_frame_multi_intron("no_recomb_9.bed", "pre9")
-# pre_ten = reading_frame_multi_intron("no_recomb_10.bed", "pre10")
-# pre_eleven = reading_frame_multi_intron("no_recomb_11.bed", "pre11")
-# pre_twelve = reading_frame_multi_intron("no_recomb_12.bed", "pre12")
-# pre_thirteen = reading_frame_multi_intron("no_recomb_13.bed", "pre13")
-# pre_fourteen = reading_frame_multi_intron("no_recomb_14.bed", "pre14")
-# pre_fifteen = reading_frame_multi_intron("no_recomb_15.bed", "pre15")
-# pre_sixteen = reading_frame_multi_intron("no_recomb_16.bed", "pre16")
-# pre_seventeen = reading_frame_multi_intron("no_recomb_17.bed", "pre17")
-# pre_eighteen = reading_frame_multi_intron("no_recomb_18.bed", "pre18")
-#the above was run on the server because it was crashing on my computer
+#An example
+# getwd()
+# setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq/")    
 
-write.csv(up, "up screen1.csv")
-write.csv(down, "down screen1.csv")
-write.csv(post, "post screen1.csv")
-
-getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen3_miseq/")
+#up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
 
 
-s1 = reading_frame_multi_intron("s1_inside_orf_unique.bed", "s1")
-s2 = reading_frame_multi_intron("s2_inside_orf_unique.bed", "s2")
-s3 = reading_frame_multi_intron("s3_inside_orf_unique.bed", "s3")
-s4 = reading_frame_multi_intron("s4_inside_orf_unique.bed", "s4")
-s5 = reading_frame_multi_intron("s5_inside_orf_unique.bed", "s5")
-s6 = reading_frame_multi_intron("s6_inside_orf_unique.bed", "s6")
-s7 = reading_frame_multi_intron("s7_inside_orf_unique.bed", "s7")
-s8 = reading_frame_multi_intron("s8_inside_orf_unique.bed", "s8")
 
-write.csv(s1, "s1.csv")
-write.csv(s2, "s2.csv")
-write.csv(s3, "s3.csv")
-write.csv(s4, "s4.csv")
-write.csv(s5, "s5.csv")
-write.csv(s6, "s6.csv")
-write.csv(s7, "s7.csv")
-write.csv(s8, "s8.csv")
 
 
 ###########
