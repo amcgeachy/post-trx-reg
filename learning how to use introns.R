@@ -141,7 +141,7 @@ pos_exons_copy$occurs_in_exon = pos_exons_occurs
 
 table(pos_exons_copy$occurs_in_exon)
 
-#three examples to make sure it worked 
+#examples to make sure it worked 
 head(pos_exons_copy)[1,] #checked
 filter(pos_exons_copy, exon_number!=1)[1,] #checked
 
