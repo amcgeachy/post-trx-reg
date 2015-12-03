@@ -111,57 +111,57 @@ filter(neg_exons, exon_number!=1)[1,]
 filter(pos_exons, exon_number!=1)[1,]
 
 #function to check if exonic and if so which exon for positive strand
-  positive_exon = function(generic_positive){
-    for (i in 1:nrow(generic_positive)){
-    if (!is.na(generic_positive[i,"start_exon_1"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_1"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_1"])) { 
-      generic_positive[i,"occurs_in_exon"] = "start_exon_1"
-    } else if (!is.na(generic_positive[i,"start_exon_2"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_2"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_2"])){
-      generic_positive[i,"occurs_in_exon"] = "start_exon_2"
-    } else if (!is.na(generic_positive[i,"start_exon_3"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_3"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_3"])){
-      generic_positive[i,"occurs_in_exon"] = "start_exon_3"
-    } else if (!is.na(generic_positive[i,"start_exon_4"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_4"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_4"])){
-      generic_positive[i,"occurs_in_exon"] = "start_exon_4"
-    } else if (!is.na(generic_positive[i,"start_exon_5"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_5"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_5"])){
-      generic_positive[i,"occurs_in_exon"] = "start_exon_5"
-    } else if (!is.na(generic_positive[i,"start_exon_6"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_6"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_6"])){
-      generic_positive[i,"occurs_in_exon"] = "start_exon_6"
-    } else if (!is.na(generic_positive[i,"start_exon_7"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_7"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_7"])){
-      generic_positive[i,"occurs_in_exon"] = "start_exon_7"
-    } else if (!is.na(generic_positive[i,"start_exon_8"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_8"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_8"])){
-      generic_positive[i,"occurs_in_exon"] = "start_exon_8"
-    } else {
-      generic_positive[i,"occurs_in_exon"] = "intronic"
-    }} 
-    generic_positive }
-
-tester = head(pos_exons)
-
-col_picker = function(x){
-  x$start_exon_1
-}
+#   positive_exon = function(generic_positive){
+#     for (i in 1:nrow(generic_positive)){
+#     if (!is.na(generic_positive[i,"start_exon_1"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_1"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_1"])) { 
+#       generic_positive[i,"occurs_in_exon"] = "start_exon_1"
+#     } else if (!is.na(generic_positive[i,"start_exon_2"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_2"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_2"])){
+#       generic_positive[i,"occurs_in_exon"] = "start_exon_2"
+#     } else if (!is.na(generic_positive[i,"start_exon_3"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_3"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_3"])){
+#       generic_positive[i,"occurs_in_exon"] = "start_exon_3"
+#     } else if (!is.na(generic_positive[i,"start_exon_4"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_4"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_4"])){
+#       generic_positive[i,"occurs_in_exon"] = "start_exon_4"
+#     } else if (!is.na(generic_positive[i,"start_exon_5"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_5"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_5"])){
+#       generic_positive[i,"occurs_in_exon"] = "start_exon_5"
+#     } else if (!is.na(generic_positive[i,"start_exon_6"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_6"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_6"])){
+#       generic_positive[i,"occurs_in_exon"] = "start_exon_6"
+#     } else if (!is.na(generic_positive[i,"start_exon_7"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_7"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_7"])){
+#       generic_positive[i,"occurs_in_exon"] = "start_exon_7"
+#     } else if (!is.na(generic_positive[i,"start_exon_8"]) & (generic_positive[i,"start_read"] >= generic_positive[i,"start_exon_8"] & generic_positive[i,"end_read"] <= generic_positive[i,"end_exon_8"])){
+#       generic_positive[i,"occurs_in_exon"] = "start_exon_8"
+#     } else {
+#       generic_positive[i,"occurs_in_exon"] = "intronic"
+#     }} 
+#     generic_positive }
+# 
+# tester = head(pos_exons)
+# 
+# col_picker = function(x){
+#   x$start_exon_1
+# }
 
 positive_exon_rows = function(row_entry_positive){
-  where = NULL
+  where_positive = NULL
   if (!is.na(as.numeric(row_entry_positive["start_exon_1"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_1"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_1"])) { 
-    where = "start_exon_1"
+    where_positive = "start_exon_1"
   } else if (!is.na(as.numeric(row_entry_positive["start_exon_2"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_2"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_2"])){
-    where = "start_exon_2"
+    where_positive = "start_exon_2"
   } else if (!is.na(as.numeric(row_entry_positive["start_exon_3"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_3"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_3"])){
-    where = "start_exon_3"
+    where_positive = "start_exon_3"
   } else if (!is.na(as.numeric(row_entry_positive["start_exon_4"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_4"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_4"])){
-    where = "start_exon_4"
+    where_positive = "start_exon_4"
   } else if (!is.na(as.numeric(row_entry_positive["start_exon_5"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_5"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_5"])){
-    where = "start_exon_5"
+    where_positive = "start_exon_5"
   } else if (!is.na(as.numeric(row_entry_positive["start_exon_6"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_6"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_6"])){
-    where = "start_exon_6"
+    where_positive = "start_exon_6"
   } else if (!is.na(as.numeric(row_entry_positive["start_exon_7"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_7"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_7"])){
-    where = "start_exon_7"
+    where_positive = "start_exon_7"
   } else if (!is.na(as.numeric(row_entry_positive["start_exon_8"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_8"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_8"])){
-    where = "start_exon_8"
+    where_positive = "start_exon_8"
   } else {
-    where = "intronic"
+    where_positive = "intronic"
   } 
-  where }
+  where_positive }
 
 
 pos_exons_occurs = apply(pos_exons, 1, positive_exon_rows)
@@ -214,9 +214,40 @@ negative_exon = function(generic_negative){
     }}
   generic_negative}
 
+?proc.time
   neg_exons_copy = negative_exon(neg_exons)
+
   table(neg_exons_copy$occurs_in_exon)
-  
+
+negative_exon_rows = function(row_entry_negative){
+  where_negative = NULL
+  if (!is.na(as.numeric(row_entry_negative["start_exon_1"])) & as.numeric(row_entry_negative["end_read"]) <= as.numeric(row_entry_negative["start_exon_1"]) & as.numeric(row_entry_negative["start_read"]) >= as.numeric(row_entry_negative["end_exon_1"])){
+    where_negative = "start_exon_1"
+  } else if (!is.na(as.numeric(row_entry_negative["start_exon_2"])) & as.numeric(row_entry_negative["end_read"]) <= as.numeric(row_entry_negative["start_exon_2"]) & as.numeric(row_entry_negative["start_read"]) >= as.numeric(row_entry_negative["end_exon_2"])){
+    where_negative = "start_exon_2"
+  } else if (!is.na(as.numeric(row_entry_negative["start_exon_3"])) & as.numeric(row_entry_negative["end_read"]) <= as.numeric(row_entry_negative["start_exon_3"]) & as.numeric(row_entry_negative["start_read"]) >= as.numeric(row_entry_negative["end_exon_3"])){
+    where_negative = "start_exon_3"
+  } else if (!is.na(as.numeric(row_entry_negative["start_exon_4"])) & as.numeric(row_entry_negative["end_read"]) <= as.numeric(row_entry_negative["start_exon_4"]) & as.numeric(row_entry_negative["start_read"]) >= as.numeric(row_entry_negative["end_exon_4"])){
+    where_negative = "start_exon_4"
+  } else if (!is.na(as.numeric(row_entry_negative["start_exon_5"])) & as.numeric(row_entry_negative["end_read"]) <= as.numeric(row_entry_negative["start_exon_5"]) & as.numeric(row_entry_negative["start_read"]) >= as.numeric(row_entry_negative["end_exon_5"])){
+    where_negative = "start_exon_5"
+  } else if (!is.na(as.numeric(row_entry_negative["start_exon_5"])) & as.numeric(row_entry_negative["end_read"]) <= as.numeric(row_entry_negative["start_exon_6"]) & as.numeric(row_entry_negative["start_read"]) >= as.numeric(row_entry_negative["end_exon_5"])){
+    where_negative = "start_exon_6"
+  } else if (!is.na(as.numeric(row_entry_negative["start_exon_7"])) & as.numeric(row_entry_negative["end_read"]) <= as.numeric(row_entry_negative["start_exon_7"]) & as.numeric(row_entry_negative["start_read"]) >= as.numeric(row_entry_negative["end_exon_7"])){
+    where_negative = "start_exon_7"
+  } else if (!is.na(as.numeric(row_entry_negative["start_exon_8"])) & as.numeric(row_entry_negative["end_read"]) <= as.numeric(row_entry_negative["start_exon_8"]) & as.numeric(row_entry_negative["start_read"]) >= as.numeric(row_entry_negative["end_exon_8"])){
+    where_negative = "start_exon_8"
+  } else {
+    where_negative = "intronic"
+  }
+  where_negative}
+
+neg_exons_occurs = apply(neg_exons, 1, negative_exon_rows)
+table(neg_exons_occurs)
+table(neg_exons_copy$occurs_in_exon)
+
+table(neg_exons_occurs == neg_exons_copy$occurs_in_exon)
+
   #three examples to make sure it worked 
   head(neg_exons_copy)[1,] #checked
   filter(neg_exons_copy, exon_number!=1)[1,] #checked
