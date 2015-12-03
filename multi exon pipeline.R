@@ -371,6 +371,14 @@ getwd()
 setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen4/")
 
 one_full_unsorted = reading_frame_multi_intron("1-100N-unsort_inside_orf_unique.bed", "1-100N-unsort")
+one_full_up = reading_frame_multi_intron("1-100N-up_inside_orf_unique.bed", "1-100N-up")
+one_full_mid = reading_frame_multi_intron("1-100N-mid_inside_orf_unique.bed", "1-100N-mid")
+one_full_down = reading_frame_multi_intron("1-100N-down_inside_orf_unique.bed", "1-100N-down")
+
+write.csv(one_full_unsorted, "one_full_unsorted.csv")
+write.csv(one_full_up, "one_full_up.csv")
+write.csv(one_full_mid, "one_full_mid.csv")
+write.csv(one_full_down, "one_full_down")
 
 
 setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq/")
