@@ -134,8 +134,44 @@ filter(pos_exons, exon_number!=1)[1,]
     }} 
     generic_positive }
 
+tester = head(pos_exons)
+
+col_picker = function(x){
+  x$start_exon_1
+}
+
+positive_exon_rows = function(row_entry_positive){
+  where = NULL
+  if (!is.na(as.numeric(row_entry_positive["start_exon_1"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_1"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_1"])) { 
+    where = "start_exon_1"
+  } else if (!is.na(as.numeric(row_entry_positive["start_exon_2"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_2"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_2"])){
+    where = "start_exon_2"
+  } else if (!is.na(as.numeric(row_entry_positive["start_exon_3"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_3"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_3"])){
+    where = "start_exon_3"
+  } else if (!is.na(as.numeric(row_entry_positive["start_exon_4"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_4"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_4"])){
+    where = "start_exon_4"
+  } else if (!is.na(as.numeric(row_entry_positive["start_exon_5"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_5"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_5"])){
+    where = "start_exon_5"
+  } else if (!is.na(as.numeric(row_entry_positive["start_exon_6"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_6"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_6"])){
+    where = "start_exon_6"
+  } else if (!is.na(as.numeric(row_entry_positive["start_exon_7"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_7"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_7"])){
+    where = "start_exon_7"
+  } else if (!is.na(as.numeric(row_entry_positive["start_exon_8"])) & as.numeric(row_entry_positive["start_read"]) >= as.numeric(row_entry_positive["start_exon_8"]) & as.numeric(row_entry_positive["end_read"]) <= as.numeric(row_entry_positive["end_exon_8"])){
+    where = "start_exon_8"
+  } else {
+    where = "intronic"
+  } 
+  where }
+
+
+pos_exons_occurs = apply(pos_exons, 1, positive_exon_rows)
+
+
 pos_exons_copy = positive_exon(pos_exons)
 table(pos_exons_copy$occurs_in_exon)
+table(pos_exons_occurs)
+
+table(pos_exons_copy$occurs_in_exon == pos_exons_occurs)
 
 #three examples to make sure it worked 
 head(pos_exons_copy)[1,] #checked
