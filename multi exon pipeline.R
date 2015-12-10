@@ -370,22 +370,22 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
     dev.off()
     
     #but more relevant to see starts and stops in context of whole protein
-    tot_exonic_with_cds$total_cds_length = NA
-    for (i in 1:nrow(tot_exonic_with_cds)){
-      tot_exonic_with_cds[i, "total_cds_length"] = sum(ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_1"]), tot_exonic_with_cds[i,"exon_size_1"], 0),
-                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_2"]), tot_exonic_with_cds[i,"exon_size_2"], 0),
-                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_3"]), tot_exonic_with_cds[i,"exon_size_3"], 0),
-                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_4"]), tot_exonic_with_cds[i,"exon_size_4"], 0),
-                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_5"]), tot_exonic_with_cds[i,"exon_size_5"], 0),
-                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_6"]), tot_exonic_with_cds[i,"exon_size_6"], 0),
-                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_7"]), tot_exonic_with_cds[i,"exon_size_7"], 0),
-                                                       ifelse(!is.na(tot_exonic_with_cds[i,"exon_size_8"]), tot_exonic_with_cds[i,"exon_size_8"], 0))  
+    cds_length = function(exonic_with_cds){
+    total_cds_length = sum(ifelse(!is.na(as.numeric(exonic_with_cds["exon_size_1"])), as.numeric(exonic_with_cds["exon_size_1"]), 0),
+                           ifelse(!is.na(as.numeric(exonic_with_cds["exon_size_2"])), as.numeric(exonic_with_cds["exon_size_2"]), 0),
+                           ifelse(!is.na(as.numeric(exonic_with_cds["exon_size_3"])), as.numeric(exonic_with_cds["exon_size_3"]), 0),
+                           ifelse(!is.na(as.numeric(exonic_with_cds["exon_size_4"])), as.numeric(exonic_with_cds["exon_size_4"]), 0),
+                           ifelse(!is.na(as.numeric(exonic_with_cds["exon_size_5"])), as.numeric(exonic_with_cds["exon_size_5"]), 0),
+                           ifelse(!is.na(as.numeric(exonic_with_cds["exon_size_6"])), as.numeric(exonic_with_cds["exon_size_6"]), 0),
+                           ifelse(!is.na(as.numeric(exonic_with_cds["exon_size_7"])), as.numeric(exonic_with_cds["exon_size_7"]), 0),
+                           ifelse(!is.na(as.numeric(exonic_with_cds["exon_size_8"])), as.numeric(exonic_with_cds["exon_size_8"]), 0))  
     }
-    
+  
+    tot_exonic_with_cds$total_cds_length = apply(tot_exonic_with_cds, 1, cds_length)
     tot_exonic_with_cds$total_cds_length_in_aa = tot_exonic_with_cds$total_cds_length/3
     tot_exonic_with_cds$dist_aa_start = tot_exonic_with_cds$aa_start/tot_exonic_with_cds$total_cds_length_in_aa
     tot_exonic_with_cds$dist_aa_end = tot_exonic_with_cds$aa_end/tot_exonic_with_cds$total_cds_length_in_aa
-    
+      
     pdf(sprintf("aa_start_and_end fract of cds %s.pdf", dataset_name), useDingbats = FALSE)
     hist(tot_exonic_with_cds$dist_aa_start, main=sprintf("aa_start fract of orf %s", dataset_name))
     hist(tot_exonic_with_cds$dist_aa_end, main=sprintf("aa_end fract of orf %s", dataset_name))
