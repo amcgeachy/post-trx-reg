@@ -299,8 +299,12 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
     neg_math["read_end_in_exon"] = as.numeric(neg_math[neg_math["occurs_in_exon"]]) - as.numeric(neg_math["start_read"]) #e[sub j] - g[end]
   }
   
-  neg_exonic$read_start_in_cds = apply(neg_exonic, 1, neg_math_start)
-  neg_exonic$read_end_in_cds = apply(neg_exonic, 1, neg_math_end)
+  neg_exonic$read_start_in_exon = apply(neg_exonic, 1, neg_math_start)
+  neg_exonic$read_end_in_exon = apply(neg_exonic, 1, neg_math_end)
+  
+  #define the location in the cds
+  neg_exonic$read_start_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_start_in_exon 
+  neg_exonic$read_end_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_end_in_exon 
   
   #translate position in exon to position in CDS
   neg_exonic$read_start_cds_frame = (neg_exonic$read_start_in_cds) %% 3 #because counting in 0 space

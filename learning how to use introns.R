@@ -305,8 +305,12 @@ table(neg_exons_copy$occurs_in_exon)
     neg_math["read_end_in_exon"] = as.numeric(neg_math[neg_math["occurs_in_exon"]]) - as.numeric(neg_math["start_read"]) #e[sub j] - g[end]
   }
   
-  neg_exonic$read_start_in_cds = apply(neg_exonic, 1, neg_math_start)
-  neg_exonic$read_end_in_cds = apply(neg_exonic, 1, neg_math_end)
+  neg_exonic$read_start_in_exon = apply(neg_exonic, 1, neg_math_start)
+  neg_exonic$read_end_in_exon = apply(neg_exonic, 1, neg_math_end)
+
+  #define the location in the cds
+  neg_exonic$read_start_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_start_in_exon 
+  neg_exonic$read_end_in_cds = neg_exonic$prior_exon_sums + neg_exonic$read_end_in_exon 
   
   #translate position in exon to position in CDS
   neg_exonic$read_start_cds_frame = (neg_exonic$read_start_in_cds) %% 3 #because counting in 0 space
@@ -363,7 +367,7 @@ tot_exonic_with_cds$aa_end = trunc(tot_exonic_with_cds$read_end_in_cds/3)
 #see how the starts and stops look
 hist(tot_exonic_with_cds$aa_start, breaks=20)
 hist(tot_exonic_with_cds$aa_end, breaks=20)
-?hist
+
 
 #but more relevant to see starts and stops in context of whole protein
 tot_exonic_with_cds$total_cds_length = NA
