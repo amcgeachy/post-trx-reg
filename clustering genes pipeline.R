@@ -1,111 +1,42 @@
-###########
-#OLD STUFF BELOW#
+#Expecting to start with a .csv file output from "multi exon pipeline.R"
+
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_and_2_hiseq/")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen4/")
 
-one_up = reading_frame_multi_intron("1up_inside_orf_unique.bed", "one_up")
-one_mid = reading_frame_multi_intron("1mid_inside_orf_unique.bed", "one_mid")
-one_down = reading_frame_multi_intron("1down_inside_orf_unique.bed", "one_down")
-one_post = reading_frame_multi_intron("1post_inside_orf_unique.bed", "one_post")
-one_pre = reading_frame_multi_intron("1pre_inside_orf_unique.bed", "one_pre")
+xref = read.delim("../SGD_features.tab", header=FALSE, quote="")
 
-
-
-
-pdf("frag count hist screen 1 and 3.pdf", useDingbats = FALSE)
-hist(s1$frag_count, main="2t post recomb, screen3")
-hist(s5$frag_count, main="4t post recomb, screen3")
-hist(post$frag_count, main="post recomb, screen1")
-dev.off()
-
-nrow(s1)
-sum(s1$frag_count)
-nrow(s5)
-sum(s5$frag_count)
-nrow(post)
-sum(post$frag_count)
-
-read.table("up")
-
-head(strsplit(up$exon_start, ","))
-head(up$exon_start)
-
-
-
-#now do it again, but weighted
-read_frame_dist_weighted = c(sum(zero_zero$frag_count), sum(zero_one$frag_count), sum(zero_two$frag_count),
-                             sum(one_zero$frag_count), sum(one_one$frag_count), sum(one_two$frag_count),
-                             sum(two_zero$frag_count), sum(two_one$frag_count), sum(two_two$frag_count))  
-barplot(read_frame_dist_weighted, xaxt = "n", main=sprintf("Single intron weighted read frame distribution, %s", dataset_name))
-labels=c("0,0", "0,1", "0,2",
-         "1,0", "1,1", "1,2",
-         "2,0", "2,1", "2,2")
-axis(1, at=(1:9), labels=labels, cex=.05)
-
-read_frame_dist_weighted_table = matrix(read_frame_dist_weighted, nrow =3)
-rownames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
-colnames(read_frame_dist_weighted_table) = c("ends in zero", "ends in one", "ends in two")
-read_frame_dist_weighted_table
-dev.off()
-
-#return information into useful objects to use outside of the function
-list(exon_percents = exon_percents, no_introns_both = no_introns_both, zero_two = zero_two, read_frame_dist_weighted = read_frame_dist_weighted)
+#make unique identifiers for each fragment
+pasting_together = function(x){
+  paste(x["chr_read"], as.numeric(x["start_read"]), as.numeric(x["end_read"]), x["strand_read"], sep="_")
 }
 
-#subset into lists of in frame fragments
-up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
-typeof(up)
-up$exon_percents
-head(up$no_introns_both)
-head(up$zero_two)
-nrow(up$zero_two)
+#one full up
+one_full_up = read.csv("one_full_up.csv")
 
-down = reading_frame_single_intron("down_inside_orf_unique.bed", "down")
-typeof(down)
-down$exon_percents
-head(down$no_introns_both)
-head(down$zero_two)
-nrow(down$zero_two)
+one_full_up_uniques = apply(one_full_up, 1, pasting_together)
+one_full_up$uniques = one_full_up_uniques
 
-no_recomb = reading_frame_single_intron("no_recomb_inside_orf_unique.bed", "no_recomb")
-typeof(no_recomb)
-no_recomb$exon_percents
-head(no_recomb$no_introns_both)
-head(no_recomb$zero_two)
-nrow(no_recomb$zero_two)
+#add in the annotation
+one_full_up$gene_useful = xref[match(one_full_up$gene_name, xref$V4),"V5"]
+one_full_up$gene_desc = xref[match(one_full_up$gene_name, xref$V4),"V16"]
 
-post_recomb = reading_frame_single_intron("post_recomb_inside_orf_unique.bed", "post_recomb")
-typeof(post_recomb)
-post_recomb$exon_percents
-head(post_recomb$no_introns_both)
-head(post_recomb$zero_two)
-nrow(post_recomb$zero_two)
+#pull in frame fragments
+one_full_up_01 = filter(one_full_up, joint_frame=="0,1")
 
 
-read_frame_dist_weighted = c(sum(zero_zero$frag_count), sum(zero_one$frag_count), sum(zero_two$frag_count),
-                             sum(one_zero$frag_count), sum(one_one$frag_count), sum(one_two$frag_count),
-                             sum(two_zero$frag_count), sum(two_one$frag_count), sum(two_two$frag_count))  
-barplot(read_frame_dist_weighted, xaxt = "n", main=sprintf("Single intron weighted read frame distribution, %s", dataset_name))
-labels=c("0,0", "0,1", "0,2",
-         "1,0", "1,1", "1,2",
-         "2,0", "2,1", "2,2")
-axis(1, at=(1:9), labels=labels, cex=.05)
-barplot(up$read_frame_dist_weighted, xaxt = "n")
-labels=c("0,0", "0,1", "0,2",
-         "1,0", "1,1", "1,2",
-         "2,0", "2,1", "2,2")
-axis(1, at=(1:9), labels=labels, cex=.05)
-no_recomb$read_frame_dist_weighted
-barplot(no_recomb$read_frame_dist_weighted, xaxt = "n")
-labels=c("0,0", "0,1", "0,2",
-         "1,0", "1,1", "1,2",
-         "2,0", "2,1", "2,2")
-axis(1, at=(1:9), labels=labels, cex=.05)
 
-up$read_frame_dist_weighted
-#####
 
-#Now combine the data into a single data frame. 
+one_full_up[1,"chr_read"]
+one_full_up[duplicated(one_full_up$uniques),]
+one_full_up[duplicated(one_full_up$uniques),]
+
+one_full_up_01[max(one_full_up_01$frag_count),]
+
+max(one_full_up_01$frag_count)
+one_full_up_01[which(one_full_up_01$frag_count==6827),]
+grep("chrII_221333_221869_+", blargh)
+
+table(one_full_up_01$gene_name)
 
 #make unique identifier for each fragment (not worrying now about intersecting duplicates)
 head(up$no_introns_both)

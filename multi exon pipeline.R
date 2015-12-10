@@ -412,8 +412,4 @@ four_full_down = reading_frame_multi_intron("4-100N-down_inside_orf_unique.bed",
 write.csv(four_full_unsorted, "four_full_unsorted.csv")
 write.csv(four_full_up, "four_full_up.csv")
 write.csv(four_full_mid, "four_full_mid.csv")
-write.csv(four_full_down, "four_full_down")
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_miseq/")
-
-nope = reading_frame_multi_intron("no_recomb_inside_orf_unique.bed", "nope")
-
+write.csv(four_full_down, "four_full_down") 

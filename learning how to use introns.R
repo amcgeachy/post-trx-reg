@@ -199,27 +199,31 @@ table(neg_exons_copy$occurs_in_exon)
   # c = Σ(s[sub 1:j-1]) + (g - e[sub j])
 
   #sum previous exons
-  for (i in 1:nrow(pos_exonic)){
-    if (pos_exonic[i,"occurs_in_exon"]=="start_exon_1"){
-      pos_exonic[i,"prior_exon_sums"] = 0
-    } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_2"){
-      pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"]
-    } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_3"){
-      pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"]
-    } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_4"){
-      pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] 
-    } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_5"){
-      pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] 
-    } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_6"){
-      pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] 
-    } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_7"){
-      pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] + pos_exonic[i,"exon_size_6"]
-    } else if (pos_exonic[i,"occurs_in_exon"]=="start_exon_8"){
-      pos_exonic[i,"prior_exon_sums"] = pos_exonic[i,"exon_size_1"] + pos_exonic[i,"exon_size_2"] + pos_exonic[i,"exon_size_3"] + pos_exonic[i,"exon_size_4"] + pos_exonic[i,"exon_size_5"] + pos_exonic[i,"exon_size_6"] + pos_exonic[i,"exon_size_7"]
+  pos_exon_summer = function(pos_summing){
+    pos_prior_sums = NULL
+    if (pos_summing["occurs_in_exon"]=="start_exon_1"){
+      pos_prior_sums = 0
+    } else if (pos_summing["occurs_in_exon"]=="start_exon_2"){
+      pos_prior_sums = as.numeric(pos_summing["exon_size_1"])
+    } else if (pos_summing["occurs_in_exon"]=="start_exon_3"){
+      pos_prior_sums = as.numeric(pos_summing["exon_size_1"]) + as.numeric(pos_summing["exon_size_2"])
+    } else if (pos_summing["occurs_in_exon"]=="start_exon_4"){
+      pos_prior_sums = as.numeric(pos_summing["exon_size_1"]) + as.numeric(pos_summing["exon_size_2"]) + as.numeric(pos_summing["exon_size_3"]) 
+    } else if (pos_summing["occurs_in_exon"]=="start_exon_5"){
+      pos_prior_sums = as.numeric(pos_summing["exon_size_1"]) + as.numeric(pos_summing["exon_size_2"]) + as.numeric(pos_summing["exon_size_3"]) + as.numeric(pos_summing["exon_size_4"]) 
+    } else if (pos_summing["occurs_in_exon"]=="start_exon_6"){
+      pos_prior_sums = as.numeric(pos_summing["exon_size_1"]) + as.numeric(pos_summing["exon_size_2"]) + as.numeric(pos_summing["exon_size_3"]) + as.numeric(pos_summing["exon_size_4"]) + as.numeric(pos_summing["exon_size_5"]) 
+    } else if (pos_summing["occurs_in_exon"]=="start_exon_7"){
+      pos_prior_sums = as.numeric(pos_summing["exon_size_1"]) + as.numeric(pos_summing["exon_size_2"]) + as.numeric(pos_summing["exon_size_3"]) + as.numeric(pos_summing["exon_size_4"]) + as.numeric(pos_summing["exon_size_5"]) + as.numeric(pos_summing["exon_size_6"])
+    } else if (pos_summing["occurs_in_exon"]=="start_exon_8"){
+      pos_prior_sums = as.numeric(pos_summing["exon_size_1"]) + as.numeric(pos_summing["exon_size_2"]) + as.numeric(pos_summing["exon_size_3"]) + as.numeric(pos_summing["exon_size_4"]) + as.numeric(pos_summing["exon_size_5"]) + as.numeric(pos_summing["exon_size_6"]) + as.numeric(pos_summing["exon_size_7"])
     } else {
-      pos_exonic[i,"prior_exon_sums"] = NA
-    }}
-  
+      pos_prior_sums = NA
+  }}
+
+  pos_priors = apply(pos_exonic, 1, pos_exon_summer)
+  pos_exonic$prior_exon_sums = pos_priors
+    
     #check if it worked
     head(pos_exonic)[1,] #checked
     filter(pos_exonic, exon_number!=1)[1,] #checked
