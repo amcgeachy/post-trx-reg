@@ -230,11 +230,17 @@ table(neg_exons_copy$occurs_in_exon)
     filter(pos_exonic, occurs_in_exon=="start_exon_3")[1,] #checked
 
   #find start and end location in current exon
-  for (i in 1:nrow(pos_exonic)){
-    pos_exonic[i,"read_start_in_exon"] = pos_exonic[i,"start_read"] - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[start] - e[sub j]
-    pos_exonic[i,"read_end_in_exon"] = (pos_exonic[i,"end_read"] -1) - pos_exonic[i,pos_exonic[i,"occurs_in_exon"]] #g[end] - e[sub j], b/c its first nt not in read
+  pos_math_start = function(pos_maths){
+    read_start_in_exon = as.numeric(pos_maths["start_read"]) - as.numeric(pos_maths[pos_maths["occurs_in_exon"]]) #g[start] - e[sub j]
   }
   
+  pos_math_end = function(pos_maths){
+    read_end_in_exon = (as.numeric(pos_maths["end_read"]) -1) - as.numeric(pos_maths[pos_maths["occurs_in_exon"]]) #g[end] - e[sub j], b/c its first nt not in read
+  }
+
+  pos_exonic$read_start_in_exon = apply(pos_exonic, 1, pos_math_start)
+  pos_exonic$read_end_in_exon = apply(pos_exonic, 1, pos_math_end)  
+
   #check to make sure they worked
   head(pos_exonic)[1,] #checked
   filter(pos_exonic, exon_number!=1)[1,] #checked
@@ -243,20 +249,19 @@ table(neg_exons_copy$occurs_in_exon)
   pos_exonic$read_start_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_start_in_exon 
   pos_exonic$read_end_in_cds = pos_exonic$prior_exon_sums + pos_exonic$read_end_in_exon 
   
-  filter(pos_exonic, exon_number!=1)[1,]
+  #check to make sure it worked
+  filter(pos_exonic, exon_number!=1)[1,] #checked
 
   pos_exonic$read_start_cds_frame = (pos_exonic$read_start_in_cds) %% 3 #because counting in 0 space
   pos_exonic$read_end_cds_frame = (pos_exonic$read_end_in_cds) %% 3 #because counting in 0 space
   
+  #check to make sure it worked
   head(pos_exonic)[1,] #checked
   filter(pos_exonic, exon_number!=1)[1,] #checked
   filter(pos_exonic, read_start_cds_frame==2, read_end_cds_frame==1)[1,]
   filter(pos_exonic, read_start_cds_frame==2, read_end_cds_frame==1)[2,]
 
   table(pos_exonic$read_start_cds_frame)
-  filter(pos_exonic, start_read==351124) # one example that checks out
-  filter(pos_exonic, start_read==189856) # another example thats checks out for frame info
-  head(pos_exonic)[1,]
 
 #for negative strand genes
 #we'll do this by utilizing the idea that a reads CDS coordinates can be defined as:
