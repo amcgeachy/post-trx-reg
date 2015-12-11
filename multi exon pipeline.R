@@ -179,10 +179,12 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
     #pull exonic fragments
     pos_exonic = filter(pos_exons_copy, occurs_in_exon!="intronic")
     pos_intronic = filter(pos_exons_copy, occurs_in_exon=="intronic") #just saving these for later
+    write.csv(pos_intronic, sprintf("intronic reads pos %s.csv", dataset_name))
     head(pos_exonic)
     
     neg_exonic = filter(neg_exons_copy, occurs_in_exon!="intronic")
     neg_intronic = filter(neg_exons_copy, occurs_in_exon=="intronic") #just saving these for later
+    write.csv(neg_intronic, sprintf("intronic reads neg %s.csv", dataset_name))
     head(neg_exonic)
     
   #for positive strand genes
@@ -415,7 +417,7 @@ one_full_up = reading_frame_multi_intron("1-100N-up_inside_orf_unique.bed", "1-1
 one_full_mid = reading_frame_multi_intron("1-100N-mid_inside_orf_unique.bed", "1-100N-mid")
 one_full_down = reading_frame_multi_intron("1-100N-down_inside_orf_unique.bed", "1-100N-down")
 
-write.csv(one_full_unsorted, "one_full_unsorted.csv")
+write.csv(one_full_unsorted, "one_full_unsorted_new.csv")
 write.csv(one_full_up, "one_full_up.csv")
 write.csv(one_full_mid, "one_full_mid.csv")
 write.csv(one_full_down, "one_full_down")
