@@ -454,3 +454,18 @@ write.csv(four_full_unsorted, "four_full_unsorted.csv")
 write.csv(four_full_up, "four_full_up.csv")
 write.csv(four_full_mid, "four_full_mid.csv")
 write.csv(four_full_down, "four_full_down") 
+
+
+####reprocessing screen 1
+getwd()
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen1_miseq_repiped/")
+
+screen1_up = reading_frame_multi_intron("screen1-up_inside_orf_unique.bed", "screen1-up")
+screen1_down = reading_frame_multi_intron("screen1-down_inside_orf_unique.bed", "screen1-down")
+screen1_unsort = reading_frame_multi_intron("screen1-unsort_inside_orf_unique.bed", "screen1-unsort")
+screen1_norecomb = reading_frame_multi_intron("screen1-norecomb_inside_orf_unique.bed", "screen1-norecomb")
+
+write.csv(screen1_up, "screen1_up.csv")
+write.csv(screen1_down, "screen1_down.csv")
+write.csv(screen1_unsort, "screen1_unsort.csv")
+write.csv(screen1_norecomb, "screen1_norecomb.csv")
