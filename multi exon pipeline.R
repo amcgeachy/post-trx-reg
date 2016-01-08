@@ -409,51 +409,51 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
 #up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
 
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen4/")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen4/datafiles_screen4_hiseq/")
 
-#turbo one, 100N
-one_full_unsorted = reading_frame_multi_intron("1-100N-unsort_inside_orf_unique.bed", "1-100N-unsort")
-one_full_up = reading_frame_multi_intron("1-100N-up_inside_orf_unique.bed", "1-100N-up")
-one_full_mid = reading_frame_multi_intron("1-100N-mid_inside_orf_unique.bed", "1-100N-mid")
-one_full_down = reading_frame_multi_intron("1-100N-down_inside_orf_unique.bed", "1-100N-down")
+#turbo one, 100-N
+hi_one_full_unsorted = reading_frame_multi_intron("hi-1-100-N-unsort_inside_orf_unique.bed", "hi-1-100-N-unsort")
+hi_one_full_up = reading_frame_multi_intron("hi-1-100-N-up_inside_orf_unique.bed", "hi-1-100-N-up")
+hi_one_full_mid = reading_frame_multi_intron("hi-1-100-N-mid_inside_orf_unique.bed", "hi-1-100-N-mid")
+hi_one_full_down = reading_frame_multi_intron("hi-1-100-N-down_inside_orf_unique.bed", "hi-1-100-N-down")
 
-write.csv(one_full_unsorted, "one_full_unsorted_new.csv")
-write.csv(one_full_up, "one_full_up.csv")
-write.csv(one_full_mid, "one_full_mid.csv")
-write.csv(one_full_down, "one_full_down")
+write.csv(hi_one_full_unsorted, "hi_one_full_unsorted_new.csv")
+write.csv(hi_one_full_up, "hi_one_full_up.csv")
+write.csv(hi_one_full_mid, "hi_one_full_mid.csv")
+write.csv(hi_one_full_down, "hi_one_full_down")
 
-#turbo two, 100N
-two_full_unsorted = reading_frame_multi_intron("2-100N-unsort_inside_orf_unique.bed", "2-100N-unsort")
-two_full_up = reading_frame_multi_intron("2-100N-up_inside_orf_unique.bed", "2-100N-up")
-two_full_mid = reading_frame_multi_intron("2-100N-mid_inside_orf_unique.bed", "2-100N-mid")
-two_full_down = reading_frame_multi_intron("2-100N-down_inside_orf_unique.bed", "2-100N-down")
+#turbo two, 100-N
+hi_hi_two_full_unsorted = reading_frame_multi_intron("hi-2-100-N-unsort_inside_orf_unique.bed", "hi-2-100-N-unsort")
+hi_two_full_up = reading_frame_multi_intron("hi-2-100-N-up_inside_orf_unique.bed", "hi-2-100-N-up")
+hi_two_full_mid = reading_frame_multi_intron("hi-2-100-N-mid_inside_orf_unique.bed", "hi-2-100-N-mid")
+hi_two_full_down = reading_frame_multi_intron("hi-2-100-N-down_inside_orf_unique.bed", "hi-2-100-N-down")
 
-write.csv(two_full_unsorted, "two_full_unsorted.csv")
-write.csv(two_full_up, "two_full_up.csv")
-write.csv(two_full_mid, "two_full_mid.csv")
-write.csv(two_full_down, "two_full_down")
+write.csv(hi_two_full_unsorted, "hi_two_full_unsorted.csv")
+write.csv(hi_two_full_up, "hi_two_full_up.csv")
+write.csv(hi_two_full_mid, "hi_two_full_mid.csv")
+write.csv(hi_two_full_down, "hi_two_full_down")
 
-#turbo three, 100N
-three_full_unsorted = reading_frame_multi_intron("3-100N-unsort_inside_orf_unique.bed", "3-100N-unsort")
-three_full_up = reading_frame_multi_intron("3-100N-up_inside_orf_unique.bed", "3-100N-up")
-three_full_mid = reading_frame_multi_intron("3-100N-mid_inside_orf_unique.bed", "3-100N-mid")
-three_full_down = reading_frame_multi_intron("3-100N-down_inside_orf_unique.bed", "3-100N-down")
+#turbo three, 100-N
+hi_three_full_unsorted = reading_frame_multi_intron("hi-3-100-N-unsort_inside_orf_unique.bed", "hi-3-100-N-unsort")
+hi_three_full_up = reading_frame_multi_intron("hi-3-100-N-up_inside_orf_unique.bed", "hi-3-100-N-up")
+hi_three_full_mid = reading_frame_multi_intron("hi-3-100-N-mid_inside_orf_unique.bed", "hi-3-100-N-mid")
+hi_three_full_down = reading_frame_multi_intron("hi-3-100-N-down_inside_orf_unique.bed", "hi-3-100-N-down")
 
-write.csv(three_full_unsorted, "three_full_unsorted.csv")
-write.csv(three_full_up, "three_full_up.csv")
-write.csv(three_full_mid, "three_full_mid.csv")
-write.csv(three_full_down, "three_full_down")
+write.csv(hi_three_full_unsorted, "hi_three_full_unsorted.csv")
+write.csv(hi_three_full_up, "hi_three_full_up.csv")
+write.csv(hi_three_full_mid, "hi_three_full_mid.csv")
+write.csv(hi_three_full_down, "hi_three_full_down")
 
-#turbo four, 100N
-four_full_unsorted = reading_frame_multi_intron("4-100N-unsort_inside_orf_unique.bed", "4-100N-unsort")
-four_full_up = reading_frame_multi_intron("4-100N-up_inside_orf_unique.bed", "4-100N-up")
-four_full_mid = reading_frame_multi_intron("4-100N-mid_inside_orf_unique.bed", "4-100N-mid")
-four_full_down = reading_frame_multi_intron("4-100N-down_inside_orf_unique.bed", "4-100N-down")
+#turbo four, 100-N
+hi_four_full_unsorted = reading_frame_multi_intron("hi-4-100-N-unsort_inside_orf_unique.bed", "hi-4-100-N-unsort")
+hi_four_full_up = reading_frame_multi_intron("hi-4-100-N-up_inside_orf_unique.bed", "hi-4-100-N-up")
+hi_four_full_mid = reading_frame_multi_intron("hi-4-100-N-mid_inside_orf_unique.bed", "hi-4-100-N-mid")
+hi_four_full_down = reading_frame_multi_intron("hi-4-100-N-down_inside_orf_unique.bed", "hi-4-100-N-down")
 
-write.csv(four_full_unsorted, "four_full_unsorted.csv")
-write.csv(four_full_up, "four_full_up.csv")
-write.csv(four_full_mid, "four_full_mid.csv")
-write.csv(four_full_down, "four_full_down") 
+write.csv(hi_four_full_unsorted, "hi_four_full_unsorted.csv")
+write.csv(hi_four_full_up, "hi_four_full_up.csv")
+write.csv(hi_four_full_mid, "hi_four_full_mid.csv")
+write.csv(hi_four_full_down, "hi_four_full_down") 
 
 
 ####reprocessing screen 1
