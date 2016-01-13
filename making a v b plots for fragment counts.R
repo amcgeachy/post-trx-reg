@@ -120,10 +120,25 @@ a_v_b_plots = function(location_of_file_a, condition_a, location_of_file_b, cond
   table(a_and_b[,condition_b])
   
   #plot a v b
-  png(sprintf("%s.png", comparison)
+  png(sprintf("%s.png", comparison))
   plot(log(a_and_b[,condition_a], 2), log(a_and_b[,condition_b], 2), pch=16, col="#808D8D4A", 
-       xlab=sprtinf("log2(%s)", condition_a),
-       ylab=sprtinf("log2(%s)", condition_b),
+#        xlim=max(max(log(a_and_b[,condition_a], 2)), max(log(a_and_b[,condition_b], 2))),
+#        ylim=max(max(log(a_and_b[,condition_a], 2)), max(log(a_and_b[,condition_b], 2))),
+       xlab=sprintf("log2(%s)", condition_a),
+       ylab=sprintf("log2(%s)", condition_b),
        main=sprintf("%s", comparison))
+  abline(a=0,b=1)
+  abline(a=-4.6,b=1)
+  abline(a=4.6,b=1)
+  abline(a=-2.3,b=1)
+  abline(a=2.3,b=1)
   dev.off()
 }
+max(max(c(1,2)), max(c(3,4)))
+
+#a_v_b_plots = function(location_of_file_a, condition_a, 
+#               location_of_file_b, condition_b, 
+#               comparison){
+a_v_b_plots("./datafiles_screen4_hiseq/hi_one_full_down.csv", "1-100N-down", 
+            "./datafiles_screen4_hiseq/hi_one_full_up.csv", "1-100N-up", 
+            "1-100N-up-v-down")
