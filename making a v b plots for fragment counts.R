@@ -3,6 +3,7 @@
 
 getwd()
 setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen4/")
+library("dplyr")
 
 xref = read.delim("../SGD_features.tab", header=FALSE, quote="")
 
@@ -82,32 +83,32 @@ write.csv(a_and_b, sprintf("%s.csv", comparison))
 #               comparison){
 
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen2_miseq_repiped//")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_and_2_hiseq_repiped/")
 
 #an example
-a_v_b_plots("screen2-mi-down.csv", "screen2-mi-down", 
-            "screen2-mi-up.csv", "screen2-mi-up", 
-            "screen2-mi-down-v-up")
+a_v_b_plots("screen1-hi-down.csv", "screen1-hi-down", 
+            "screen1-hi-up.csv", "screen1-hi-up", 
+            "screen1-hi-down-v-up")
 
-a_v_b_plots("screen2-mi-down.csv", "screen2-mi-down", 
-            "screen2-mi-norecomb.csv", "screen2-mi-norecomb", 
-            "screen2-mi-down-v-norecomb")
+a_v_b_plots("screen1-hi-down.csv", "screen1-hi-down", 
+            "screen1-hi-norecomb.csv", "screen1-hi-norecomb", 
+            "screen1-hi-down-v-norecomb")
 
-a_v_b_plots("screen2-mi-down.csv", "screen2-mi-down", 
-            "screen2-mi-unsort.csv", "screen2-mi-unsort", 
-            "screen2-mi-down-v-unsort")
+a_v_b_plots("screen1-hi-down.csv", "screen1-hi-down", 
+            "screen1-hi-unsort.csv", "screen1-hi-unsort", 
+            "screen1-hi-down-v-unsort")
 
 ##  
 
-a_v_b_plots("screen2-mi-up.csv", "screen2-mi-up", 
-            "screen2-mi-norecomb.csv", "screen2-mi-norecomb", 
-            "screen2-mi-up-v-norecomb")
+a_v_b_plots("screen1-hi-up.csv", "screen1-hi-up", 
+            "screen1-hi-norecomb.csv", "screen1-hi-norecomb", 
+            "screen1-hi-up-v-norecomb")
 
-a_v_b_plots("screen2-mi-up.csv", "screen2-mi-up", 
-            "screen2-mi-unsort.csv", "screen2-mi-unsort", 
-            "screen2-mi-up-v-unsort")
+a_v_b_plots("screen1-hi-up.csv", "screen1-hi-up", 
+            "screen1-hi-unsort.csv", "screen1-hi-unsort", 
+            "screen1-hi-up-v-unsort")
 ##
 
-a_v_b_plots("screen2-mi-norecomb.csv", "screen2-mi-norecomb", 
-            "screen2-mi-unsort.csv", "screen2-mi-unsort", 
-            "screen2-mi-norecomb-v-unsort")
+a_v_b_plots("screen1-hi-norecomb.csv", "screen1-hi-norecomb", 
+            "screen1-hi-unsort.csv", "screen1-hi-unsort", 
+            "screen1-hi-norecomb-v-unsort")
