@@ -409,66 +409,16 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
 #up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
 
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen4/datafiles_screen4_hiseq/")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen2_miseq_repiped/")
 
-#turbo one, 100-N
-hi_one_full_unsorted = reading_frame_multi_intron("hi-1-100-N-unsort_inside_orf_unique.bed", "hi-1-100-N-unsort")
-hi_one_full_up = reading_frame_multi_intron("hi-1-100-N-up_inside_orf_unique.bed", "hi-1-100-N-up")
-hi_one_full_mid = reading_frame_multi_intron("hi-1-100-N-mid_inside_orf_unique.bed", "hi-1-100-N-mid")
-hi_one_full_down = reading_frame_multi_intron("hi-1-100-N-down_inside_orf_unique.bed", "hi-1-100-N-down")
+unsorted = reading_frame_multi_intron("unsort_inside_orf_unique.bed", "screen2-mi-unsort")
+up = reading_frame_multi_intron("up2_inside_orf_unique.bed", "screen2-mi-up")
+mid = reading_frame_multi_intron("mid2_inside_orf_unique.bed", "screen2-mi-mid")
+down = reading_frame_multi_intron("down2_inside_orf_unique.bed", "screen2-mi-down")
+norecomb = reading_frame_multi_intron("norecomb_inside_orf_unique.bed", "screen2-mi-norecomb")
 
-write.csv(hi_one_full_unsorted, "hi_one_full_unsorted_new.csv")
-write.csv(hi_one_full_up, "hi_one_full_up.csv")
-write.csv(hi_one_full_mid, "hi_one_full_mid.csv")
-write.csv(hi_one_full_down, "hi_one_full_down")
-
-
-getwd()
-setwd("./datafiles_screen4_hiseq/")
-#turbo two, 100-N
-hi_hi_two_full_unsorted = reading_frame_multi_intron("hi-2-100-N-unsort_inside_orf_unique.bed", "hi-2-100-N-unsort")
-hi_two_full_up = reading_frame_multi_intron("hi-2-100-N-up_inside_orf_unique.bed", "hi-2-100-N-up")
-hi_two_full_mid = reading_frame_multi_intron("hi-2-100-N-mid_inside_orf_unique.bed", "hi-2-100-N-mid")
-hi_two_full_down = reading_frame_multi_intron("hi-2-100-N-down_inside_orf_unique.bed", "hi-2-100-N-down")
-
-write.csv(hi_hi_two_full_unsorted, "hi_two_full_unsorted.csv")
-write.csv(hi_two_full_up, "hi_two_full_up.csv")
-write.csv(hi_two_full_mid, "hi_two_full_mid.csv")
-write.csv(hi_two_full_down, "hi_two_full_down")
-
-#turbo three, 100-N
-hi_three_full_unsorted = reading_frame_multi_intron("hi-3-100-N-unsort_inside_orf_unique.bed", "hi-3-100-N-unsort")
-hi_three_full_up = reading_frame_multi_intron("hi-3-100-N-up_inside_orf_unique.bed", "hi-3-100-N-up")
-hi_three_full_mid = reading_frame_multi_intron("hi-3-100-N-mid_inside_orf_unique.bed", "hi-3-100-N-mid")
-hi_three_full_down = reading_frame_multi_intron("hi-3-100-N-down_inside_orf_unique.bed", "hi-3-100-N-down")
-
-write.csv(hi_three_full_unsorted, "hi_three_full_unsorted.csv")
-write.csv(hi_three_full_up, "hi_three_full_up.csv")
-write.csv(hi_three_full_mid, "hi_three_full_mid.csv")
-write.csv(hi_three_full_down, "hi_three_full_down")
-
-#turbo four, 100-N
-hi_four_full_unsorted = reading_frame_multi_intron("hi-4-100-N-unsort_inside_orf_unique.bed", "hi-4-100-N-unsort")
-hi_four_full_up = reading_frame_multi_intron("hi-4-100-N-up_inside_orf_unique.bed", "hi-4-100-N-up")
-hi_four_full_mid = reading_frame_multi_intron("hi-4-100-N-mid_inside_orf_unique.bed", "hi-4-100-N-mid")
-hi_four_full_down = reading_frame_multi_intron("hi-4-100-N-down_inside_orf_unique.bed", "hi-4-100-N-down")
-
-write.csv(hi_four_full_unsorted, "hi_four_full_unsorted.csv")
-write.csv(hi_four_full_up, "hi_four_full_up.csv")
-write.csv(hi_four_full_mid, "hi_four_full_mid.csv")
-write.csv(hi_four_full_down, "hi_four_full_down") 
-
-
-####reprocessing screen 1
-getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen1_miseq_repiped/")
-
-screen1_up = reading_frame_multi_intron("screen1-up_inside_orf_unique.bed", "screen1-up")
-screen1_down = reading_frame_multi_intron("screen1-down_inside_orf_unique.bed", "screen1-down")
-screen1_unsort = reading_frame_multi_intron("screen1-unsort_inside_orf_unique.bed", "screen1-unsort")
-screen1_norecomb = reading_frame_multi_intron("screen1-norecomb_inside_orf_unique.bed", "screen1-norecomb")
-
-write.csv(screen1_up, "screen1_up.csv")
-write.csv(screen1_down, "screen1_down.csv")
-write.csv(screen1_unsort, "screen1_unsort.csv")
-write.csv(screen1_norecomb, "screen1_norecomb.csv")
+write.csv(unsorted, "screen2-mi-unsort.csv")
+write.csv(up, "screen2-mi-up.csv")
+write.csv(mid, "screen2-mi-mid.csv")
+write.csv(down, "screen2-mi-down.csv")
+write.csv(norecomb, "screen2-mi-norecomb.csv")
