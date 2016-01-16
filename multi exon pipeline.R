@@ -422,13 +422,16 @@ write.csv(hi_one_full_up, "hi_one_full_up.csv")
 write.csv(hi_one_full_mid, "hi_one_full_mid.csv")
 write.csv(hi_one_full_down, "hi_one_full_down")
 
+
+getwd()
+setwd("./datafiles_screen4_hiseq/")
 #turbo two, 100-N
 hi_hi_two_full_unsorted = reading_frame_multi_intron("hi-2-100-N-unsort_inside_orf_unique.bed", "hi-2-100-N-unsort")
 hi_two_full_up = reading_frame_multi_intron("hi-2-100-N-up_inside_orf_unique.bed", "hi-2-100-N-up")
 hi_two_full_mid = reading_frame_multi_intron("hi-2-100-N-mid_inside_orf_unique.bed", "hi-2-100-N-mid")
 hi_two_full_down = reading_frame_multi_intron("hi-2-100-N-down_inside_orf_unique.bed", "hi-2-100-N-down")
 
-write.csv(hi_two_full_unsorted, "hi_two_full_unsorted.csv")
+write.csv(hi_hi_two_full_unsorted, "hi_two_full_unsorted.csv")
 write.csv(hi_two_full_up, "hi_two_full_up.csv")
 write.csv(hi_two_full_mid, "hi_two_full_mid.csv")
 write.csv(hi_two_full_down, "hi_two_full_down")

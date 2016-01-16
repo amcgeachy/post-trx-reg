@@ -81,31 +81,32 @@ write.csv(a_and_b, sprintf("%s.csv", comparison))
 #               location_of_file_b, condition_b, 
 #               comparison){
 
+getwd()
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen1_miseq_repiped/")
 #an example
-a_v_b_plots("./datafiles_screen4_hiseq/hi_three_full_down.csv", "3-100N-down", 
-            "./datafiles_screen4_hiseq/hi_three_full_up.csv", "3-100N-up", 
-            "3-100N-down-v-up")
+a_v_b_plots("screen1_down.csv", "screen1-down", 
+            "screen1_up.csv", "screen1-up", 
+            "screen1-down-v-up")
 
-a_v_b_plots("./datafiles_screen4_hiseq/hi_four_full_down.csv", "4-100N-down", 
-             "./datafiles_screen4_hiseq/hi_four_full_mid.csv", "4-100N-mid", 
-             "4-100N-down-v-mid")
+a_v_b_plots("screen1_down.csv", "screen1-down", 
+            "screen1_norecomb.csv", "screen1-norecomb", 
+            "screen1-down-v-norecomb")
 
-a_v_b_plots("./datafiles_screen4_hiseq/hi_four_full_down.csv", "4-100N-down", 
-            "./datafiles_screen4_hiseq/hi_four_full_unsorted.csv", "4-100N-unsort", 
-            "4-100N-down-v-unsort")
+a_v_b_plots("screen1_down.csv", "screen1-down", 
+            "screen1_unsort.csv", "screen1-unsort", 
+            "screen1-down-v-unsort")
 
 ##  
 
-a_v_b_plots("./datafiles_screen4_hiseq/hi_four_full_up.csv", "4-100N-up", 
-            "./datafiles_screen4_hiseq/hi_four_full_mid.csv", "4-100N-mid", 
-            "4-100N-up-v-mid")
+a_v_b_plots("screen1_up.csv", "screen1-up", 
+            "screen1_norecomb.csv", "screen1-norecomb", 
+            "screen1-up-v-norecomb")
 
-a_v_b_plots("./datafiles_screen4_hiseq/hi_four_full_up.csv", "4-100N-up", 
-            "./datafiles_screen4_hiseq/hi_four_full_unsorted.csv", "4-100N-unsort", 
-            "4-100N-up-v-unsort")
-
+a_v_b_plots("screen1_up.csv", "screen1-up", 
+            "screen1_unsort.csv", "screen1-unsort", 
+            "screen1-up-v-unsort")
 ##
 
-a_v_b_plots("./datafiles_screen4_hiseq/hi_four_full_mid.csv", "4-100N-mid", 
-            "./datafiles_screen4_hiseq/hi_four_full_unsorted.csv", "4-100N-unsort", 
-            "4-100N-mid-v-unsort")
+a_v_b_plots("screen1_norecomb.csv", "screen1-norecomb", 
+            "screen1_unsort.csv", "screen1-unsort", 
+            "screen1-norecomb-v-unsort")
