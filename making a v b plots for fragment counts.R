@@ -82,31 +82,32 @@ write.csv(a_and_b, sprintf("%s.csv", comparison))
 #               comparison){
 
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen1_miseq_repiped/")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen2_miseq_repiped//")
+
 #an example
-a_v_b_plots("screen1_down.csv", "screen1-down", 
-            "screen1_up.csv", "screen1-up", 
-            "screen1-down-v-up")
+a_v_b_plots("screen2-mi-down.csv", "screen2-mi-down", 
+            "screen2-mi-up.csv", "screen2-mi-up", 
+            "screen2-mi-down-v-up")
 
-a_v_b_plots("screen1_down.csv", "screen1-down", 
-            "screen1_norecomb.csv", "screen1-norecomb", 
-            "screen1-down-v-norecomb")
+a_v_b_plots("screen2-mi-down.csv", "screen2-mi-down", 
+            "screen2-mi-norecomb.csv", "screen2-mi-norecomb", 
+            "screen2-mi-down-v-norecomb")
 
-a_v_b_plots("screen1_down.csv", "screen1-down", 
-            "screen1_unsort.csv", "screen1-unsort", 
-            "screen1-down-v-unsort")
+a_v_b_plots("screen2-mi-down.csv", "screen2-mi-down", 
+            "screen2-mi-unsort.csv", "screen2-mi-unsort", 
+            "screen2-mi-down-v-unsort")
 
 ##  
 
-a_v_b_plots("screen1_up.csv", "screen1-up", 
-            "screen1_norecomb.csv", "screen1-norecomb", 
-            "screen1-up-v-norecomb")
+a_v_b_plots("screen2-mi-up.csv", "screen2-mi-up", 
+            "screen2-mi-norecomb.csv", "screen2-mi-norecomb", 
+            "screen2-mi-up-v-norecomb")
 
-a_v_b_plots("screen1_up.csv", "screen1-up", 
-            "screen1_unsort.csv", "screen1-unsort", 
-            "screen1-up-v-unsort")
+a_v_b_plots("screen2-mi-up.csv", "screen2-mi-up", 
+            "screen2-mi-unsort.csv", "screen2-mi-unsort", 
+            "screen2-mi-up-v-unsort")
 ##
 
-a_v_b_plots("screen1_norecomb.csv", "screen1-norecomb", 
-            "screen1_unsort.csv", "screen1-unsort", 
-            "screen1-norecomb-v-unsort")
+a_v_b_plots("screen2-mi-norecomb.csv", "screen2-mi-norecomb", 
+            "screen2-mi-unsort.csv", "screen2-mi-unsort", 
+            "screen2-mi-norecomb-v-unsort")
