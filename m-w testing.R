@@ -27,7 +27,17 @@ table(up_inframe_genes$Freq)
   nrow(up_inframe_genes_actual)
   table(up_inframe_genes_actual$Freq) #ok. got all of the 0s removed.
 
-wilcox.test(filter(down, joint_frame=="0,1", gene_name=="YCR077C")[,"frag_count"], filter(down, joint_frame=="0,1", gene_name!="YCR077C")[,"frag_count"],)
+head(up_inframe) # first gene is YAL017W so try that
+  #make list of all YAL017W and all of NOT YAL017W
+  YAL017W_yes = filter(up_inframe, gene_name=="YAL017W")
+  YAL017W_no = filter(up_inframe, gene_name!="YAL017W")
+  
+  #check to see if the beta substitution works as well as the generated lists
+  wilcox.test(filter(up_inframe, gene_name=="YAL017W")[,"frag_count"], filter(up_inframe, joint_frame=="0,1", gene_name!="YAL017W")[,"frag_count"],)
+  wilcox.test(YAL017W_yes$frag_count, YAL017W_no$frag_count) #it does
+
+
+
 
 table(filter(up, joint_frame=="0,1", gene_name=="YPR204W")[,"frag_count"])
 table(filter(down, joint_frame=="0,1", gene_name=="YCR077C")[,"frag_count"])
