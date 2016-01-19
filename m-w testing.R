@@ -12,17 +12,20 @@ down_inframe = filter(down, joint_frame=="0,1")
 head(up_inframe)
 
 #make a list of all the gene names
-up_inframe_genes = as.matrix(table(up_inframe$gene_name))
+up_inframe_genes = as.data.frame(table(up_inframe$gene_name), ncol=2)
 
 #notice that there are a lot of 0s (so they occur 0 times)
-table(up_inframe_genes[,1])
+table(up_inframe_genes$Freq)
   #so where are they coming from
   head(up_inframe_genes)
   grep("Q0045", up_inframe$gene_name) #they in face don't exist in up_inframe
   grep("Q0045", up$gene_name) #looks like they existed in up,
   up[1065,] # but are out of frame
 
-  #so how do we get rid of 
+  #so how do we get rid of these 0's for the in frame so they don't complicate things
+  up_inframe_genes_actual = filter(up_inframe_genes, Freq!=0)
+  nrow(up_inframe_genes_actual)
+  table(up_inframe_genes_actual$Freq) #ok. got all of the 0s removed.
 
 wilcox.test(filter(down, joint_frame=="0,1", gene_name=="YCR077C")[,"frag_count"], filter(down, joint_frame=="0,1", gene_name!="YCR077C")[,"frag_count"],)
 
