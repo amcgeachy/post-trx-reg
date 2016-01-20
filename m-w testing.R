@@ -81,8 +81,8 @@ mw_test = function(x){
 
 mw_test = function(x){
   wilcox.test(
-    filter(up_inframe, gene_name==as.character(x[,"Var1"]))[,"frag_count"],
-    filter(up_inframe, gene_name!=as.character(x[,"Var1"]))[,"frag_count"])#[3][[1]]
+    filter(up_inframe, gene_name==as.character(x["Var1"]))[,"frag_count"],
+    filter(up_inframe, gene_name!=as.character(x["Var1"]))[,"frag_count"])[3][[1]]
 }
 
 mw_test(just_one)
@@ -91,6 +91,8 @@ picker = function(x){as.character(x["Var1"])}
 picker(just_one)
 filter(up_inframe, gene_name==picker(just_one))[,"frag_count"]
 apply(just_one, 1, picker)
+
+apply(just_one, 1, mw_test)
 
 just_five = as.data.frame(up_inframe_genes_actual[1:5,])
 just_five
