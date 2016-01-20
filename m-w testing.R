@@ -157,3 +157,28 @@ down_inframe_genes_actual$gene_desc = xref[match(down_inframe_genes_actual$Var1,
 head(down_inframe_genes_actual)
 down_inframe_genes_actual[grep("PAT1", down_inframe_genes_actual$gene_useful),]
 
+####
+#try to do this for up-v-down
+
+#read in table that already has counts for each of down and up (in frame only)
+down_v_up = read.csv("screen1-down-v-up.csv", stringsAsFactors=FALSE)
+
+#need to relate back to gene names
+#to do this, need to get them from down_inframe and up_inframe
+#but need to give those _inframe the same type of unique identifiers
+#build them the same was as we did for down_v_up
+pasting_together = function(x){
+  paste(x["chr_read"], as.numeric(x["start_read"]), as.numeric(x["end_read"]), x["strand_read"], sep="_")
+}
+
+down_inframe$uniques = apply(down_inframe, 1, pasting_together)
+up_inframe$uniques = apply(up_inframe, 1, pasting_together)
+
+#then cross reference to pull gene names
+down_v_up$down_genes = down_inframe[match(down_v_up$a_and_b, down_inframe$uniques), "gene_name"]
+down_v_up$up_genes = up_inframe[match(down_v_up$a_and_b, up_inframe$uniques), "gene_name"]
+head(down_v_up)
+
+#make a column that has gene names (filling in the blanks where it's only in one versus the other)
+down_v_up$gene_name = ifelse(is.na(down_v_up$down_genes), down_v_up$up_genes, down_v_up$down_genes)
+
