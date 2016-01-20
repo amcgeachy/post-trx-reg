@@ -1,15 +1,18 @@
 getwd()
 setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen1_miseq_repiped/")
 
+
+
 library("dplyr")
 
+#read in files
 up = read.csv("screen1_up.csv")
 down = read.csv("screen1_down.csv")
+xref = read.delim("../SGD_features.tab", header=FALSE, quote="")
 
+#filter lists to get only in frame fragments
 up_inframe = filter(up, joint_frame=="0,1")
 down_inframe = filter(down, joint_frame=="0,1")
-
-head(up_inframe)
 
 #make a list of all the gene names
 up_inframe_genes = as.data.frame(table(up_inframe$gene_name), ncol=2)
@@ -95,3 +98,9 @@ up_inframe_genes_actual$p_adj = up_p_vals_adj
 up_inframe_genes_actual = up_inframe_genes_actual[order(up_inframe_genes_actual$p_adj),]
 table(up_inframe_genes_actual$p_adj)
 
+#add in useful gene information 
+up_inframe_genes_actual$gene_useful = xref[match(up_inframe_genes_actual$Var1, xref$V4),"V5"]
+up_inframe_genes_actual$gene_desc = xref[match(up_inframe_genes_actual$Var1, xref$V4),"V16"]
+
+head(up_inframe_genes_actual)
+up_inframe_genes_actual[grep("PAT1", up_inframe_genes_actual$gene_useful),]
