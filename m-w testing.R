@@ -36,9 +36,14 @@ head(up_inframe) # first gene is YAL017W so try that
   wilcox.test(filter(up_inframe, gene_name=="YAL017W")[,"frag_count"], filter(up_inframe, joint_frame=="0,1", gene_name!="YAL017W")[,"frag_count"],)
   wilcox.test(YAL017W_yes$frag_count, YAL017W_no$frag_count) #it does
 
+  #try returning this to an object so I can grab the 
+  blorb = wilcox.test(YAL017W_yes$frag_count, YAL017W_no$frag_count) #it does
+  typeof(blorb)
+  unlist(blorb)
 
+  blorb[3][[1]] #how to get the pvalue out of the fucking ridiculous wilcox list
 
-
+  blorb[[2]]
 table(filter(up, joint_frame=="0,1", gene_name=="YPR204W")[,"frag_count"])
 table(filter(down, joint_frame=="0,1", gene_name=="YCR077C")[,"frag_count"])
 nrow(as.matrix(table(up$gene_name)))
