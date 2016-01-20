@@ -83,32 +83,32 @@ write.csv(a_and_b, sprintf("%s.csv", comparison))
 #               comparison){
 
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_and_2_hiseq_repiped/")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen3_miseq/screen 3 a v b plots/")
 
 #an example
-a_v_b_plots("screen1-hi-down.csv", "screen1-hi-down", 
-            "screen1-hi-up.csv", "screen1-hi-up", 
-            "screen1-hi-down-v-up")
+a_v_b_plots("screen3-4-down.csv", "screen3-4-down", 
+            "screen3-4-up.csv", "screen3-4-up", 
+            "screen3-4-down-v-up")
 
-a_v_b_plots("screen1-hi-down.csv", "screen1-hi-down", 
-            "screen1-hi-norecomb.csv", "screen1-hi-norecomb", 
-            "screen1-hi-down-v-norecomb")
+a_v_b_plots("screen3-4-down.csv", "screen3-4-down", 
+            "screen3-4-mid.csv", "screen3-4-mid", 
+            "screen3-4-down-v-mid")
 
-a_v_b_plots("screen1-hi-down.csv", "screen1-hi-down", 
-            "screen1-hi-unsort.csv", "screen1-hi-unsort", 
-            "screen1-hi-down-v-unsort")
+a_v_b_plots("screen3-4-down.csv", "screen3-4-down", 
+            "screen3-4-unsort.csv", "screen3-4-unsort", 
+            "screen3-4-down-v-unsort")
 
 ##  
 
-a_v_b_plots("screen1-hi-up.csv", "screen1-hi-up", 
-            "screen1-hi-norecomb.csv", "screen1-hi-norecomb", 
-            "screen1-hi-up-v-norecomb")
+a_v_b_plots("screen3-4-up.csv", "screen3-4-up", 
+            "screen3-4-mid.csv", "screen3-4-mid", 
+            "screen3-4-up-v-mid")
 
-a_v_b_plots("screen1-hi-up.csv", "screen1-hi-up", 
-            "screen1-hi-unsort.csv", "screen1-hi-unsort", 
-            "screen1-hi-up-v-unsort")
+a_v_b_plots("screen3-4-up.csv", "screen3-4-up", 
+            "screen3-4-unsort.csv", "screen3-4-unsort", 
+            "screen3-4-up-v-unsort")
 ##
 
-a_v_b_plots("screen1-hi-norecomb.csv", "screen1-hi-norecomb", 
-            "screen1-hi-unsort.csv", "screen1-hi-unsort", 
-            "screen1-hi-norecomb-v-unsort")
+a_v_b_plots("screen3-4-mid.csv", "screen3-4-mid", 
+            "screen3-4-unsort.csv", "screen3-4-unsort", 
+            "screen3-4-mid-v-unsort")
