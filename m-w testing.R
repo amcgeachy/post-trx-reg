@@ -180,5 +180,8 @@ down_v_up$up_genes = up_inframe[match(down_v_up$a_and_b, up_inframe$uniques), "g
 head(down_v_up)
 
 #make a column that has gene names (filling in the blanks where it's only in one versus the other)
-down_v_up$gene_name = ifelse(is.na(down_v_up$down_genes), down_v_up$up_genes, down_v_up$down_genes)
+down_v_up$gene_name = ifelse(is.na(down_v_up$down_genes), as.character(down_v_up$up_genes), as.character(down_v_up$down_genes))
 
+nrow(down_v_up)
+head(down_v_up$gene_name)
+shead(down_v_up)
