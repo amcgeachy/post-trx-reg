@@ -37,16 +37,34 @@ head(up_inframe) # first gene is YAL017W so try that
   wilcox.test(YAL017W_yes$frag_count, YAL017W_no$frag_count) #it does
 
   #try returning this to an object so I can grab the 
-  blorb = wilcox.test(YAL017W_yes$frag_count, YAL017W_no$frag_count) #it does
+  blorb = wilcox.test(filter(up_inframe, gene_name=="YAL017W")[,"frag_count"], filter(up_inframe, joint_frame=="0,1", gene_name!="YAL017W")[,"frag_count"],) #it does
   typeof(blorb)
   unlist(blorb)
 
   blorb[3][[1]] #how to get the pvalue out of the fucking ridiculous wilcox list
 
-  blorb[[2]]
-table(filter(up, joint_frame=="0,1", gene_name=="YPR204W")[,"frag_count"])
-table(filter(down, joint_frame=="0,1", gene_name=="YCR077C")[,"frag_count"])
-nrow(as.matrix(table(up$gene_name)))
+#so now we have a way to use a gene name to get a wilcox p value. 
+#but how do we do this for a list of gene names? not just a given one.
+
+#how to get a gene name out of the in frame gene list
+as.character(up_inframe_genes_actual$Var1)[1]
+
+#test this using beta substitution
+  test_thing = wilcox.test(
+    filter(up_inframe, gene_name==as.character(up_inframe_genes_actual$Var1)[1])[,"frag_count"],
+    filter(up_inframe, gene_name!=as.character(up_inframe_genes_actual$Var1)[1])[,"frag_count"])
+  
+  test_thing
+  
+  blorb2 = wilcox.test(filter(up_inframe, gene_name=="Q0055")[,"frag_count"], filter(up_inframe, gene_name!="Q0055")[,"frag_count"],) #it does
+  blorb2 #make sure that works the same as above; it does
+
+#fetch the p value from this mess
+  test_thing_p = wilcox.test(
+    filter(up_inframe, gene_name==as.character(up_inframe_genes_actual$Var1)[1])[,"frag_count"],
+    filter(up_inframe, gene_name!=as.character(up_inframe_genes_actual$Var1)[1])[,"frag_count"])[3][[1]]
+  test_thing_p
+
 
 colnames(up)
 table(up$joint_frame)
