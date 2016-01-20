@@ -65,7 +65,22 @@ as.character(up_inframe_genes_actual$Var1)[1]
     filter(up_inframe, gene_name!=as.character(up_inframe_genes_actual$Var1)[1])[,"frag_count"])[3][[1]]
   test_thing_p
 
+#can we use apply to get this to work? instead of a for loop
+  just_one = up_inframe_genes_actual[1,]
+  
+just_one_test_thing_p = wilcox.test(
+  filter(up_inframe, gene_name==as.character(just_one$Var1))[,"frag_count"],
+  filter(up_inframe, gene_name!=as.character(just_one$Var1))[,"frag_count"])[3][[1]]
 
+#try to make it into a function
+mw_test = function(x){
+  wilcox.test(
+  filter(up_inframe, gene_name==as.character(x$Var1))[,"frag_count"],
+  filter(up_inframe, gene_name!=as.character(x$Var1))[,"frag_count"])[3][[1]]
+}
+
+
+just_one_test_thing_p
 colnames(up)
 table(up$joint_frame)
 
