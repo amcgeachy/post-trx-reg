@@ -72,37 +72,26 @@ just_one_test_thing_p = wilcox.test(
   filter(up_inframe, gene_name==as.character(just_one$Var1))[,"frag_count"],
   filter(up_inframe, gene_name!=as.character(just_one$Var1))[,"frag_count"])[3][[1]]
 
-#try to make it into a function
-mw_test = function(x){
-  wilcox.test(
-  filter(up_inframe, gene_name==as.character(x[,"Var1"]))[,"frag_count"],
-  filter(up_inframe, gene_name!=as.character(x[,"Var1"]))[,"frag_count"])#[3][[1]]
-}
-
+#function to do pvalues using apply and mw test
 mw_test = function(x){
   wilcox.test(
     filter(up_inframe, gene_name==as.character(x["Var1"]))[,"frag_count"],
     filter(up_inframe, gene_name!=as.character(x["Var1"]))[,"frag_count"])[3][[1]]
 }
 
-mw_test(just_one)
+#generate the pvalues, then adjust
+up_p_vals = apply(up_inframe_genes_actual, 1, mw_test)
+up_p_vals_adj = p.adjust(up_p_vals)
 
-picker = function(x){as.character(x["Var1"])}
-picker(just_one)
-filter(up_inframe, gene_name==picker(just_one))[,"frag_count"]
-apply(just_one, 1, picker)
+#histogram of pvals pre and post adjustment
+hist(up_p_vals, col=2)
+hist(up_p_vals_adj, add=TRUE, col=3)
 
-apply(just_one, 1, mw_test)
+#add the pvalues to the data frame
+up_inframe_genes_actual$mw_p_vals = up_p_vals
+up_inframe_genes_actual$p_adj = up_p_vals_adj
 
-just_five = as.data.frame(up_inframe_genes_actual[1:5,])
-just_five
-apply(just_five, 1, mw_test)
-typeof(just_five)
-?apply
+#reorder by smallest adjusted p value
+up_inframe_genes_actual = up_inframe_genes_actual[order(up_inframe_genes_actual$p_adj),]
+table(up_inframe_genes_actual$p_adj)
 
-just_one_test_thing_p
-colnames(up)
-table(up$joint_frame)
-
-down_v_up = read.csv("screen1-down-v-up.csv")
-head(down_v_up)
