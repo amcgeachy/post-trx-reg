@@ -199,38 +199,30 @@ down_v_up$down_div_up = down_v_up$a_adj / down_v_up$b_adj
 down_v_up$up_div_down = down_v_up$b_adj / down_v_up$a_adj
 
 #now make the mw for it
-mw_test_general = function(input_data_frame, gene_list, condition){
-  wilcox.test(
-    filter(input_data_frame, gene_name==as.character(gene_list["gene_name"]))[,condition],
-    filter(input_data_frame, gene_name!=as.character(gene_list["gene_name"]))[,condition])[3][[1]]
-}
-
-head(down_v_up)
-
-
-
-down_v_up$down_div_up_p_val = apply(down_v_up_gene_names, 1, mw_test_dvu)
-down_v_up_gene_names[1]
-wilcox.test(filter(down_v_up, gene_name==down_v_up_gene_names[1])[,"down_div_up"],
-            filter(down_v_up, gene_name!=down_v_up_gene_names[1])[,"down_div_up"])[3][[1]]
-
-mw_test_down = function(x){
-  wilcox.test(
-    filter(down_inframe, gene_name==as.character(x["Var1"]))[,"frag_count"],
-    filter(down_inframe, gene_name!=as.character(x["Var1"]))[,"frag_count"])[3][[1]]
-}
-
-mw_test_dvu = function(x){
+mw_test_dvu_d = function(x){
   wilcox.test(
     filter(down_v_up, gene_name==(x["Var1"]))[,"down_div_up"],
     filter(down_v_up, gene_name!=(x["Var1"]))[,"down_div_up"])[3][[1]]
 }
 
-blorb = apply(down_v_up_gene_names, 1, mw_test_dvu)
-head(blorb)
+down_v_up_gene_names$down_div_up_pvals = apply(down_v_up_gene_names, 1, mw_test_dvu_d)
+down_v_up_gene_names$down_div_up_padj = p.adjust(down_v_up_gene_names$down_div_up_pvals)
+hist(down_v_up_gene_names$down_div_up_pvals)
+hist(down_v_up_gene_names$down_div_up_padj, col=2, add=TRUE)
 
-head(down_v_up_gene_names)
+table(down_v_up_gene_names$down_div_up_padj)
+head(down_v_up)
 
-wilcox.test(
-  filter(down_v_up, gene_name=="YAL002W")[,"down_div_up"],
-  filter(down_v_up, gene_name!="YAL002W")[,"down_div_up"])[3][[1]]
+mw_test_dvu_u = function(x){
+  wilcox.test(
+    filter(down_v_up, gene_name==(x["Var1"]))[,"up_div_down"],
+    filter(down_v_up, gene_name!=(x["Var1"]))[,"up_div_down"])[3][[1]]
+}
+
+down_v_up_gene_names$up_div_down_pvals = apply(down_v_up_gene_names, 1, mw_test_dvu_u)
+down_v_up_gene_names$up_div_down_padj = p.adjust(down_v_up_gene_names$up_div_down_pvals)
+
+hist(down_v_up_gene_names$up_div_down_pvals)
+hist(down_v_up_gene_names$up_div_down_padj, add=TRUE)
+
+table(down_v_up_gene_names$up_div_down_padj)
