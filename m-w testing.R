@@ -213,6 +213,7 @@ hist(down_v_up_gene_names$down_div_up_padj, col=2, add=TRUE)
 table(down_v_up_gene_names$down_div_up_padj)
 head(down_v_up)
 
+##now do it for up div down
 mw_test_dvu_u = function(x){
   wilcox.test(
     filter(down_v_up, gene_name==(x["Var1"]))[,"up_div_down"],
@@ -225,4 +226,20 @@ down_v_up_gene_names$up_div_down_padj = p.adjust(down_v_up_gene_names$up_div_dow
 hist(down_v_up_gene_names$up_div_down_pvals)
 hist(down_v_up_gene_names$up_div_down_padj, add=TRUE)
 
-table(down_v_up_gene_names$up_div_down_padj)
+table(down_v_up_gene_names$up_div_down_padj) #get the exact same thing as the reverse, 1948 at 1 and 1 at .97795
+#fuck
+
+####
+#ok. what if we try m-w test per fragment
+
+head(down_v_up)
+
+mw_test_frag = function(x){
+  wilcox.test(
+  filter(down_v_up, a_and_b==(x["Var1"]))[,"up_div_down"],
+  filter(down_v_up, a_and_b!=(x["Var1"]))[,"up_div_down"])[3][[1]]
+}
+uniques = as.data.frame(table(down_v_up$a_and_b))
+
+blab = apply(uniques, 1, mw_test_frag)
+hist(p.adjust(blab))
