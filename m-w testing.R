@@ -74,14 +74,14 @@ just_one_test_thing_p = wilcox.test(
   filter(up_inframe, gene_name!=as.character(just_one$Var1))[,"frag_count"])[3][[1]]
 
 #function to do pvalues using apply and mw test
-mw_test = function(x){
+mw_test_up = function(x){
   wilcox.test(
     filter(up_inframe, gene_name==as.character(x["Var1"]))[,"frag_count"],
     filter(up_inframe, gene_name!=as.character(x["Var1"]))[,"frag_count"])[3][[1]]
 }
 
 #generate the pvalues, then adjust
-up_p_vals = apply(up_inframe_genes_actual, 1, mw_test)
+up_p_vals = apply(up_inframe_genes_actual, 1, mw_test_up)
 up_p_vals_adj = p.adjust(up_p_vals)
 
 #histogram of pvals pre and post adjustment
@@ -124,17 +124,17 @@ down_inframe_genes_actual = filter(down_inframe_genes, Freq!=0)
 nrow(down_inframe_genes_actual)
 table(down_inframe_genes_actual$Freq) #ok. got all of the 0s removed.
 head(down_inframe_genes_actual)
-head(up_in)
 
-#
-mw_test = function(x){
+#write the mw function
+mw_test_down = function(x){
   wilcox.test(
     filter(down_inframe, gene_name==as.character(x["Var1"]))[,"frag_count"],
     filter(down_inframe, gene_name!=as.character(x["Var1"]))[,"frag_count"])[3][[1]]
 }
 
 #generate the pvalues, then adjust
-down_p_vals = apply(down_inframe_genes_actual, 1, mw_test)
+
+down_p_vals = apply(down_inframe_genes_actual, 1, mw_test_down)
 down_p_vals_adj = p.adjust(down_p_vals)
 
 #histogram of pvals pre and post adjustment
@@ -181,7 +181,56 @@ head(down_v_up)
 
 #make a column that has gene names (filling in the blanks where it's only in one versus the other)
 down_v_up$gene_name = ifelse(is.na(down_v_up$down_genes), as.character(down_v_up$up_genes), as.character(down_v_up$down_genes))
-
 nrow(down_v_up)
-head(down_v_up$gene_name)
-shead(down_v_up)
+head(down_v_up)
+sum(!is.na(down_v_up$down_genes))
+
+  #make a list of genes for use in the mw later
+  down_v_up_gene_names = as.data.frame(table(down_v_up$gene_name))
+  head(down_v_up_gene_names)
+  nrow(down_v_up_gene_names)
+
+#need to make a single measurement for use in MW 
+#that is, can't use two sets of numbers (up frags and down frags)
+#need it to be one set of numbers
+#do ratio between them using the pseudocount (otherwise you div by 0 and nope)
+
+down_v_up$down_div_up = down_v_up$a_adj / down_v_up$b_adj
+down_v_up$up_div_down = down_v_up$b_adj / down_v_up$a_adj
+
+#now make the mw for it
+mw_test_general = function(input_data_frame, gene_list, condition){
+  wilcox.test(
+    filter(input_data_frame, gene_name==as.character(gene_list["gene_name"]))[,condition],
+    filter(input_data_frame, gene_name!=as.character(gene_list["gene_name"]))[,condition])[3][[1]]
+}
+
+head(down_v_up)
+
+
+
+down_v_up$down_div_up_p_val = apply(down_v_up_gene_names, 1, mw_test_dvu)
+down_v_up_gene_names[1]
+wilcox.test(filter(down_v_up, gene_name==down_v_up_gene_names[1])[,"down_div_up"],
+            filter(down_v_up, gene_name!=down_v_up_gene_names[1])[,"down_div_up"])[3][[1]]
+
+mw_test_down = function(x){
+  wilcox.test(
+    filter(down_inframe, gene_name==as.character(x["Var1"]))[,"frag_count"],
+    filter(down_inframe, gene_name!=as.character(x["Var1"]))[,"frag_count"])[3][[1]]
+}
+
+mw_test_dvu = function(x){
+  wilcox.test(
+    filter(down_v_up, gene_name==(x["Var1"]))[,"down_div_up"],
+    filter(down_v_up, gene_name!=(x["Var1"]))[,"down_div_up"])[3][[1]]
+}
+
+blorb = apply(down_v_up_gene_names, 1, mw_test_dvu)
+head(blorb)
+
+head(down_v_up_gene_names)
+
+wilcox.test(
+  filter(down_v_up, gene_name=="YAL002W")[,"down_div_up"],
+  filter(down_v_up, gene_name!="YAL002W")[,"down_div_up"])[3][[1]]
