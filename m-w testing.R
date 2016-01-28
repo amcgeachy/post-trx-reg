@@ -243,3 +243,37 @@ uniques = as.data.frame(table(down_v_up$a_and_b))
 
 blab = apply(uniques, 1, mw_test_frag)
 hist(p.adjust(blab))
+
+###
+
+down_inframe_bi = filter(down_inframe, frag_count>64)
+
+down_inframe_bi_genes = as.data.frame(table(down_inframe_bi$gene_name))
+head(down_inframe_bi_genes)
+down_inframe_bi_genes = filter(down_inframe_bi_genes, Freq!=0)
+head(down_inframe_bi_genes)
+
+mw_test_down_bi = function(x){
+  wilcox.test(
+    filter(down_inframe_bi, gene_name==as.character(x["Var1"]))[,"frag_count"],
+    filter(down_inframe_bi, gene_name!=as.character(x["Var1"]))[,"frag_count"])[3][[1]]
+}
+
+down_inframe_bi_genes$pvals = apply(down_inframe_bi_genes, 1, mw_test_down_bi)
+down_inframe_bi_genes$padj = p.adjust(down_inframe_bi_genes$pvals)
+
+hist(down_inframe_bi_genes$padj)
+
+head(down_inframe)
+as.matrix(filter(down_inframe, gene_name=="YER165W")[,c("uniques","frag_count")])
+as.matrix(filter(up_inframe, gene_name=="YER165W")[,c("uniques","frag_count")])
+
+filter(up_inframe, gene_name=="YBL113C")
+
+?max
+
+YPR204W = filter(up_inframe, gene_name=="YPR204W")
+YPR204W = YPR204W[order(YPR204W$frag_count, decreasing = TRUE),]
+head(YPR204W)
+
+?pmax
