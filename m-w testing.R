@@ -177,27 +177,11 @@ mw_test_dvu_d = function(x){
 
 down_v_up_gene_names$down_div_up_pvals = apply(down_v_up_gene_names, 1, mw_test_dvu_d)
 down_v_up_gene_names$down_div_up_padj = p.adjust(down_v_up_gene_names$down_div_up_pvals)
-hist(down_v_up_gene_names$down_div_up_pvals)
-hist(down_v_up_gene_names$down_div_up_padj, col=2, add=TRUE)
+hist(down_v_up_gene_names$down_div_up_padj, col=3)
+hist(down_v_up_gene_names$down_div_up_pvals, col=2, add=TRUE)
 
 table(down_v_up_gene_names$down_div_up_padj)
 head(down_v_up)
-
-##now do it for up div down
-mw_test_dvu_u = function(x){
-  wilcox.test(
-    filter(down_v_up, gene_name==(x["Var1"]))[,"up_div_down"],
-    filter(down_v_up, gene_name!=(x["Var1"]))[,"up_div_down"])[3][[1]]
-}
-
-down_v_up_gene_names$up_div_down_pvals = apply(down_v_up_gene_names, 1, mw_test_dvu_u)
-down_v_up_gene_names$up_div_down_padj = p.adjust(down_v_up_gene_names$up_div_down_pvals)
-
-hist(down_v_up_gene_names$up_div_down_pvals)
-hist(down_v_up_gene_names$up_div_down_padj, add=TRUE)
-
-table(down_v_up_gene_names$up_div_down_padj) #get the exact same thing as the reverse, 1948 at 1 and 1 at .97795
-#fuck
 
 ####
 #ok. what if we try m-w test per fragment
@@ -212,7 +196,8 @@ mw_test_frag = function(x){
 uniques = as.data.frame(table(down_v_up$a_and_b))
 
 blab = apply(uniques, 1, mw_test_frag)
-hist(p.adjust(blab))
+hist(p.adjust(blab), col=3)
+hist(blab, col=2, add=TRUE)
 
 ###
 
@@ -235,15 +220,87 @@ down_inframe_bi_genes$padj = p.adjust(down_inframe_bi_genes$pvals)
 hist(down_inframe_bi_genes$padj)
 
 head(down_inframe)
-as.matrix(filter(down_inframe, gene_name=="YER165W")[,c("uniques","frag_count")])
-as.matrix(filter(up_inframe, gene_name=="YER165W")[,c("uniques","frag_count")])
+as.matrix(filter(down_inframe, gene_name=="YPR204W")[,c("uniques","frag_count")])
+as.matrix(filter(up_inframe, gene_name=="YPR204W")[,c("uniques","frag_count")])
+  
+# up_inframe %>%
+#   filter(gene_name=="YPR204W") %>%
+#   select(uniques, frag_count) %>%
+#   arrange(desc(frag_count))  ###cleaner way to do the above using dplyr
 
-filter(up_inframe, gene_name=="YBL113C")
+read_count_puller = function(lib, name){
+  lib %>%
+  filter(gene_name==name) %>%
+  select(uniques, frag_count) %>%
+  arrange(uniques)  ###cleaner way to do the above using dplyr
+}
 
-?max
+read_count_puller(up_inframe, "YAL038W")
+read_count_puller(down_inframe, "YAL038W")
 
-YPR204W = filter(up_inframe, gene_name=="YPR204W")
-YPR204W = YPR204W[order(YPR204W$frag_count, decreasing = TRUE),]
-head(YPR204W)
+up_mi = read.table("../screen1_miseq_repiped/screen1_up.csv", sep=",", stringsAsFactors = FALSE, header=TRUE)
+head(up_mi)
+down_mi = read.table("../screen1_miseq_repiped/screen1_down.csv", sep=",", stringsAsFactors = FALSE, header=TRUE)
+head(down_mi)
 
-?pmax
+up_mi_inframe = up_mi %>%
+  filter(joint_frame=="0,1")
+
+down_mi_inframe = down_mi %>%
+  filter(joint_frame=="0,1")
+
+down_mi_inframe$uniques = apply(down_mi_inframe, 1, pasting_together)
+up_mi_inframe$uniques = apply(up_mi_inframe, 1, pasting_together)
+
+
+
+count_puller_mi_and_hi = function(gene_name){
+  gene_name_up = read_count_puller(up_inframe, gene_name)
+  gene_name_down = read_count_puller(down_inframe, gene_name)
+  gene_name_up_mi = read_count_puller(up_mi_inframe, gene_name)
+  gene_name_down_mi = read_count_puller(down_mi_inframe, gene_name)
+  
+  gene_name_all = data.frame(c(gene_name_down$uniques, gene_name_down_mi$uniques, 
+                               gene_name_up$uniques, gene_name_up_mi$uniques))
+  
+  head(gene_name_down)
+  colnames(gene_name_all) = "unique"
+  
+  gene_name_all = gene_name_all %>%
+    distinct
+  
+  gene_name_all$down_hi = gene_name_down[match(gene_name_all$unique, gene_name_down$uniques),"frag_count"]
+  gene_name_all$down_mi = gene_name_down_mi[match(gene_name_all$unique, gene_name_down_mi$uniques),"frag_count"]
+  gene_name_all$up_hi = gene_name_up[match(gene_name_all$unique, gene_name_up$uniques),"frag_count"]
+  gene_name_all$up_mi = gene_name_up_mi[match(gene_name_all$unique, gene_name_up_mi$uniques),"frag_count"]
+  return(gene_name_all)
+}  
+
+YPR204W_counts = count_puller_mi_and_hi("YPR204W")
+YPR204W_counts
+
+all_uniques = as.data.frame(c(up_inframe$uniques, up_mi_inframe$uniques, down_inframe$uniques, down_mi_inframe$uniques))
+all_uniques = all_uniques %>%
+  distinct
+
+head(all_uniques$uniques)
+colnames(all_uniques) = "uniques"
+hea
+
+all_uniques$down_hi = down_inframe[match(all_uniques$uniques, down_inframe$uniques),"frag_count"]
+all_uniques$down_mi = down_mi_inframe[match(all_uniques$uniques, down_mi_inframe$uniques),"frag_count"]
+all_uniques$up_hi = up_inframe[match(all_uniques$uniques, up_inframe$uniques),"frag_count"]
+all_uniques$up_mi = up_mi_inframe[match(all_uniques$uniques, up_mi_inframe$uniques),"frag_count"]
+
+all_uniques$down_hi_adj = ifelse(is.na(all_uniques$down_hi), 0, all_uniques$down_hi)
+all_uniques$down_mi_adj = ifelse(is.na(all_uniques$down_mi), 0, all_uniques$down_mi)
+all_uniques$up_hi_adj = ifelse(is.na(all_uniques$up_hi), 0, all_uniques$up_hi)
+all_uniques$up_mi_adj = ifelse(is.na(all_uniques$up_mi), 0, all_uniques$up_mi)
+
+plot(log(all_uniques$down_hi_adj,2), log(all_uniques$down_mi_adj,2), pch=16, col="#808D8D4A")
+plot(log(all_uniques$up_hi_adj,2), log(all_uniques$up_mi_adj,2), pch=16, col="#808D8D4A")
+
+plot(log(all_uniques$down_hi_adj,2), log(all_uniques$up_hi_adj,2), pch=16, col="#808D8D4A")
+plot(log(all_uniques$down_mi_adj,2), log(all_uniques$up_mi_adj,2), pch=16, col="#808D8D4A")
+
+hist(log(all_uniques$up_mi,2))
