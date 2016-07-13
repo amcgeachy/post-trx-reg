@@ -409,16 +409,240 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
 #up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
 
 getwd()
-setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_and_2_hiseq_repiped//")
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_and_2_hiseq_repiped_bash/")
 
-unsorted_2 = reading_frame_multi_intron("2post_inside_orf_unique.bed", "screen2-hi-unsort")
-up_2 = reading_frame_multi_intron("2up_inside_orf_unique.bed", "screen2-hi-up")
-mid_2 = reading_frame_multi_intron("2mid_inside_orf_unique.bed", "screen2-hi-mid")
-down_2 = reading_frame_multi_intron("2down_inside_orf_unique.bed", "screen2-hi-down")
-norecomb_1 = reading_frame_multi_intron("1pre_inside_orf_unique.bed", "screen1-hi-norecomb")
+# unsorted_2 = reading_frame_multi_intron("2post_inside_orf_unique.bed", "screen2-hi-unsort")
+# up_2 = reading_frame_multi_intron("2up_inside_orf_unique.bed", "screen2-hi-up")
+# mid_2 = reading_frame_multi_intron("2mid_inside_orf_unique.bed", "screen2-hi-mid")
+# down_2 = reading_frame_multi_intron("2down_inside_orf_unique.bed", "screen2-hi-down")
+# norecomb_2 = reading_frame_multi_intron("2pre_inside_orf_unique.bed", "screen2-hi-pre")
+# 
+# unsorted_1 = reading_frame_multi_intron("1post_inside_orf_unique.bed", "screen1-hi-unsort")
+# up_1 = reading_frame_multi_intron("1up_inside_orf_unique.bed", "screen1-hi-up")
+# mid_1 = reading_frame_multi_intron("1mid_inside_orf_unique.bed", "screen1-hi-mid")
+# down_1 = reading_frame_multi_intron("1down_inside_orf_unique.bed", "screen1-hi-down")
+ norecomb_aa = reading_frame_multi_intron("1pre_smalleraa", "screen1-hi-norecomb_aa")
 
-write.csv(unsorted_2, "screen2-hi-unsort.csv")
-write.csv(up_2, "screen2-hi-up.csv")
-write.csv(mid_2, "screen2-hi-mid.csv")
-write.csv(down_2, "screen2-hi-down.csv")
-write.csv(norecomb_2, "screen2-hi-norecomb.csv")
+
+norecomb_bigger1 = reading_frame_multi_intron("1pre_biggeraa", "screen1-hi-norecomb_bigger1")
+write.csv(norecomb_bigger1, "norecomb_bigger1.csv")
+
+norecomb_bigger2 = reading_frame_multi_intron("1pre_biggerab", "screen1-hi-norecomb_bigger2")
+write.csv(norecomb_bigger2, "norecomb_bigger2.csv")
+
+norecomb_bigger3 = reading_frame_multi_intron("1pre_biggerac", "screen1-hi-norecomb_bigger3")
+write.csv(norecomb_bigger3, "norecomb_bigger3.csv")
+
+norecomb_bigger4 = reading_frame_multi_intron("1pre_biggerad", "screen1-hi-norecomb_bigger4")
+write.csv(norecomb_bigger4, "norecomb_bigger4.csv")
+
+norecomb_bigger5 = reading_frame_multi_intron("1pre_biggerae", "screen1-hi-norecomb_bigger5")
+write.csv(norecomb_bigger5, "norecomb_bigger5.csv")
+
+norecomb_bigger6 = reading_frame_multi_intron("1pre_biggeraf", "screen1-hi-norecomb_bigger6")
+write.csv(norecomb_bigger6, "norecomb_bigger6.csv")
+
+norecomb_bigger7 = reading_frame_multi_intron("1pre_biggerag", "screen1-hi-norecomb_bigger7")
+write.csv(norecomb_bigger7, "norecomb_bigger7.csv")
+
+
+norecomb_bigger8 = reading_frame_multi_intron("1pre_biggerah", "screen1-hi-norecomb_bigger8")
+write.csv(norecomb_bigger8, "norecomb_bigger8.csv")
+
+norecomb_bigger9 = reading_frame_multi_intron("1pre_biggerai", "screen1-hi-norecomb_bigger9")
+write.csv(norecomb_bigger9, "norecomb_bigger9.csv")
+
+norecomb_bigger10 = reading_frame_multi_intron("1pre_biggeraj", "screen1-hi-norecomb_bigger10")
+write.csv(norecomb_bigger10, "norecomb_bigger10.csv")
+
+norecomb_bigger11 = reading_frame_multi_intron("1pre_biggerak", "screen1-hi-norecomb_bigger11")
+write.csv(norecomb_bigger11, "norecomb_bigger11.csv")
+
+norecomb_bigger12 = reading_frame_multi_intron("1pre_biggeral", "screen1-hi-norecomb_bigger12")
+write.csv(norecomb_bigger12, "norecomb_bigger12.csv")
+
+norecomb_bigger13 = reading_frame_multi_intron("1pre_biggeram", "screen1-hi-norecomb_bigger13")
+write.csv(norecomb_bigger13, "norecomb_bigger13.csv")
+
+norecomb_bigger14 = reading_frame_multi_intron("1pre_biggeran", "screen1-hi-norecomb_bigger14")
+write.csv(norecomb_bigger14, "norecomb_bigger14.csv")
+
+
+head(norecomb_bigger1)
+#shit crashed, re run
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/datafiles_screen1_and_2_hiseq_repiped_bash/")
+
+norecomb_bigger1 = read.csv("norecomb_bigger1.csv")
+norecomb_bigger2 = read.csv("norecomb_bigger2.csv")
+norecomb_bigger3 = read.csv("norecomb_bigger3.csv")
+norecomb_bigger4 = read.csv("norecomb_bigger4.csv")
+norecomb_bigger5 = read.csv("norecomb_bigger5.csv")
+norecomb_bigger6 = read.csv("norecomb_bigger6.csv")
+norecomb_bigger7 = read.csv("norecomb_bigger7.csv")
+norecomb_bigger8 = read.csv("norecomb_bigger8.csv")
+norecomb_bigger9 = read.csv("norecomb_bigger9.csv")
+norecomb_bigger10 = read.csv("norecomb_bigger10.csv")
+norecomb_bigger11 = read.csv("norecomb_bigger11.csv")
+norecomb_bigger12 = read.csv("norecomb_bigger12.csv")
+norecomb_bigger13 = read.csv("norecomb_bigger13.csv")
+norecomb_bigger14 = read.csv("norecomb_bigger14.csv")
+
+data.frame(table(norecomb_bigger1$gene_name))
+table1 = data.frame(table(norecomb_bigger1$gene_name))
+table2 = data.frame(table(norecomb_bigger2$gene_name))
+table3 = data.frame(table(norecomb_bigger3$gene_name))
+table4 = data.frame(table(norecomb_bigger4$gene_name))
+table5 = data.frame(table(norecomb_bigger5$gene_name))
+table6 = data.frame(table(norecomb_bigger6$gene_name))
+table7 = data.frame(table(norecomb_bigger7$gene_name))
+table8 = data.frame(table(norecomb_bigger8$gene_name))
+table9 = data.frame(table(norecomb_bigger9$gene_name))
+table10 = data.frame(table(norecomb_bigger10$gene_name))
+table11 = data.frame(table(norecomb_bigger11$gene_name))
+table12 = data.frame(table(norecomb_bigger12$gene_name))
+table13 = data.frame(table(norecomb_bigger13$gene_name))
+table14 = data.frame(table(norecomb_bigger14$gene_name))
+
+
+all_genes_pre = c(norecomb_bigger1$gene_name, norecomb_bigger2$gene_name, norecomb_bigger3$gene_name,
+  norecomb_bigger4$gene_name, norecomb_bigger5$gene_name, norecomb_bigger6$gene_name,
+  norecomb_bigger7$gene_name, norecomb_bigger8$gene_name, norecomb_bigger9$gene_name,
+  norecomb_bigger10$gene_name, norecomb_bigger11$gene_name, norecomb_bigger12$gene_name,
+  norecomb_bigger13$gene_name, norecomb_bigger14$gene_name)
+
+all_genes_pre_uniqe = unique(all_genes_pre)
+all_genes_pre_uniqe_data = data.frame(all_genes_pre_uniqe)
+
+turbo2_all_uniques$time2 = turbo2_time2[match(turbo2_all_uniques$unique.turbo2_all_uniques, turbo2_time2$unique), "frag_count"]
+all_genes_pre_uniqe_data$table1 = table1[match(all_genes_pre_uniqe_data$all_genes_pre_uniqe, table1$Var1), "Freq"]
+all_genes_pre_uniqe_data$table2 = table2[match(all_genes_pre_uniqe_data$all_genes_pre_uniqe, table2$Var1), "Freq"]
+all_genes_pre_uniqe_data$table3 = 0
+all_genes_pre_uniqe_data$table3 = table3[match(all_genes_pre_uniqe_data$all_genes_pre_uniqe, table3$Var1), "Freq"]
+
+ifelse(head(all_genes_pre_uniqe_data)[,2]  
+all_genes_pre_uniqe_data[1,1] + all_genes_pre_uniqe_data[1,2]
+is.na(all_genes_pre_uniqe_data$table2) = 0 
+
+head(all_genes_pre_uniqe_data)
+
+megea_norecomb = rbind(norecomb_bigger1, norecomb_bigger2, norecomb_bigger3, norecomb_bigger4,
+      norecomb_bigger5, norecomb_bigger6, norecomb_bigger7, norecomb_bigger8,
+      norecomb_bigger9, norecomb_bigger10, norecomb_bigger11, norecomb_bigger12,
+      norecomb_bigger13, norecomb_bigger14)
+
+mega_norecomb_genecount = data.frame(table(megea_norecomb$gene_name))
+head(mega_norecomb_genecount)
+mega_norecomb_genecount_test = mega_norecomb_genecount[order(mega_norecomb_genecount$Freq),]
+
+head(mega_norecomb_genecount_test)
+write.csv(mega_norecomb_genecount_test, "mega_norecomb_genecount_test.csv")
+
+write.csv(mega_norecomb_genecount_test[which(mega_norecomb_genecount_test$Freq==1),], "one_counts_pre.txt")
+max(mega_norecomb_genecount_test$Freq)
+tail(mega_norecomb_genecount_test)
+
+plot(mega_norecomb_genecount_test$Freq)
+mega_cdf = ecdf(mega_norecomb_genecount_test$Freq)
+
+?ecdf
+pdf("pre-recomb_cdf_stretch.pdf", height = 3, width = 5, useDingbats = FALSE)
+plot(mega_cdf, xlab="Fragments per Gene", main="CDF of pre-recombination coverage by gene", do.points = FALSE, lwd=5)
+abline(v=median(mega_norecomb_genecount_test$Freq))
+# axis(1, at=median(mega_norecomb_genecount_test$Freq), 
+#      labels = as.character(median(mega_norecomb_genecount_test$Freq)), 
+#      col.axis="#62866a")
+abline(h=.5)
+dev.off()
+lines(mega_cdf)
+nrow(mega_norecomb_genecount_test)
+getwd()
+
+post_recomb = read.csv("screen1-hi-unsort.csv")
+head(post_recomb)
+post_gene_counts = data.frame(table(post_recomb$gene_name))
+post_gene_counts = post_gene_counts[order(post_gene_counts$Freq),]
+
+head(post_gene_counts)
+unsort_cdf = ecdf(post_gene_counts$Freq)
+
+median(post_gene_counts$Freq)
+pdf("post-recomb_cdf_stretch.pdf", height = 3, width = 5, useDingbats = FALSE)
+plot(unsort_cdf, xlab="Fragments per Gene", main="CDF of post-recombination coverage by gene", do.points = FALSE, lwd = 5)
+abline(v=median(post_gene_counts$Freq))
+# axis(1, at=median(post_gene_counts$Freq), labels = as.character(median(post_gene_counts$Freq)))
+abline(h=.5)
+dev.off()
+lines(unsort_cdf)
+
+
+head(post_gene_counts)
+tail(post_gene_counts)
+
+# 
+# write.csv(unsorted_2, "screen2-hi-unsort.csv")
+# write.csv(up_2, "screen2-hi-up.csv")
+# write.csv(mid_2, "screen2-hi-mid.csv")
+# write.csv(down_2, "screen2-hi-down.csv")
+# write.csv(norecomb_2, "screen2-hi-norecomb.csv")
+# 
+# write.csv(unsorted_1, "screen1-hi-unsort.csv")
+# write.csv(up_1, "screen1-hi-up.csv")
+# write.csv(mid_1, "screen1-hi-mid.csv")
+# write.csv(down_1, "screen1-hi-down.csv")
+# write.csv(norecomb_1, "screen1-hi-norecomb.csv")
+
+setwd("Google Drive/post trx reg data/miseq_screen5_20160504/")
+turbo2_time2 = reading_frame_multi_intron("2t_2_inside_orf_unique.bed", "2t_2")
+turbo2_time3 = reading_frame_multi_intron("2t_3_inside_orf_unique.bed", "2t_3")
+turbo2_time4 = reading_frame_multi_intron("2t_4_inside_orf_unique.bed", "2t_4")
+turbo2_time5 = reading_frame_multi_intron("2t_5_inside_orf_unique.bed", "2t_5")
+turbo2_time6 = reading_frame_multi_intron("2t_6_inside_orf_unique.bed", "2t_6")
+
+turbo3_time2 = reading_frame_multi_intron("3t_2_inside_orf_unique.bed", "3t_2")
+turbo3_time3 = reading_frame_multi_intron("3t_3_inside_orf_unique.bed", "3t_3")
+turbo3_time4 = reading_frame_multi_intron("3t_4_inside_orf_unique.bed", "3t_4")
+turbo3_time5 = reading_frame_multi_intron("3t_5_inside_orf_unique.bed", "3t_5")
+turbo3_time6 = reading_frame_multi_intron("3t_6_inside_orf_unique.bed", "3t_6")
+
+turbo4_time2 = reading_frame_multi_intron("4t_2_inside_orf_unique.bed", "4t_2")
+turbo4_time3 = reading_frame_multi_intron("4t_3_inside_orf_unique.bed", "4t_3")
+turbo4_time4 = reading_frame_multi_intron("4t_4_inside_orf_unique.bed", "4t_4")
+turbo4_time5 = reading_frame_multi_intron("4t_5_inside_orf_unique.bed", "4t_5")
+turbo4_time6 = reading_frame_multi_intron("4t_6_inside_orf_unique.bed", "4t_6")
+
+turbo5_time2 = reading_frame_multi_intron("5t_2_inside_orf_unique.bed", "5t_2")
+turbo5_time3 = reading_frame_multi_intron("5t_3_inside_orf_unique.bed", "5t_3")
+turbo5_time4 = reading_frame_multi_intron("5t_4_inside_orf_unique.bed", "5t_4")
+turbo5_time5 = reading_frame_multi_intron("5t_5_inside_orf_unique.bed", "5t_5")
+turbo5_time6 = reading_frame_multi_intron("5t_6_inside_orf_unique.bed", "5t_6")
+
+screen5_prerecomb = reading_frame_multi_intron("pre_recomb_inside_orf_unique.bed", "screen5_prerecomb")
+screen5_undetermined = reading_frame_multi_intron("undertermined_inside_orf_unique.bed", "screen5_undetermined")
+
+write.csv(turbo2_time2, "screen5_2t_2.csv")
+write.csv(turbo2_time3, "screen5_2t_3.csv")
+write.csv(turbo2_time4, "screen5_2t_4.csv")
+write.csv(turbo2_time5, "screen5_2t_5.csv")
+write.csv(turbo2_time6, "screen5_2t_6.csv")
+
+write.csv(turbo3_time2, "screen5_3t_2.csv")
+write.csv(turbo3_time3, "screen5_3t_3.csv")
+write.csv(turbo3_time4, "screen5_3t_4.csv")
+write.csv(turbo3_time5, "screen5_3t_5.csv")
+write.csv(turbo3_time6, "screen5_3t_6.csv")
+
+write.csv(turbo4_time2, "screen5_4t_2.csv")
+write.csv(turbo4_time3, "screen5_4t_3.csv")
+write.csv(turbo4_time4, "screen5_4t_4.csv")
+write.csv(turbo4_time5, "screen5_4t_5.csv")
+write.csv(turbo4_time6, "screen5_4t_6.csv")
+
+write.csv(turbo5_time2, "screen5_5t_2.csv")
+write.csv(turbo5_time3, "screen5_5t_3.csv")
+write.csv(turbo5_time4, "screen5_5t_4.csv")
+write.csv(turbo5_time5, "screen5_5t_5.csv")
+write.csv(turbo5_time6, "screen5_5t_6.csv")
+
+write.csv(screen5_prerecomb, "screen5_prerecomb.csv")
+write.csv(screen5_undetermined, "screen5_undetermined.csv")
+

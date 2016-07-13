@@ -1,0 +1,9 @@
+*.ai
+*.pdf
+*.rtf
+*.rtfd
+*~
+*.gif
+*.png
+*.jpg
+.DS_Store
