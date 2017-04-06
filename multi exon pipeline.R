@@ -409,6 +409,101 @@ reading_frame_multi_intron = function(inputfile, dataset_name){
 #up = reading_frame_multi_intron("up_inside_orf_unique.bed", "up")
 
 getwd()
+
+#screen 8 sort 1
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen8_sort1/")
+two_t_up = reading_frame_multi_intron("2t-up_inside_orf_unique.bed", "two_t_up")
+two_t_mid = reading_frame_multi_intron("2t-mid_inside_orf_unique.bed", "two_t_mid")
+two_t_down = reading_frame_multi_intron("2t-down_inside_orf_unique.bed", "two_t_down")
+two_t_unsort = reading_frame_multi_intron("2t-S2_inside_orf_unique.bed", "two_t_unsort")
+
+
+four_t_mid = reading_frame_multi_intron("4t-mid_inside_orf_unique.bed", "four_t_mid")
+
+prerecomb = reading_frame_multi_intron("pre_inside_orf_unique.bed", "pre_recomb")
+
+undet = reading_frame_multi_intron("Undetermined_inside_orf_unique.bed", "undet")
+
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen8_sort1/345_redo/")
+three_t_up = reading_frame_multi_intron("3t-up_inside_orf_unique.bed", "three_t_up")
+three_t_mid = reading_frame_multi_intron("3t-mid_inside_orf_unique.bed", "three_t_mid")
+three_t_down = reading_frame_multi_intron("3t-down_inside_orf_unique.bed", "three_t_down")
+three_t_unsort = reading_frame_multi_intron("3t_inside_orf_unique.bed", "three_t_unsort")
+
+four_t_up = reading_frame_multi_intron("4t-up_inside_orf_unique.bed", "four_t_up")
+four_t_mid = reading_frame_multi_intron("4t-mid_inside_orf_unique.bed", "four_t_mid")
+four_t_down = reading_frame_multi_intron("4t-down_inside_orf_unique.bed", "four_t_down")
+four_t_unsort = reading_frame_multi_intron("4t_inside_orf_unique.bed", "four_t_unsort")
+
+five_t_up = reading_frame_multi_intron("5t-up_inside_orf_unique.bed", "five_t_up")
+five_t_mid = reading_frame_multi_intron("5t-mid_inside_orf_unique.bed", "five_t_mid")
+five_t_down = reading_frame_multi_intron("5t-down_inside_orf_unique.bed", "five_t_down")
+five_t_unsort = reading_frame_multi_intron("5t_inside_orf_unique.bed", "five_t_unsort")
+
+write.csv(three_t_up, "three_t_up.csv")
+write.csv(three_t_mid, "three_t_mid.csv")
+write.csv(three_t_down, "three_t_down.csv")
+write.csv(three_t_unsort, "three_t_unsort.csv")
+
+write.csv(four_t_up, "four_t_up.csv")
+write.csv(four_t_mid, "four_t_mid.csv")
+write.csv(four_t_down, "four_t_down.csv")
+write.csv(four_t_unsort, "four_t_unsort.csv")
+
+write.csv(five_t_up, "five_t_up.csv")
+write.csv(five_t_mid, "five_t_mid.csv")
+write.csv(five_t_down, "five_t_down.csv")
+write.csv(five_t_unsort, "five_t_unsort.csv")
+
+
+
+#screen 8 sort 2
+setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen8_sort2//")
+two_t_up = reading_frame_multi_intron("2t-up-2_inside_orf_unique.bed", "two_t_up")
+two_t_mid = reading_frame_multi_intron("2t-mid-2_inside_orf_unique.bed", "two_t_mid")
+two_t_down = reading_frame_multi_intron("2t-down-2_inside_orf_unique.bed", "two_t_down")
+two_t_unsort = reading_frame_multi_intron("2t-2_inside_orf_unique.bed", "two_t_unsort")
+
+three_t_up = reading_frame_multi_intron("3t-up-2_inside_orf_unique.bed", "three_t_up")
+three_t_mid = reading_frame_multi_intron("3t-mid-2_inside_orf_unique.bed", "three_t_mid")
+three_t_down = reading_frame_multi_intron("3t-down-2_inside_orf_unique.bed", "three_t_down")
+three_t_unsort = reading_frame_multi_intron("3t-2_inside_orf_unique.bed", "three_t_unsort")
+
+four_t_up = reading_frame_multi_intron("4t-up-2_inside_orf_unique.bed", "four_t_up")
+four_t_mid = reading_frame_multi_intron("4t-mid-2_inside_orf_unique.bed", "four_t_mid")
+four_t_down = reading_frame_multi_intron("4t-down-2_inside_orf_unique.bed", "four_t_down")
+four_t_unsort = reading_frame_multi_intron("4t-2_inside_orf_unique.bed", "four_t_unsort")
+
+five_t_up = reading_frame_multi_intron("5t-up-2_inside_orf_unique.bed", "five_t_up")
+five_t_mid = reading_frame_multi_intron("5t-mid-2_inside_orf_unique.bed", "five_t_mid")
+five_t_down = reading_frame_multi_intron("5t-down-2_inside_orf_unique.bed", "five_t_down")
+five_t_unsort = reading_frame_multi_intron("5t-2_inside_orf_unique.bed", "five_t_unsort")
+
+
+write.csv(two_t_up, "two_t_up.csv")
+write.csv(two_t_mid, "two_t_mid.csv")
+write.csv(two_t_down, "two_t_down.csv")
+write.csv(two_t_unsort, "two_t_unsort.csv")
+
+write.csv(three_t_up, "three_t_up.csv")
+write.csv(three_t_mid, "three_t_mid.csv")
+write.csv(three_t_down, "three_t_down.csv")
+write.csv(three_t_unsort, "three_t_unsort.csv")
+
+write.csv(four_t_up, "four_t_up.csv")
+write.csv(four_t_mid, "four_t_mid.csv")
+write.csv(four_t_down, "four_t_down.csv")
+write.csv(four_t_unsort, "four_t_unsort.csv")
+
+write.csv(five_t_up, "five_t_up.csv")
+write.csv(five_t_mid, "five_t_mid.csv")
+write.csv(five_t_down, "five_t_down.csv")
+write.csv(five_t_unsort, "five_t_unsort.csv")
+
+
+
+#screen 5 sorted
+getwd()
 setwd("/Users/annamcgeachy/Google Drive/post trx reg data/screen5_sorted/")
 
 two_t_up = reading_frame_multi_intron("2tup_inside_orf_unique.bed", "two_t_up")
@@ -440,6 +535,7 @@ write.csv(four_t_two, "four_t_two.csv")
 
 write.csv(hh, "hh.csv")
 write.csv(undet, "undet.csv")
+write.csv(prerecomb, "prerecomb.csv")
 
 screen5_genes = c(two_t_up$gene_name, two_t_mid$gene_name, two_t_down$gene_name,
                   three_t_up$gene_name, three_t_mid$gene_name, three_t_down$gene_name,
